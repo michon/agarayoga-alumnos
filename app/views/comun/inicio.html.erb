@@ -1,0 +1,10 @@
+
+
+<h1> hola </h1>
+
+<% if current_usuario.nil? %>
+    <%= link_to new_usuario_session_path, class: 'login-button' do %>Entrar<% end %>
+<% else %>
+    <%= link_to inicio_path, class: 'login-button' do %>Inicio de la aplicación<% end %>
+    <%= link_to destroy_usuario_session_path, method: :delete do %>Salir<% end %>
+<% end %>
