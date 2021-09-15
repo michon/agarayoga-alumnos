@@ -13,3 +13,11 @@
  *= require_tree .
  *= require_self
  */
+h1 {  
+  text-decoration: underline;  
+  color: blue;
+}  
+
+@import "bootstrap/scss/bootstrap";
+// Import Bootstrap v5  
+/* @import "/node-modules/bootstrap/scss/bootstrap";  */

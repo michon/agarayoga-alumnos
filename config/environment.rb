@@ -14,3 +14,4 @@ ActionMailer::Base.smtp_settings = {
  :password => "kkdvkgorda1968",
  :enable_starttls_auto => false
 }
+

@@ -9,6 +9,7 @@ Rails.application.configure do
 
   
   config.hosts << "agarayoga.eu"
+  config.hosts << "www.agarayoga.eu"
 
   config.cache_classes = false
 
