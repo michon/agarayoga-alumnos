@@ -1,0 +1,23 @@
+
+<%= @id %> 
+<ol>
+    <li><%= @almn.nombre %></li>
+    <li><%= @almn.dni %></li>
+    <li><%= @almn.email %></li>
+    <li><%= @almn.telefono %></li>
+    <li><%= @almn.movil %></li>
+    <li><%= @almn.direccion %></li>
+    <li><%= @almn.pais %></li>
+    <li><%= @almn.localidad %></li>
+    <li><%= @almn.provincia %></li>
+    <li><%= @almn.cp %></li>
+    <li><%= @almn.iban %></li>
+    <li><%= @almn.lugarfirma %></li>
+    <li><%= @almn.fechafirma %></li>
+    <li><%= @almn.debaja %></li>
+    <li><%= @almn.codigofacturacion %></li>
+</ol>
+
+<%= link_to( 'Volver al indice', alumnos_index_path) %>
+<%= link_to( 'obtener ficha', alumnos_ficha_path) %>
+<%= link_to( 'Obtener S.E.P.A', alumnos_sepa_path) %>

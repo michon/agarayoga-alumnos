@@ -1,0 +1,8 @@
+<ol>
+<% @alumnos.each do |almn| %>
+    <li>
+    <%=almn.nombre %>
+    <%= link_to almn.nombre, alumnos_path(almn) %>
+    </li>
+<%end%>
+</ol>

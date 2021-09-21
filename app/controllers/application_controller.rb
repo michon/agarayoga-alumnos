@@ -6,4 +6,5 @@ class ApplicationController < ActionController::Base
           #cambiar por la url del usuario en que acaba de realizar el acceso
          indice_path 
     end
+    helper_method :current_user
 end
