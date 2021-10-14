@@ -1,0 +1,87 @@
+class FichaAlumno  < Prawn::Document
+  require "prawn/measurement_extensions"
+
+  def initialize(almn)
+      super()
+      @almn = almn
+      fichaCabecera
+      fichaAlumno(22*72/2.54)
+      fichaSepa(10*72/2.54)
+  end
+
+
+  def fichaAlumno(y)
+    bounding_box([0,y], width: (19*72/2.54), height: (10*72/2.54)) do 
+        bounding_box([((0.3)*72/2.54), ((10.3)*72/2.54)], width: cm2pt(12.5), height: cm2pt(1.3)) do
+            text "FICHA ALUMNO"
+        end
+        stroke_color 'd3d3d3'
+        transparent(0.5) { stroke_bounds }
+        bounding_box([(0.3*72/2.54), ((11.6)*72/2.54)], width: cm2pt(12.5), height: cm2pt(1.3)) do
+            stroke_color 'd33333'
+            transparent(0.5) { self.stroke_bounds }
+            text "Nombre: #{(0.3*72/2.54)}" 
+        end 
+    end
+  end
+
+  def fichaSepa(y)
+    self.text "ACUERDO SEPA"
+    self.bounding_box([0,y], width: (19*72/2.54), height: (10*72/2.54)) do
+        self.text "Acuerdo S.E.P.A"
+        self.stroke_color 'd3d3d3'
+        self.transparent(0.5) { self.stroke_bounds }
+    end
+  end
+
+  def fichaCabecera()
+    self.image Rails.root.join("app/assets/images/logo-agara-5cm.png"), at: [(14*72/2.54),  25*72/2.54], width: 5*72/2.54
+
+    self.font_families.update(
+        'cocomat' => { 
+            normal: Rails.root.join("app/assets/fonts/cocomat.ttf"),
+            italic: Rails.root.join("app/assets/fonts/cocomat.ttf"),
+            bold: Rails.root.join("app/assets/fonts/cocomat.ttf"),
+            bold_italic: Rails.root.join("app/assets/fonts/cocomat.ttf")
+
+        },
+        'c059' => {
+            normal: Rails.root.join("app/assets/fonts/C059-Roman.ttf"),
+            italic: Rails.root.join("app/assets/fonts/C059-Roman.ttf"),
+            bold: Rails.root.join("app/assets/fonts/C059-Roman.ttf"),
+            bold_italic: Rails.root.join("app/assets/fonts/C059-Roman.ttf")
+        }
+
+    )
+    self.font('cocomat') do
+        self.font_size(9)
+        self.text "AGÂRA YOGA"
+    end
+    self.move_down 6 
+    self.font('c059') do
+        self.font_size(7)
+        self.text "MIGUEL RODRÍGUEZ LOPEZ"
+        self.text "N.I.F.: 33.322.144-C"
+        self.text "CARRIL DAS HORTAS, 25 BAJO"
+        self.text "27002 - LUGO "
+        self.move_down 6
+        self.font_size(6)
+        self.text "CONTACTO@AGARAYOGA.ES"
+        self.text "WWW.AGARAYOGA.ES"
+        self.text "677524729-982815476"
+    end
+    
+    self.stroke_color 'd3d3d3'
+    self.move_down 5
+    self.stroke do
+        self.horizontal_rule
+    end
+
+  end
+
+  private 
+  
+      def cm2pt(cuantos)
+          return (cuantos*72/2.54)
+      end
+end

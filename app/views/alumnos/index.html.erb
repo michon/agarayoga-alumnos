@@ -1,8 +1,24 @@
-<ol>
-<% @alumnos.each do |almn| %>
-    <li>
-    <%=almn.nombre %>
-    <%= link_to almn.nombre, alumnos_path(almn) %>
-    </li>
-<%end%>
-</ol>
+
+<div class="listado">
+    <div class="table-responsive-sm">
+        <table class="table">
+            <thead>
+              <tr>
+                  <th> Alumnos </th>
+                  <th> </th>
+                  <th> </th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <% @alumnos.order(:nombre).each do |almn| %>
+                <tr>
+                    <td> <%=almn.nombre %> </td>
+                    <td> <%= link_to "Ver" , alumnos_path(almn) %> </td>
+                    <td> <%= link_to "Ficha" , alumnos_path(almn, format: :pdf) %> </td>
+                </tr>
+            <%end%>
+            </tbody>
+        </table>
+    </div>
+</div>
