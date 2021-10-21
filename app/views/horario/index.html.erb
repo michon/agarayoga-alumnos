@@ -1,0 +1,18 @@
+<h1>Horario#index</h1>
+<% @horario.each do |clase| %>
+    <div class="row">
+        <div class="col-sm-2>
+        <%= clase.dia_humano %>
+            <div class="row">
+            <%= clase.clase_humano %>
+        <div class="col-sm-2">
+            <% clase.horarioAlumnos.each do |almn| %>
+                <div class="col-sm-2">
+                    <%= almn.usuario.nombre %> 
+                </div>
+            <% end %>
+        </div>
+            </div>
+        </div>
+    </div>
+<% end %>
