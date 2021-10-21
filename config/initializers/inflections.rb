@@ -19,4 +19,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'comun', 'comunes'
   inflect.irregular 'cuentabcocli', 'cuentasbcocli'
   inflect.irregular 'dircliente', 'dirclientes'
+  inflect.irregular 'instructor', 'instructores'
 end

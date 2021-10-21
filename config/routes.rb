@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'horario/index'
+  get 'instructor/index'
+  get 'instructor/show'
   get 'alumnos/index'
   get 'alumnos/show/:id', to: 'alumnos#show', as: 'alumnos'
   get 'alumnos/ficha/:id', to: 'alumnos#ficha', as: 'alumnos_ficha'

@@ -21,7 +21,6 @@ namespace :sincronizar do
                     usr.provincia = dir.provincia
                     usr.cp = dir.codpostal
                 end
-                usr.save
                 if Cuentabcocli.exists?(["codcliente = ?", cli.codcliente])
                     puts "Actualizando dantos bancarios ................ "
                     usr.iban =  Cuentabcocli.where("codcliente = ?", cli.codcliente).first.iban
@@ -39,6 +38,14 @@ namespace :sincronizar do
                 usr.telefono = cli.telefono2
                 usr.movil = cli.telefono1
                 usr.debaja = cli.debaja
+                if Dircliente.exists?(["codcliente = ?", cli.codcliente])
+                    puts "Actualizando direccion ................ "
+                    dir =  Dircliente.where("codcliente = ?", cli.codcliente).first
+                    usr.direccion = dir.direccion
+                    usr.localidad = dir.ciudad
+                    usr.provincia = dir.provincia
+                    usr.cp = dir.codpostal
+                end
                 if Cuentabcocli.exists?(["codcliente = ?", cli.codcliente])
                     puts "Actualizando dantos bancarios ................ "
                     usr.iban =  Cuentabcocli.where("codcliente = ?", cli.codcliente).first.iban
@@ -47,7 +54,9 @@ namespace :sincronizar do
                 end
                 puts "\n"
                 usr.save
-            end
-        end
-    end
-end
+            end # if usuario.exists?
+        end # each cliente
+    end # task
+end # name space
+
+

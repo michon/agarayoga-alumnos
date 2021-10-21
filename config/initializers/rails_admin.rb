@@ -39,4 +39,61 @@ RailsAdmin.config do |config|
     # history_index
     # history_show
   end
+
+  config.model 'Instructor' do
+    object_label_method do
+        :custom_label_method
+    end
+  end
+
+  config.model 'Usuario' do
+    object_label_method do
+        :usuario_label_method
+    end
+    list do
+        scopes [:activo]
+    end
+  end
+
+  config.model 'Horario' do 
+      object_label_method do
+          :horario_label_method
+      end
+      field :diaSemana, :enum do
+        enum_method do
+            :diasemana_enum
+        end
+      end
+      field :hora
+      field :minuto
+      field :instructor
+      field :usuario
+  end
+
+  config.model 'HorarioAlumno' do
+      object_label_method do
+          :horarioAlumno_label_method
+      end
+      field :instructor
+      field :horario
+    end
+
+  def horarioAlumno_label_method
+     self.usuario.nombre
+  end
+
+  def usuario_label_method
+     self.nombre
+  end
+
+  def horario_label_method
+        semana = [['domingo','0'], ['lunes','1'], ['martes','2'], ['miércoles','3'], ['jueves','4'], ['viernes'],'5', ['sábado'],'6']
+     semana[self.diaSemana][0].to_s + ' '  + self.hora.to_s + ':' + self.minuto.to_s
+  end
+
+
+  def custom_label_method
+     self.nombre
+  end
+
 end
