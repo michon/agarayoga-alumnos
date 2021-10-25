@@ -79,7 +79,7 @@ RailsAdmin.config do |config|
     end
 
   def horarioAlumno_label_method
-     self.usuario.nombre
+     self.usuario.nombre unless self.usuario.blank?
   end
 
   def usuario_label_method

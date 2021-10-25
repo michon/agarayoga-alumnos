@@ -1,18 +1,36 @@
 <h1>Horario#index</h1>
-<% @horario.each do |clase| %>
-    <div class="row">
-        <div class="col-sm-2>
-        <%= clase.dia_humano %>
-            <div class="row">
-            <%= clase.clase_humano %>
-        <div class="col-sm-2">
-            <% clase.horarioAlumnos.each do |almn| %>
-                <div class="col-sm-2">
-                    <%= almn.usuario.nombre %> 
-                </div>
+
+<table class="table-responsibe table-bordered">
+
+    <thead>
+        <tr>
+            <th scope="col"> # </th>
+            <%@diasDistintos.each do |dia| %>
+                <th scope="col">
+                    <%= I18n.t('date.day_names')[dia.diaSemana] %> 
+                </th>
             <% end %>
-        </div>
-            </div>
-        </div>
-    </div>
-<% end %>
+        </tr>
+    </thead> 
+
+    <tbody>
+        <% @horarioGeneral.each  do |h| %>
+             <tr>
+                 <td> <%= h[0] %> </td>
+                <% for idx in @diasDistintos.first.diaSemana..@diasDistintos.last.diaSemana do %>
+                    <td> 
+                        <% unless h[1][idx].blank? %>
+                        <ol>
+                            <% h[1][idx].usuario.each do |alm|%> 
+                                <li> <%= alm.nombre %> </li>
+                            <% end %>
+                        </ol>
+                        <%end%>
+
+                    </td>
+                <% end %>
+            </tr>
+        <% end%>
+    </tbody>
+    
+</table>
