@@ -19,4 +19,6 @@ class HorarioController < ApplicationController
       end
       
   end
+
+
 end
