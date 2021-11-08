@@ -7,4 +7,6 @@ class ApplicationController < ActionController::Base
          indice_path 
     end
     helper_method :current_user
+
 end
+

@@ -1,4 +1,6 @@
 class HorarioController < ApplicationController
+    before_action :configure_permitted_parameters, if: :devise_controller?
+
   def index
 
       # horarioGeneral es un hash que tiene una entrada por cada hora (key) que
@@ -20,5 +22,19 @@ class HorarioController < ApplicationController
       
   end
 
+  def crearClases
+      require 'horario_clase.rb'
+      objHorario = HorarioClase.new()
 
+      fecha = params[:fecha].to_datetime
+      
+      objHorario.crearClases(fecha)
+      redirect_to action: 'index'
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:fecha)
+  end
 end

@@ -22,17 +22,4 @@ class Horario < ActiveRecord::Base
         diasemana_enum[self.diaSemana][0]
     end
 
-    #crea las clases para una fecha especificada a partir de la plantilla del
-    #horario.
-    def crearClases(fecha)
-        Horario.all.each do |h|
-            fechaClase = fecha - (fecha.day - h.diaSemana).days
-            fechaClase.change(hour: h.hora, min: h.minuto)
-            cl = Clase.new(diaHora: fechaClase, instructor: h.instructor)
-            h.horarioAlumno.each do |ha|
-               cl.claseAlumno.new(usuario: ha.usuario) 
-            end
-            cl.save
-        end
-    end
 end 

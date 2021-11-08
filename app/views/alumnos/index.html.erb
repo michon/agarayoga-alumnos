@@ -4,7 +4,7 @@
         <table class="table">
             <thead>
               <tr>
-                  <th> Alumnos </th>
+                  <th> <%= "Alumnos (#{@alumnos.count})"%> </th>
                   <th> </th>
                   <th> </th>
               </tr>
@@ -13,6 +13,7 @@
             <tbody>
             <% @alumnos.order(:nombre).each do |almn| %>
                 <tr>
+
                     <td> <%=almn.nombre %> </td>
                     <td> <%= link_to "Ver" , alumnos_path(almn) %> </td>
                     <td> <%= link_to "Ficha" , alumnos_path(almn, format: :pdf) %> </td>

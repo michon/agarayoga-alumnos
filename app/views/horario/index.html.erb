@@ -1,7 +1,13 @@
 <h1>Horario#index</h1>
 
-<table class="table-responsibe table-bordered">
+<%= form_tag('/horario/crear_horario_semanal', method: :post) do %>
+    <label for="fecha">comienzo de Semana</label>
+    <input id="fecha" name="fecha" class="form-control" type="date" />
+    <button type="submit"> crear horario para la fecha </button>
+<% end %>
 
+
+<table class="table-responsibe table-bordered">
     <thead>
         <tr>
             <th scope="col"> # </th>
@@ -32,5 +38,6 @@
             </tr>
         <% end%>
     </tbody>
-    
 </table>
+
+

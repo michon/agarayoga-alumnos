@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
+  get 'clase/semana/:fecha', to: "clase#semana", as: "clase/semana"
+  get 'clase/actual'
   get 'horario/index'
+  post 'horario/crear_horario_semanal', to: 'horario#crearClases'
   get 'instructor/index'
   get 'instructor/show'
   get 'alumnos/index'
