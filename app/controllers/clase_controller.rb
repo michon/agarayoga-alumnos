@@ -1,4 +1,6 @@
 class ClaseController < ApplicationController
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   def semana()
       # horarioGeneral es un hash que tiene una entrada por cada hora (key) que
       # tenemos en el horario, cada una de estas entradas  contendrá otro hash
@@ -20,25 +22,31 @@ class ClaseController < ApplicationController
 
       @horasDistintas.each do |h|
           horaClase = h.hora
-          Rails.logger.debug("hora de clase #{horaClase}")
-          Rails.logger.debug("Primer dia de la semana #{@diasSemana.first.dia.to_i}")
-          Rails.logger.debug("último dia de la semana #{@diasSemana.last.dia.to_i}")
           @horarioGeneral.store(horaClase, Hash.new)
           for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do 
               #montar un date time para esta @fecha y hora
-              Rails.logger.debug "--------------------  Indice #{idx}"
-
               fechaCl  = @fecha.beginning_of_week.days_since(idx-1)
               fechaCl = fechaCl.change(hour: h.hora[0..1].to_i, min: h.hora[3..4].to_i)
-              Rails.logger.debug "--------------------  @fecha de clase #{fechaCl.to_s}"
               cl = Clase.where(diaHora: fechaCl).first
               @horarioGeneral[horaClase].store(fechaCl, cl)
           end
       end
   end
 
+  def seleccion
+      fecha = params[:fecha]
+      redirect_to clase_semana_url(fecha)
+  end
+
   def actual
       fecha = Date.today.to_datetime
       redirect_to clase_semana_url(fecha)
   end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:fecha)
+  end
+
 end

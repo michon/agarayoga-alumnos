@@ -85,9 +85,22 @@ RailsAdmin.config do |config|
       field :diaHora
       field :instructor
       field :usuario
+      field :pruebas
+  end
+
+  config.model 'Prueba' do
+      object_label_method do 
+          :prueba_label_method
+      end
+      field :clase
+      field :nombre
   end
 
 
+
+  def prueba_label_method
+      self.nombre
+  end
 
   def horarioAlumno_label_method
      self.usuario.nombre unless self.usuario.blank?
@@ -103,7 +116,7 @@ RailsAdmin.config do |config|
   end
 
   def clase_label_method
-        self.diaHora
+        self.diaHora.strftime('%a, %e %B %y a las %H:%M')
   end
 
 

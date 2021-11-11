@@ -1,3 +1,55 @@
+
+    
+    <div class="row row-cols-7 text-white bg-primary p-4 rounded ">
+        <div class="col">
+                <%= I18n.t('date.month_names')[@fecha.beginning_of_week.strftime("%m").to_i ] %> 
+        </div>
+        
+        <%@diasSemana.each do |dia| %>
+          <div class="col">
+            <%fechaCl  = @fecha.beginning_of_week.days_since(dia.dia.to_i-1)%>
+            <%= I18n.t('date.abbr_day_names')[dia.dia.to_i].upcase   %> 
+            <%= fechaCl.strftime("%d") %>
+          </div>
+      <%end%>
+    </div>
+
+
+    <% @horarioGeneral.each_with_index  do |h,idx| %>
+        <div class="row row-cols-6  border <%= if idx%2==0 then 'bg-white' else 'bg-light' end%>">
+        <div class="col">
+          <%= h[0] %>
+        </div>
+        <% for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do %>
+          <div class="col">
+            <%fechaCl  = @fecha.beginning_of_week.days_since(idx-1)%>
+            <% fechaCl = fechaCl.change(hour: h[0][0..1].to_i, min: h[0][3..4].to_i)%>
+            <% unless h[1][fechaCl].blank? %>
+                 <form action="/action_page.php">
+                    <% h[1][fechaCl].usuario.each do |alm|%> 
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" value"" id="alumn-<%=alm.id%>"> 
+                        <label class="form-check-label" for="alumn-<%=alm.id%>"> <%= alm.nombre %> </label>
+                      </div>
+                    <% end %>
+                    <% h[1][fechaCl].pruebas.each do |alm|%> 
+                      <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="checbox" class="form-check-input" value""> <%= alm.nombre %> 
+                        </label>
+                      </div>
+                    <% end %>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            <%end%>
+          </div>
+        <%end%> 
+        
+      </div>
+    <%end%> 
+    
+
+
 <table class="table-responsibe table_fixed table-bordered">
     <thead>
         <tr>
@@ -26,6 +78,9 @@
                             <% h[1][fechaCl].usuario.each do |alm|%> 
                                 <li> <%= alm.nombre %> </li>
                             <% end %>
+                            <% h[1][fechaCl].pruebas.each do |alm|%> 
+                                <li> <%= alm.nombre %> </li>
+                            <% end %>
                         </ol>
                         <%end%>
 
@@ -35,6 +90,8 @@
         <% end%>
     </tbody>
 </table>
+
+
 
 <h1>Clase#semana</h1>
 <ol>

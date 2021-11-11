@@ -12,7 +12,52 @@
   </head>
 
   <body>
-    <%= yield %>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand">AgâraYoga</a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav">
+                    <%= link_to 'Inicio', indice_path, class: "nav-item nav-link" %>
+                    <a href="#" class="nav-item nav-link active">Home</a>
+                    <a href="#" class="nav-item nav-link">Services</a>
+                    <a href="#" class="nav-item nav-link">About</a>
+                    <a href="#" class="nav-item nav-link">Contact</a>
+                </div>
+                <div class="navbar-nav ms-auto">
+                    <% if current_usuario %>
+                        <%= link_to 'Abandonar la sesión', destroy_usuario_session_path, class: "nav-item nav-link", method: :delete %>
+                    <%else%>
+                        <%= link_to 'Autenticarse', new_usuario_session_path, class: "nav-item nav-link" %>
+                        <%= link_to 'Darse de alta', new_usuario_registration_path, class: "nav-item nav-link" %>
+                    <%end%>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <%= render 'layouts/alerts' %>
+
+    <div class="container-fluid">
+        <%= yield %>
+    </div>
+
+    <footer>
+        <div class="row">
+            <div class="col-md-6">
+                <p>Copyright &copy; 2021 Tutorial Republic</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-dark">Terms of Use</a>
+                <span class="text-muted mx-2">|</span>
+                <a href="#" class="text-dark">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
     <% unless flash.empty? %>
        <script type="text/javascript">
           <% flash.each do |f| %>
@@ -21,5 +66,7 @@
        <% end %>
        </script>
     <% end %>
+
   </body>
+  
 </html>
