@@ -1,3 +1,4 @@
+
 class HorarioClase
 
     def initialize
@@ -13,7 +14,7 @@ class HorarioClase
             fechaClase = fechaClase.change(hour: h.hora, min: h.minuto)
             cl = Clase.new(diaHora: fechaClase, instructor: h.instructor)
             h.horarioAlumno.each do |ha|
-               cl.claseAlumno.new(usuario: ha.usuario) 
+               cl.claseAlumno.new(usuario: ha.usuario, claseAlumnoEstado_id: 1) 
             end
             cl.save
         end

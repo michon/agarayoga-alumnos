@@ -1,7 +1,8 @@
 
+<h1> vengo de aquí  <%= @vengode %> </h1>
     
-    <div class="row row-cols-7 text-white bg-primary p-4 rounded ">
-        <div class="col">
+    <div class="row row-cols-6 text-white bg-primary p-4 rounded ">
+        <div class="col d-none d-md-block">
                 <%= I18n.t('date.month_names')[@fecha.beginning_of_week.strftime("%m").to_i ] %> 
         </div>
         
@@ -16,8 +17,8 @@
 
 
     <% @horarioGeneral.each_with_index  do |h,idx| %>
-        <div class="row row-cols-6  border <%= if idx%2==0 then 'bg-white' else 'bg-light' end%>">
-        <div class="col">
+        <div class="row row-cols-6 border <%= if idx%2==0 then 'bg-white' else 'bg-light' end%>">
+        <div class="col d-none d-md-block">
           <%= h[0] %>
         </div>
         <% for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do %>
@@ -25,13 +26,44 @@
             <%fechaCl  = @fecha.beginning_of_week.days_since(idx-1)%>
             <% fechaCl = fechaCl.change(hour: h[0][0..1].to_i, min: h[0][3..4].to_i)%>
             <% unless h[1][fechaCl].blank? %>
-                 <form action="/action_page.php">
-                    <% h[1][fechaCl].usuario.each do |alm|%> 
+                <%= form_tag(clase_estado_path, method: :post) do %>
+
+                    <div class="pb-4 row rows-cols-2">
+                      <div class="col ">
+                        <div class="form-check" >
+                          <input class="form-check-input" type="radio" id="falto-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="4">
+                          <label class="form-check-label" for="falto-<%=h[1][fechaCl].id%>"> Faltó </label>
+                        </div>
+
+                        <div class="form-check" >
+                          <input class="form-check-input" type="radio" id="aviso-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="3">
+                          <label class="form-check-label" for="aviso-<%=h[1][fechaCl].id%>"> Avisó </label>
+                        </div>
+
+                        <div class="form-check ">
+                          <input class="form-check-input" type="radio" id="asistio-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="2">
+                          <label class="form-check-label" for="asistio-<%=h[1][fechaCl].id%>"> Asistió </label>
+                        </div>
+
+                        <div class="pb-4 form-check ">
+                          <input class="form-check-input" type="radio" id="vendra-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="1">
+                          <label class="form-check-label" for="vendra-<%=h[1][fechaCl].id%>"> Vendrá </label>
+                        </div>
+                      </div>
+                        
+                      <div class="col ">
+                        <button type="submit" class="btn btn-primary">Haz</button>
+                      </div>
+                    </div>
+
+                    
+                    <% h[1][fechaCl].claseAlumno.each do |clalm|%> 
                       <div class="form-check">
-                          <input type="checkbox" class="form-check-input" value"" id="alumn-<%=alm.id%>"> 
-                        <label class="form-check-label" for="alumn-<%=alm.id%>"> <%= alm.nombre %> </label>
+                        <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" > 
+                        <label class="form-check-label <%=clalm.claseAlumnoEstado.color %>" for="<%=clalm.id%>"> <%= clalm.usuario.nombre %> </label>
                       </div>
                     <% end %>
+                    
                     <% h[1][fechaCl].pruebas.each do |alm|%> 
                       <div class="form-check-inline">
                         <label class="form-check-label">
@@ -39,8 +71,7 @@
                         </label>
                       </div>
                     <% end %>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                <% end %>
             <%end%>
           </div>
         <%end%> 
@@ -50,50 +81,13 @@
     
 
 
-<table class="table-responsibe table_fixed table-bordered">
-    <thead>
-        <tr>
-            <th scope="col justify-content-center"> 
-                <%= I18n.t('date.month_names')[@fecha.beginning_of_week.strftime("%m").to_i ] %> 
-            </th>
-            <%@diasSemana.each do |dia| %>
-                <th scope="col">
-                    <%fechaCl  = @fecha.beginning_of_week.days_since(dia.dia.to_i-1)%>
-                    <%= I18n.t('date.day_names')[dia.dia.to_i] %> 
-                    <%= fechaCl.strftime("%d") %>
-                </th>
-            <% end %>
-        </tr>
-    </thead> 
-    <tbody>
-        <% @horarioGeneral.each  do |h| %>
-             <tr>
-                 <td> <%= h[0] %> </td>
-                <% for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do %>
-                    <%fechaCl  = @fecha.beginning_of_week.days_since(idx-1)%>
-                    <% fechaCl = fechaCl.change(hour: h[0][0..1].to_i, min: h[0][3..4].to_i)%>
-                    <td> 
-                        <% unless h[1][fechaCl].blank? %>
-                        <ol>
-                            <% h[1][fechaCl].usuario.each do |alm|%> 
-                                <li> <%= alm.nombre %> </li>
-                            <% end %>
-                            <% h[1][fechaCl].pruebas.each do |alm|%> 
-                                <li> <%= alm.nombre %> </li>
-                            <% end %>
-                        </ol>
-                        <%end%>
-
-                    </td>
-                <% end %>
-            </tr>
-        <% end%>
-    </tbody>
-</table>
 
 
 
-<h1>Clase#semana</h1>
+
+
+
+<h1> Vista de datos </h1>
 <ol>
     <li>
         <p> dias semana: </p>

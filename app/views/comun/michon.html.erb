@@ -2,13 +2,23 @@
 <div class="d-grid gap-4">
     <%= link_to 'Plantilla general', horario_index_path, class: 'btn btn-primary btn-lg', role: "button" %>
 </div>
+
 <div class="d-grid gap-4">
     <%= form_tag(clase_seleccion_path, method: :post) do %>
         <label for="fecha">comienzo de Semana</label>
         <input id="fecha" name="fecha" class="form-control" type="date" />
-        <button type="submit"> crear horario para la fecha </button>
+        <button type="submit"> Ver horario semanal </button>
     <% end %>
 </div>
+
+<div class="d-grid gap-4">
+    <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
+        <label for="fecha">Selecciona un día</label>
+        <input id="fecha" name="fecha" class="form-control" type="date" />
+        <button type="submit"> Ver clases </button>
+    <% end %>
+</div>
+
 <div class="d-grid gap-4">
     <%= link_to 'ALUMNOS, listado general', alumnos_index_path, class: 'btn btn-primary btn-lg', role: "button"  %>
 </div>

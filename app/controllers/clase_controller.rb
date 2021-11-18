@@ -4,7 +4,7 @@ class ClaseController < ApplicationController
   def semana()
       # horarioGeneral es un hash que tiene una entrada por cada hora (key) que
       # tenemos en el horario, cada una de estas entradas  contendrá otro hash
-      # cuya clave será el día de la semana y el contenido un resitro de hoario.
+      # cuya clave será el día de la semana y el contenido un registro de hoario.
       
       @fecha = params[:fecha].to_datetime
 
@@ -18,12 +18,11 @@ class ClaseController < ApplicationController
       @horarioGeneral = Hash.new
 
       @diasArray = Array.new
-          Rails.logger.debug("Antes de nada -------- H O L A --------- ")
 
-      @horasDistintas.each do |h|
+      @horasDistintas.each do |h| #cada hora
           horaClase = h.hora
           @horarioGeneral.store(horaClase, Hash.new)
-          for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do 
+          for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do #generamos todos los dias 
               #montar un date time para esta @fecha y hora
               fechaCl  = @fecha.beginning_of_week.days_since(idx-1)
               fechaCl = fechaCl.change(hour: h.hora[0..1].to_i, min: h.hora[3..4].to_i)
@@ -33,20 +32,56 @@ class ClaseController < ApplicationController
       end
   end
 
+  # Presenta las clases proyectadas para un día
+  def dia
+    fecha = params[:fecha].to_datetime
+    @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
+  end
+
+  # Método POST 
+  # Recibe una fecha y envía a la presentación semanal
   def seleccion
       fecha = params[:fecha]
       redirect_to clase_semana_url(fecha)
   end
 
-  def actual
-      fecha = Date.today.to_datetime
-      redirect_to clase_semana_url(fecha)
+  # Método POST 
+  # Recibe una fecha y envía a la presentación de ese día
+  def seleccionDia
+      fecha = params[:fecha]
+      redirect_to clase_dia_url(fecha)
+  end
+
+  # Método POST entrada de datos del formulario semana
+  # Recibe una lista de alumnos y una acción a realizar que debe corresponder
+  # con la tabla claseAlumnoEstado.
+  def estado
+    accion = 0
+    params.each do |p|
+        if p[0].start_with?('accion') then
+            accion = p[1]
+        end
+     end
+
+     fijarEstado(params[:alumnos_ids],accion.to_i)
+
+     redirect_back(fallback_location: clase_semana_url(Date.today))
   end
 
   protected
 
+  #Fija el valor de estado en la tabla ClaseAlumnoEstado recibe un array con los
+  #alumnos a los que se les debe aplicar el estado y un estado a aplicar.
+  def fijarEstado(alumnos,estado)
+      alumnos.each do |alm|
+          cl = ClaseAlumno.find(alm)
+          cl.claseAlumnoEstado_id = estado
+          cl.save
+      end
+  end
+
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:fecha)
+    devise_parameter_sanitizer.permit(:fecha, accion, alumnos_ids:[])
   end
 
 end
