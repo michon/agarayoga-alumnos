@@ -1,0 +1,89 @@
+
+<% @clasesHoy.each do |cl| %>
+    <div class="pb-4 mb-3 card">
+        <div class="card-header"> 
+            <h5 class="card-title"><%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+        </div> 
+
+        <%= form_tag(clase_estado_path, method: :post) do %>
+            <div class="card-body">
+                <% cl.claseAlumno.each do |clalm| %>
+                  <div class="form-check">
+                    <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" > 
+                    <label class="form-check-label <%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
+                  </div>
+                <%end %>
+            </div>
+
+            <div class="card-footer"> 
+              <div class="pb-4 row">
+                  <div class="col col-9">
+                      <div class="row">
+                        <div class="col col-6">
+                            <div class="form-check form-check-inline" >
+                              <input class="form-check-input" type="radio" id="falto-<%=cl.id%>", name="accion#<%=cl.id%>" checked value="4">
+                              <label class="form-check-label" for="falto-<%=cl.id%>"> Faltó </label>
+                            </div>
+
+                            <div class="form-check form-check-inline" >
+                              <input class="form-check-input" type="radio" id="aviso-<%=cl.id%>", name="accion#<%=cl.id%>" value="3">
+                              <label class="form-check-label" for="aviso-<%=cl.id%>"> Avisó </label>
+                            </div>
+                        </div>
+
+                        <div class="col col-6">
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" id="asistio-<%=cl.id%>", name="accion#<%=cl.id%>" value="2">
+                              <label class="form-check-label" for="asistio-<%=cl.id%>"> Asistió </label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" id="vendra-<%=cl.id%>", name="accion#<%=cl.id%>" value="1">
+                              <label class="form-check-label" for="vendra-<%=cl.id%>"> Vendrá </label>
+                            </div>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div class="col col-3">
+                    <button type="submit" class="btn btn-primary">Haz</button>
+                  </div>
+              </div>
+              <div class="row justify-content-center">
+                  <div class="col col-4">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">+Alumno</button>
+                  </div>
+                  <div class="col col-4">
+                    <button type="submit" class="btn btn-primary">+Prueba</button>
+                  </div>
+                  <div class="col col-4">
+                    <button type="submit" class="btn btn-primary">-Quitar </button>
+                  </div>
+              </div>
+            </div>
+              
+        <%end %>
+    </div>
+<% end %>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>

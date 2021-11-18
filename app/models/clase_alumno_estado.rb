@@ -1,0 +1,3 @@
+class ClaseAlumnoEstado < ApplicationRecord
+    
+end
