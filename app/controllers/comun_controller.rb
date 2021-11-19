@@ -13,7 +13,7 @@ class ComunController < ApplicationController
   end
 
   def michon
-      
+      @fechaHoy = Date.today
   end
 
 

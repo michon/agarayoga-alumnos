@@ -36,13 +36,43 @@ class ClaseController < ApplicationController
   def dia
     fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
+    @alumnosActivos = Usuario.where(debaja: false)
   end
 
   # Método POST 
   # Recibe una fecha y envía a la presentación semanal
   def seleccion
       fecha = params[:fecha]
-      redirect_to clase_semana_url(fecha)
+      redirect_to clase_semana_url(fecha).order(:nombre)
+  end
+
+  # Método POST 
+  # Recibe una id ClaseAlumno_id y lo borra 
+  def altaPrueba
+      redirect_to clase_dia_url(params[:fecha])
+  end
+
+  # Método POST 
+  # Recibe una id ClaseAlumno_id y lo borra 
+  def bajaAlumnos
+      ClaseAlumno.find(params[:clase_alumno_id]).destroy
+      redirect_to clase_dia_url(params[:fecha])
+  end
+
+  # Método POST 
+  # Recibe una Modelo ClaseAlumno y lo da de alta en la tabla
+  def altaAlumno
+      clAlmParam = params[:clase_alumno]
+
+      fecha = params[:fecha]
+
+      clAlm = ClaseAlumno.new
+      clAlm.usuario_id = clAlmParam[:usuario_id]
+      clAlm.clase_id = clAlmParam[:clase_id]
+      clAlm.claseAlumnoEstado_id = clAlmParam[:claseAlumnoEstado_id]
+      clAlm.save
+
+      redirect_to clase_dia_url(params[:fecha])
   end
 
   # Método POST 

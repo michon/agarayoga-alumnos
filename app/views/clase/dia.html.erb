@@ -51,13 +51,19 @@
               </div>
               <div class="row justify-content-center">
                   <div class="col col-4">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">+Alumno</button>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#altaAlumno-<%=cl.id%>">
+                      +Alumno
+                    </button>
                   </div>
                   <div class="col col-4">
-                    <button type="submit" class="btn btn-primary">+Prueba</button>
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#altaPrueba-<%=cl.id%>">
+                      +Prueba
+                    </button>
                   </div>
                   <div class="col col-4">
-                    <button type="submit" class="btn btn-primary">-Quitar </button>
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quitar-<%=cl.id%>">
+                      Quitar
+                    </button>
                   </div>
               </div>
             </div>
@@ -65,25 +71,86 @@
         <%end %>
     </div>
 <% end %>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+
+<!-- formularios Modales para altas Alumnos-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="altaAlumno-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="altaAlumno-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_for(ClaseAlumno.new, url: clase_alta_alumno_path) do |f| %> 
+              <div class="modal-body">
+                      <%= f.collection_select :usuario_id, Usuario.where(debaja: false).order(:nombre), :id, :nombre, prompt: true %> </br>
+                      <%= f.hidden_field :clase_id, value: cl.id %>
+                      <%= f.hidden_field :claseAlumnoEstado_id, value: 1 %>
+                      <input type="hidden" id="fecha_dia" name="fecha" value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Añadir Alumno </button>
+              </div>
+          <% end %>    
+        </div>
       </div>
     </div>
-  </div>
-</div>
+<%end%>
+
+<!-- formularios Modales para altas Pruebas-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="altaPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="altaPrueba-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <select class="form-select" ata-live-search="true">
+                <% @alumnosActivos.each do |alm|%>
+                    <option> <%=alm.nombre%> </option>
+                <%end%>
+            </select>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary">Añadir Alumno</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<%end%>
+
+<!-- formularios Modales para quitar alumnos-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="quitar-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="quitar-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_tag(clase_baja_alumnos_path, method: :post) do %>
+              <div class="modal-body">
+                  <select class="form-select"  name="clase_alumno_id" id="baja_clase_alumno_id">
+                      <% cl.claseAlumno.each do |clAlm|%>
+                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre%> </option>
+                      <% end %>
+                  </select>
+                  <input type="hidden" id="baja_fecha_dia" name="fecha"    value="<%=cl.diaHora.to_s%>" >
+              </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Quitar Alumno </button>
+          </div>
+          <% end %>    
+        </div>
+      </div>
+    </div>
+<%end%>
