@@ -43,12 +43,22 @@ class ClaseController < ApplicationController
   # Recibe una fecha y envía a la presentación semanal
   def seleccion
       fecha = params[:fecha]
-      redirect_to clase_semana_url(fecha).order(:nombre)
+      redirect_to clase_semana_url(fecha)
   end
 
   # Método POST 
   # Recibe una id ClaseAlumno_id y lo borra 
+  def bajaPrueba
+      Prueba.find(params[:prueba_id]).destroy
+      redirect_to clase_dia_url(params[:fecha])
+  end
+
+  # Método POST 
+  # Recibe un nombre, movil y id de la clase y cursa un alta
   def altaPrueba
+      fecha = params[:fecha]
+      
+      Prueba.new(nombre: params[:nombre], movil: params[:movil], clase_id: params[:clase_id]).save
       redirect_to clase_dia_url(params[:fecha])
   end
 

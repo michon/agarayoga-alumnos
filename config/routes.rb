@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   post   'clase/altaAlumno',    to: 'clase#altaAlumno',   as: "clase/alta_alumno"
   post   'clase/bajaAlumnos',   to: 'clase#bajaAlumnos',  as: "clase/baja_alumnos"
   post   'clase/altaPrueba',    to: 'clase#altaPrueba',   as: "clase/alta_prueba"
-
+  post   'clase/bajaPrueba',    to: 'clase#bajaPrueba',   as: "clase/baja_prueba"
   post   'clase/estado',        to: 'clase#estado',       as: "clase/estado"
 
 

@@ -1,8 +1,19 @@
 
+<%= form_tag(clase_seleccion_dia_path, method: :post) do %>
+    <label for="fecha">Selecciona un día</label>
+    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
+    <button class="btn btn-primary" type="submit"> Ver clases </button>
+<% end %>
+    
 <% @clasesHoy.each do |cl| %>
     <div class="pb-4 mb-3 card">
         <div class="card-header"> 
-            <h5 class="card-title"><%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <h5 class="d-flex justify-content-between">
+                <span class="card-title"><%= "#{cl.diaHora.strftime('%H:%M')}" %> </span>
+                <span class="text-right"><%= cl.asistentes %></span>
+            </h5>
+            <span class="card-subtitle text-muted"> <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase}" %></span>
+            <span class="card-subtitle text-muted text-end">--<%= cl.instructor.nombre %></span>
         </div> 
 
         <%= form_tag(clase_estado_path, method: :post) do %>
@@ -14,6 +25,13 @@
                   </div>
                 <%end %>
             </div>
+            <% unless cl.pruebas.blank? %>
+                <ol>
+                    <% cl.pruebas.each do |prb| %>
+                        <li> <%="#{prb.nombre} - #{prb.movil}"%> </li> 
+                    <% end %>
+                </ol>
+            <%end%>
 
             <div class="card-footer"> 
               <div class="pb-4 row">
@@ -49,23 +67,34 @@
                     <button type="submit" class="btn btn-primary">Haz</button>
                   </div>
               </div>
-              <div class="row justify-content-center">
+              
+              <div class="pb-4 row justify-content-left">
                   <div class="col col-4">
                       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#altaAlumno-<%=cl.id%>">
                       +Alumno
                     </button>
                   </div>
                   <div class="col col-4">
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quitar-<%=cl.id%>">
+                      -Alumno
+                    </button>
+                  </div>
+              </div>
+
+              <div class="row justify-content-left">
+                  <div class="col col-4">
                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#altaPrueba-<%=cl.id%>">
                       +Prueba
                     </button>
                   </div>
+
                   <div class="col col-4">
-                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quitar-<%=cl.id%>">
-                      Quitar
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quitarPrueba-<%=cl.id%>">
+                      -Prueba
                     </button>
                   </div>
               </div>
+
             </div>
               
         <%end %>
@@ -99,33 +128,6 @@
     </div>
 <%end%>
 
-<!-- formularios Modales para altas Pruebas-->
-<% @clasesHoy.each do |cl| %>
-    <div class="modal fade" id="altaPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="altaPrueba-<%=cl.id%>">
-            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <select class="form-select" ata-live-search="true">
-                <% @alumnosActivos.each do |alm|%>
-                    <option> <%=alm.nombre%> </option>
-                <%end%>
-            </select>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-primary">Añadir Alumno</button>
-          </div>
-        </div>
-      </div>
-    </div>
-<%end%>
-
 <!-- formularios Modales para quitar alumnos-->
 <% @clasesHoy.each do |cl| %>
     <div class="modal fade" id="quitar-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
@@ -145,12 +147,72 @@
                   </select>
                   <input type="hidden" id="baja_fecha_dia" name="fecha"    value="<%=cl.diaHora.to_s%>" >
               </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Quitar Alumno </button>
-          </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Quitar Alumno </button>
+              </div>
           <% end %>    
         </div>
       </div>
     </div>
 <%end%>
+
+<!-- formularios Modales para altas Pruebas-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="altaPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="altaPrueba-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <%= form_tag(clase_alta_prueba_path, method: :post) do %>
+              <div class="modal-body">
+                  <label for="alta_prueba_nombre", class="form-label"> Nombre del alumno </label>
+                  <input type="text" class="form-control" id="alta_prueba_nombre" name="nombre" placeholder="nombre del alumno" >
+                  <label for="alta_prueba_movil", class="form-label"> Móvil </label>
+                  <input type="text"  class="form-control" id="alta_prueba_movil" name="movil" placeholder="móvil del alumno" >
+                  <input type="hidden" id="alta_prueba_clase_id" name="clase_id"    value="<%=cl.id%>" >
+                  <input type="hidden" id="alta_prueba_fecha"    name="fecha"       value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir prueba"> Añadir para probar </button>
+              </div>
+            <% end %>    
+        </div>
+      </div>
+    </div>
+<%end%>
+
+<!-- formularios Modales para quitar Pruebas-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="quitarPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalQuitarPrueba" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="quitarPrueba-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <%= form_tag(clase_baja_prueba_path, method: :post) do %>
+                  <div class="modal-body">
+                      <select class="form-select"  name="prueba_id" id="baja_clase_alumno_id">
+                          <% cl.pruebas.each do |clPrb|%>
+                              <option value="<%=clPrb.id%>"> <%=clPrb.nombre%> </option>
+                          <% end %>
+                      </select>
+                      <input type="hidden" id="baja_prueba_fecha"    name="fecha"       value="<%=cl.diaHora.to_s%>" >
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="commit" value="baja prueba"> quitar para probar </button>
+                  </div>
+              <% end %>    
+          </div>
+      </div>
+    </div>
+<%end%>
+
