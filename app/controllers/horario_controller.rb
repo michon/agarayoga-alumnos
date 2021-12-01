@@ -22,6 +22,19 @@ class HorarioController < ApplicationController
       
   end
 
+  def libre
+      # Es un array que contiene tantas posiciones como horas distintas hay de
+      # clase. En cada una de estas posiciones se guardan tatos objetos Horario
+      # como existan para esa hora.
+      @libres = Array.new(Horario.group(:hora).count.count)
+      Horario.group(:hora).pluck(:hora).each_with_index do |hr,idx|
+        @libres[idx] = Array.new(Horario.where(hora: hr))
+      end
+          
+  end
+
+
+
   def crearClases
       require 'horario_clase.rb'
       objHorario = HorarioClase.new()

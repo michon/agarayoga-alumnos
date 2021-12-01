@@ -37,6 +37,7 @@ class ClaseController < ApplicationController
     fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
     @alumnosActivos = Usuario.where(debaja: false)
+    @estados = ClaseAlumnoEstado.all
   end
 
   # Método POST 

@@ -23,3 +23,4 @@ Turbolinks.start()
 ActiveStorage.start()
 
 global.toastr = require("toastr")
+

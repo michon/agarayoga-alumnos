@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
 
   get 'horario/index'
+  get 'horario/libre'
   post 'horario/crear_horario_semanal', to: 'horario#crearClases'
 
   get 'instructor/index'

@@ -74,8 +74,9 @@ RailsAdmin.config do |config|
       object_label_method do
           :horarioAlumno_label_method
       end
-      field :instructor
+      field :id
       field :horario
+      field :usuario
   end
 
   config.model 'Clase' do 
@@ -111,8 +112,8 @@ RailsAdmin.config do |config|
   end
 
   def horario_label_method
-        semana = [['domingo','0'], ['lunes','1'], ['martes','2'], ['miércoles','3'], ['jueves','4'], ['viernes'],'5', ['sábado'],'6']
-     semana[self.diaSemana][0].to_s + ' '  + self.hora.to_s + ':' + self.minuto.to_s
+     semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+     semana[self.diaSemana].to_s + ' '  + self.hora.to_s + ':' + self.minuto.to_s
   end
 
   def clase_label_method
