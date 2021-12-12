@@ -1,24 +1,81 @@
 
-<div class="d-grid gap-4">
-    <%= link_to 'Plantilla general', horario_index_path, class: 'btn btn-primary btn-lg', role: "button" %>
-</div>
+<section class="container">
+    <div class="card-group">
+        <div class="m-3 card ">
+          <div class="card-header">
+            <h5>Clases</h5>
+          </div>
 
-<div class="d-grid gap-4">
-    <%= form_tag(clase_seleccion_path, method: :post) do %>
-        <label for="fecha">comienzo de Semana</label>
-        <input id="fecha" name="fecha" class="form-control" type="date" />
-        <button class="btn btn-primary" type="submit"> Ver horario semanal </button>
-    <% end %>
-</div>
+          <div class="car-body py-3 m-3 text-center">
 
-<div class="d-grid gap-4">
-    <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
-        <label for="fecha">Selecciona un día</label>
-        <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-        <button class="btn btn-primary" type="submit"> Ver clases </button>
-    <% end %>
-</div>
+            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horario semanal -->
+              <div class="row mb-3">
+                <div class="col col6">
+                    <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
+                </div>
+                <div class="col col6">
+                    <button class="btn btn-primary w-100" type="submit"> Ver semana </button>
+                </div>
+              </div>
+            <% end %>
 
-<div class="d-grid gap-4">
-    <%= link_to 'ALUMNOS, listado general', alumnos_index_path, class: 'btn btn-primary btn-lg', role: "button"  %>
-</div>
+            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista horario dia -->
+              <div class="row mb-3">
+                <div class="col col6">
+                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                </div>
+                <div class="col col6">
+                    <button class="btn btn-primary w-100" type="submit"> Ver clases </button>
+                </div>
+              </div>
+            <% end %>
+
+            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horas libre semanal -->
+              <div class="row mb-3">
+                <div class="col col6">
+                    <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
+                </div>
+                <div class="col col6">
+                    <button class="btn btn-primary w-100" type="submit"> libre esta semana </button>
+                </div>
+              </div>
+            <% end %>
+
+            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista hoara libres dia -->
+              <div class="row mb-3">
+                <div class="col col6">
+                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                </div>
+                <div class="col col6">
+                    <button class="btn btn-primary w-100" type="submit"> libre este dia </button>
+                </div>
+              </div>
+            <% end %>
+
+          </div>
+
+        </div> <!-- fin clase card -->
+
+        <div class="m-3 card"> <!-- Alumnos card -->
+          <div class="card-header">
+            <h5>Alumnos</h5>
+          </div>
+
+          <div class="car-body m-3 py-3 text-center">
+              <%= link_to 'Listado alumnos', alumnos_index_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+          </div>
+
+        </div> <!-- fin alumno card -->
+
+        <div class="m-3 card">
+          <div class="card-header">
+            <h5>Horario</h5>
+          </div>
+          <div class="car-body m-3 py-3 text-center">
+              <%= link_to 'Plantilla general', horario_index_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+              <%= link_to 'Horas libres', horario_libre_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+          </div>
+        </div> <!-- fin horario card -->
+
+  </div> <!-- fin de fila -->
+</section>

@@ -60,7 +60,7 @@ external_reporting_table:
   adapter: mysql2
   encoding: utf8
   database: agara
-  host: 170.253.26.205
+  host: 170.253.31.213
   username: michon
   password: herishef
 

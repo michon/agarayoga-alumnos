@@ -1,16 +1,16 @@
-
+<div class="card-group">
   <% @libres.each do |hr| %>
-    <div class="pb-4 card">
-        <div class="card-header"> 
+    <div class="pb-4 m-3 card">
+        <div class="card-header">
             <h5 class="d-flex justify-content-between"><%=hr.first.hora_humano%></h5>
-        </div> 
+        </div>
         <div class="card-body">
         <%hr.each do |cl|%>
             <% if cl.usuario.count < 10 %>
                 <li> hay <mark> <%=10 -cl.usuario.count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %> </li>
             <%end%>
         <%end%>
-        </div> 
-    </div> 
+        </div>
+    </div>
   <%end%>
-
+</div>

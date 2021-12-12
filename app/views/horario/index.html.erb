@@ -1,4 +1,5 @@
-<h1>Horario#index</h1>
+<div class="container-fluid">
+<h1>Horario: Plantilla General</h1>
 
 <%= form_tag('/horario/crear_horario_semanal', method: :post) do %>
     <label for="fecha">comienzo de Semana</label>
@@ -13,21 +14,21 @@
             <th scope="col"> # </th>
             <%@diasDistintos.each do |dia| %>
                 <th scope="col">
-                    <%= I18n.t('date.day_names')[dia.diaSemana] %> 
+                    <%= I18n.t('date.day_names')[dia.diaSemana] %>
                 </th>
             <% end %>
         </tr>
-    </thead> 
+    </thead>
 
     <tbody>
         <% @horarioGeneral.each  do |h| %>
              <tr>
                  <td> <%= h[0] %> </td>
                 <% for idx in @diasDistintos.first.diaSemana..@diasDistintos.last.diaSemana do %>
-                    <td> 
+                    <td>
                         <% unless h[1][idx].blank? %>
                         <ol>
-                            <% h[1][idx].usuario.each do |alm|%> 
+                            <% h[1][idx].usuario.each do |alm|%>
                                 <li> <%= alm.nombre %> </li>
                             <% end %>
                         </ol>
@@ -39,5 +40,4 @@
         <% end%>
     </tbody>
 </table>
-
-
+</div>

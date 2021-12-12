@@ -1,15 +1,13 @@
 
-<h1> vengo de aquí  <%= @vengode %> </h1>
-    
     <div class="row row-cols-6 text-white bg-primary p-4 rounded ">
         <div class="col d-none d-md-block">
-                <%= I18n.t('date.month_names')[@fecha.beginning_of_week.strftime("%m").to_i ] %> 
+                <%= I18n.t('date.month_names')[@fecha.beginning_of_week.strftime("%m").to_i ] %>
         </div>
-        
+
         <%@diasSemana.each do |dia| %>
           <div class="col">
             <%fechaCl  = @fecha.beginning_of_week.days_since(dia.dia.to_i-1)%>
-            <%= I18n.t('date.abbr_day_names')[dia.dia.to_i].upcase   %> 
+            <%= I18n.t('date.abbr_day_names')[dia.dia.to_i].upcase   %>
             <%= fechaCl.strftime("%d") %>
           </div>
       <%end%>
@@ -50,35 +48,35 @@
                           <label class="form-check-label" for="vendra-<%=h[1][fechaCl].id%>"> Vendrá </label>
                         </div>
                       </div>
-                        
+
                       <div class="col ">
                         <button type="submit" class="btn btn-primary">Haz</button>
                       </div>
                     </div>
 
-                    
-                    <% h[1][fechaCl].claseAlumno.each do |clalm|%> 
+
+                    <% h[1][fechaCl].claseAlumno.each do |clalm|%>
                       <div class="form-check">
-                        <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" > 
+                        <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                         <label class="form-check-label <%=clalm.claseAlumnoEstado.color %>" for="<%=clalm.id%>"> <%= clalm.usuario.nombre %> </label>
                       </div>
                     <% end %>
-                    
-                    <% h[1][fechaCl].pruebas.each do |alm|%> 
+
+                    <% h[1][fechaCl].pruebas.each do |alm|%>
                       <div class="form-check-inline">
                         <label class="form-check-label">
-                            <input type="checbox" class="form-check-input" value""> <%= alm.nombre %> 
+                            <input type="checbox" class="form-check-input" value""> <%= alm.nombre %>
                         </label>
                       </div>
                     <% end %>
                 <% end %>
             <%end%>
           </div>
-        <%end%> 
-        
+        <%end%>
+
       </div>
-    <%end%> 
-    
+    <%end%>
+
 
 
 
@@ -103,13 +101,12 @@
         <p> todo: </p>
         <ul>
         <%@horarioGeneral.each do |cl|%>
-            <li>   
+            <li>
             <%= cl.to_json %>
-            </li>   
+            </li>
         <%end%>
         </ul>
     </li>
 
 </ol>
 <p> <%= @fecha.to_s %> </p>
-
