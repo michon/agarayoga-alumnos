@@ -1,112 +1,42 @@
 
-    <div class="row row-cols-6 text-white bg-primary p-4 rounded ">
-        <div class="col d-none d-md-block">
-                <%= I18n.t('date.month_names')[@fecha.beginning_of_week.strftime("%m").to_i ] %>
-        </div>
-
-        <%@diasSemana.each do |dia| %>
-          <div class="col">
-            <%fechaCl  = @fecha.beginning_of_week.days_since(dia.dia.to_i-1)%>
-            <%= I18n.t('date.abbr_day_names')[dia.dia.to_i].upcase   %>
-            <%= fechaCl.strftime("%d") %>
-          </div>
-      <%end%>
-    </div>
 
 
-    <% @horarioGeneral.each_with_index  do |h,idx| %>
-        <div class="row row-cols-6 border <%= if idx%2==0 then 'bg-white' else 'bg-light' end%>">
-        <div class="col d-none d-md-block">
-          <%= h[0] %>
-        </div>
-        <% for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do %>
-          <div class="col">
-            <%fechaCl  = @fecha.beginning_of_week.days_since(idx-1)%>
-            <% fechaCl = fechaCl.change(hour: h[0][0..1].to_i, min: h[0][3..4].to_i)%>
-            <% unless h[1][fechaCl].blank? %>
-                <%= form_tag(clase_estado_path, method: :post) do %>
-
-                    <div class="pb-4 row rows-cols-2">
-                      <div class="col ">
-                        <div class="form-check" >
-                          <input class="form-check-input" type="radio" id="falto-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="4">
-                          <label class="form-check-label" for="falto-<%=h[1][fechaCl].id%>"> Faltó </label>
-                        </div>
-
-                        <div class="form-check" >
-                          <input class="form-check-input" type="radio" id="aviso-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="3">
-                          <label class="form-check-label" for="aviso-<%=h[1][fechaCl].id%>"> Avisó </label>
-                        </div>
-
-                        <div class="form-check ">
-                          <input class="form-check-input" type="radio" id="asistio-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="2">
-                          <label class="form-check-label" for="asistio-<%=h[1][fechaCl].id%>"> Asistió </label>
-                        </div>
-
-                        <div class="pb-4 form-check ">
-                          <input class="form-check-input" type="radio" id="vendra-<%=h[1][fechaCl].id%>", name="accion#<%=h[1][fechaCl].id%>" value="1">
-                          <label class="form-check-label" for="vendra-<%=h[1][fechaCl].id%>"> Vendrá </label>
-                        </div>
-                      </div>
-
-                      <div class="col ">
-                        <button type="submit" class="btn btn-primary">Haz</button>
-                      </div>
+    <h1> Semana del </h1>
+<div class="container d-flex flex-column flex-md-row ">
+    <% @horarioSemana.each do |dia| %>
+      <% fechaClase = @fecha.at_beginning_of_week + dia[0]-1 %>
+      <div class="card-group-vertical">
+          <%dia[1].each do |hr|%>
+                <div class="m-1 card ">
+                    <div class="card-header">
+                        <h4 class="d-flex justify-content-between">
+                            <%= link_to clase_dia_path(fechaClase) do %>
+                            <span class="card-subtitle text-muted"><%="#{I18n.t('date.day_names')[fechaClase.wday].capitalize}"%> &nbsp;&nbsp;</span>
+                            <span class="card-subtitle text-muted"><%="#{fechaClase.day} #{I18n.t('date.abbr_month_names')[fechaClase.strftime('%m').to_i].upcase}"%></span>
+                            <%end%>
+                        </h4>
+                    <h5 class="d-flex justify-content-between">
+                        <span class="card-subtitle text-muted"><%="#{hr[0]}"%></span>
+                        <span class="card-subtitle text-muted"><%= hr[1].asistentes  unless hr[1].blank?%></span>
+                    </h5>
                     </div>
-
-
-                    <% h[1][fechaCl].claseAlumno.each do |clalm|%>
-                      <div class="form-check">
-                        <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
-                        <label class="form-check-label <%=clalm.claseAlumnoEstado.color %>" for="<%=clalm.id%>"> <%= clalm.usuario.nombre %> </label>
-                      </div>
-                    <% end %>
-
-                    <% h[1][fechaCl].pruebas.each do |alm|%>
-                      <div class="form-check-inline">
-                        <label class="form-check-label">
-                            <input type="checbox" class="form-check-input" value""> <%= alm.nombre %>
-                        </label>
-                      </div>
-                    <% end %>
-                <% end %>
-            <%end%>
-          </div>
-        <%end%>
-
+                    <div class="card-body">
+                        <% unless hr[1].blank? %>
+                          <% hr[1].claseAlumno.order(:claseAlumnoEstado_id).each do |usr| %>
+                              <p class="m-1 text-<%=usr.claseAlumnoEstado.color%>"><%=usr.usuario.nombre.split(" ")[0..1].join(" ")%></p>
+                          <%end%>
+                          <% for i in hr[1].usuario.count..9 %>
+                            <p class="m-1"><br/></p>
+                          <%end%>
+                        <%else%>
+                          <% for i in 0..9 %>
+                            <p class="m-1"><br/></p>
+                          <%end%>
+                        <%end%>
+                    </div>
+                </div>
+          <% end %>
       </div>
     <%end%>
+</div>
 
-
-
-
-
-
-
-
-
-<h1> Vista de datos </h1>
-<ol>
-    <li>
-        <p> dias semana: </p>
-        <%=@diasSemana.to_json%>
-    </li>
-
-    <li>
-        <p> horas clase: </p>
-        <%=@horasDistintas.to_json%>
-    </li>
-
-    <li>
-        <p> todo: </p>
-        <ul>
-        <%@horarioGeneral.each do |cl|%>
-            <li>
-            <%= cl.to_json %>
-            </li>
-        <%end%>
-        </ul>
-    </li>
-
-</ol>
-<p> <%= @fecha.to_s %> </p>

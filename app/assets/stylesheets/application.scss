@@ -13,10 +13,21 @@
  *= require_tree .
  *= require_self
  */
-h1 {  
-  text-decoration: underline;  
-  color: blue;
-}  
+a:link {
+    text-decoration: none; 
+}
+
+a:visited {
+    text-decoration: none; 
+}
+
+a:hover {
+    text-decoration: none; 
+}
+
+a:active {
+    text-decoration: none; 
+}
 
 @import "bootstrap/scss/bootstrap";
 // Import Bootstrap v5  

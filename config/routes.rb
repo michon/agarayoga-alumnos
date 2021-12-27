@@ -23,9 +23,10 @@ Rails.application.routes.draw do
   get 'alumnos/ficha/:id', to: 'alumnos#ficha', as: 'alumnos_ficha'
   get 'alumnos/sepa/:id', to: 'alumnos#sepa', as: 'alumnos_sepa'
   
-  get 'indice', to: 'comun#indice'
-  get 'inicio', to: 'comun#inicio'
-  get 'michon',  to: 'comun#michon'
+  get 'indice',       to: 'comun#indice'
+  get 'inicio',       to: 'comun#inicio'
+  get 'michon',       to: 'comun#michon'
+  get 'facturacion',  to: 'comun#facturacion'
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

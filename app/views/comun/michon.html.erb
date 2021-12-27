@@ -55,8 +55,10 @@
           </div>
 
         </div> <!-- fin clase card -->
+        
 
-        <div class="m-3 card"> <!-- Alumnos card -->
+        <!-- Alumnos card -->
+        <div class="m-3 card"> 
           <div class="card-header">
             <h5>Alumnos</h5>
           </div>
@@ -67,15 +69,36 @@
 
         </div> <!-- fin alumno card -->
 
+        
+        <!-- H O R A R I O    card -->
         <div class="m-3 card">
           <div class="card-header">
-            <h5>Horario</h5>
+              <h5 class="d-flex justify-content-between">
+                  <span>Horario</span>
+                  <span><%= @alumnosTotal.count %> </span>
+            </h5>
           </div>
           <div class="car-body m-3 py-3 text-center">
               <%= link_to 'Plantilla general', horario_index_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
               <%= link_to 'Horas libres', horario_libre_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
           </div>
-        </div> <!-- fin horario card -->
+        </div>
+        <!-- fin horario card -->
+
+        <!-- F A C T U R A C I Ó N  card -->
+        <div class="m-3 card">
+          <div class="card-header">
+              <h5 class="d-flex justify-content-between">
+                  <span>Facturación</span>
+                  <span><%= @alumnosTotal.count %> </span>
+            </h5>
+          </div>
+          
+          <div class="car-body m-3 py-3 text-center">
+              <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+          </div>
+        </div>
+        <!-- fin horario card -->
 
   </div> <!-- fin de fila -->
 </section>

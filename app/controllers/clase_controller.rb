@@ -2,32 +2,24 @@ class ClaseController < ApplicationController
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   def semana()
-      # horarioGeneral es un hash que tiene una entrada por cada hora (key) que
+      # horarioSemana es un hash que tiene una entrada por cada dia (key) que
       # tenemos en el horario, cada una de estas entradas  contendrá otro hash
-      # cuya clave será el día de la semana y el contenido un registro de hoario.
-      
+      # cuya clave será la hora de la clase y el contenido un registro de hoario (una clase).
+
       @fecha = params[:fecha].to_datetime
-
-      @claseSemanal = Clase.select("*, date_format(diaHOra, '%H') as hora, date_format(diaHora, '%i') as minuto, date_format(diaHora, '%w') as dia").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:hora, :minuto, :dia)
-
-      @diasSemana = Clase.select("date_format(diaHora, '%w') as dia").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:dia).distinct
-
-      @horasDistintas = Clase.select("date_format(diaHora, '%H:%i') as hora").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).distinct
-
+      diasSemana = Clase.select("date_format(diaHora, '%w') as dia").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:dia).distinct
+      horasDistintas = Clase.select("date_format(diaHora, '%H:%i') as hora").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:hora).distinct
       
-      @horarioGeneral = Hash.new
-
-      @diasArray = Array.new
-
-      @horasDistintas.each do |h| #cada hora
-          horaClase = h.hora
-          @horarioGeneral.store(horaClase, Hash.new)
-          for idx in @diasSemana.first.dia.to_i..@diasSemana.last.dia.to_i do #generamos todos los dias 
+      @horarioSemana = Hash.new()
+      for idx in diasSemana.first.dia.to_i..diasSemana.last.dia.to_i do #generamos todos los dias
+          @horarioSemana.store(idx, Hash.new)
+          horasDistintas.each do |h|
+              horaClase = h.hora
               #montar un date time para esta @fecha y hora
               fechaCl  = @fecha.beginning_of_week.days_since(idx-1)
               fechaCl = fechaCl.change(hour: h.hora[0..1].to_i, min: h.hora[3..4].to_i)
               cl = Clase.where(diaHora: fechaCl).first
-              @horarioGeneral[horaClase].store(fechaCl, cl)
+              @horarioSemana[idx].store(h.hora, cl)
           end
       end
   end
@@ -40,37 +32,37 @@ class ClaseController < ApplicationController
     @estados = ClaseAlumnoEstado.all
   end
 
-  # Método POST 
+  # Método POST
   # Recibe una fecha y envía a la presentación semanal
   def seleccion
       fecha = params[:fecha]
       redirect_to clase_semana_url(fecha)
   end
 
-  # Método POST 
-  # Recibe una id ClaseAlumno_id y lo borra 
+  # Método POST
+  # Recibe una id ClaseAlumno_id y lo borra
   def bajaPrueba
       Prueba.find(params[:prueba_id]).destroy
       redirect_to clase_dia_url(params[:fecha])
   end
 
-  # Método POST 
+  # Método POST
   # Recibe un nombre, movil y id de la clase y cursa un alta
   def altaPrueba
       fecha = params[:fecha]
-      
+
       Prueba.new(nombre: params[:nombre], movil: params[:movil], clase_id: params[:clase_id]).save
       redirect_to clase_dia_url(params[:fecha])
   end
 
-  # Método POST 
-  # Recibe una id ClaseAlumno_id y lo borra 
+  # Método POST
+  # Recibe una id ClaseAlumno_id y lo borra
   def bajaAlumnos
       ClaseAlumno.find(params[:clase_alumno_id]).destroy
       redirect_to clase_dia_url(params[:fecha])
   end
 
-  # Método POST 
+  # Método POST
   # Recibe una Modelo ClaseAlumno y lo da de alta en la tabla
   def altaAlumno
       clAlmParam = params[:clase_alumno]
@@ -86,7 +78,7 @@ class ClaseController < ApplicationController
       redirect_to clase_dia_url(params[:fecha])
   end
 
-  # Método POST 
+  # Método POST
   # Recibe una fecha y envía a la presentación de ese día
   def seleccionDia
       fecha = params[:fecha]

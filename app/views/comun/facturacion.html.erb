@@ -1,0 +1,78 @@
+<p><%= @clientes.count %> total clientes de alta </p>
+<p><%= @alumnosTotal.count %> Alumnos totales en horario</p>
+
+
+<h4> Alumnos sin codigo de facturacion </h4>
+<h6> De la tabla usuario, los que no tienen código de facturación </h6>
+<% if @clientesSinUsuario.count > 0 then %>
+    <ol>
+    <% @alumnosSinCodigoFacturacion.each do |noLink| %>
+        <li> <%= noLink.id %> - <%= noLink.nombre %> <%= noLink.codigofacturacion %> </li>
+    <%end%>
+    </ol>
+<% else %>
+    <p class="text-success"> No hay ningún Alumno en este caso </p>
+<%end%>
+
+
+<h4> Usuarios de alta que ya no vienen </h4>
+<h6> Aparecen de alta como usuarios y no están en Horario </h6>
+<ol>
+<% @usuariosSinHorario.each do |noLink| %>
+    <li> <%= noLink.id %> - <%= noLink.nombre %>  </li>
+<%end%>
+</ol>
+
+<h4> Clientes de factuación que no estan en Hoario </h4>
+<h6> Clientes dados de alta en factuación y no tienen usuario registrado </h6>
+<% if @clientesSinUsuario.count > 0 then %>
+    <ol>
+    <% @clientesSinUsuario.each do |noUsr| %>
+        <li><%= noUsr.nombre %></li>
+    <%end%>
+    </ol>
+<% else %>
+    <p class="text-success"> No hay ningún cliente en este caso </p>
+<%end%>
+
+
+
+<h4>Clientes de facturacion que no estan viniendo</h4>
+<h6> Clientes dados de alta en factuación y no están en el horario</h6>
+<% if  @clientesSinHorario.count > 0 then %>
+    <ol>
+    <% @clientesSinHorario.each do |noUsr| %>
+        <li><%= noUsr.nombre %></li>
+    <%end%>
+    </ol>
+<% else %>
+    <p class="text-success"> No hay ningún cliente en este caso </p>
+<%end%>
+
+
+
+<table>
+    <tr>
+        <th> Alumno </th>
+        <th> Cuota </th>
+        <th> Grupo </th>
+        <th> Importe €</th>
+    </tr>
+
+    <tbody>
+        <!-- recorremos todos los alumnos que tenemos en el horario y cotejamos -->
+        <% @aFacturar.each do |web| %>
+            <tr>
+                <td> <%= web[0].nombre %> </td>
+                <td> <%= web[1] %> dia </td>
+                <td> <%= web[2].codgrupo %></td>
+                <td> <%= web[3].to_i %></td>
+            </tr>
+        <%end%>
+    </tbody>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><%= @importeTotal%></td>
+</table>

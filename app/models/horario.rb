@@ -10,6 +10,10 @@ class Horario < ActiveRecord::Base
 
     
 
+    def alumnosTotal
+        HorarioAlumno.select("distinct usuario_id")
+    end
+
     def diasemana_enum 
         [['domingo','0'], ['lunes','1'], ['martes','2'], ['miércoles','3'], ['jueves','4'], ['viernes','5'], ['sábado','6']]
     end
