@@ -55,21 +55,31 @@
           </div>
 
         </div> <!-- fin clase card -->
-        
+
 
         <!-- Alumnos card -->
-        <div class="m-3 card"> 
+        <div class="m-3 card">
           <div class="card-header">
             <h5>Alumnos</h5>
           </div>
 
           <div class="car-body m-3 py-3 text-center">
-              <%= link_to 'Listado alumnos', alumnos_index_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+              <%= link_to 'Listado alumnos', alumnos_index_path,   class: 'btn btn-primary w-100 mb-3', role: "button" %>
+            <%= form_tag(alumnos_business_path, method: :post) do %> <!-- Vista horario dia -->
+              <div class="row mb-3">
+                <div class="col col6">
+                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                </div>
+                <div class="col col6">
+                    <button class="btn btn-primary w-100" type="submit"> Altas e </button>
+                </div>
+              </div>
+            <% end %>
           </div>
 
         </div> <!-- fin alumno card -->
 
-        
+
         <!-- H O R A R I O    card -->
         <div class="m-3 card">
           <div class="card-header">
@@ -93,7 +103,7 @@
                   <span><%= @alumnosTotal.count %> </span>
             </h5>
           </div>
-          
+
           <div class="car-body m-3 py-3 text-center">
               <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
           </div>

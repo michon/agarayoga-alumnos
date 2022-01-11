@@ -17,6 +17,12 @@
                     <td> <%=almn.nombre %> </td>
                     <td> <%= link_to "Ver" , alumnos_path(almn) %> </td>
                     <td> <%= link_to "Ficha" , alumnos_path(almn, format: :pdf) %> </td>
+                    <% if almn.regalo then %>
+                        <% color = "text-success" %>
+                    <% else %>
+                        <% color = "text-danger" %>
+                    <%end%>
+                    <td> <%= link_to "Regalo" , alumnos_regalo_path(almn), class: color %> </td>
                 </tr>
             <%end%>
             </tbody>

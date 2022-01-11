@@ -1,0 +1,42 @@
+
+<div class="container">
+
+  <%= form_tag(alumnos_business_path, method: :post) do %> <!-- Vista horario dia -->
+      <div class="row mb-3">
+        <div class="col col6">
+            <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
+        </div>
+        <div class="col col6">
+            <button class="btn btn-primary w-100" type="submit"> Altas e </button>
+        </div>
+    </div>
+  <% end %>
+
+  <div class="listado">
+      <div class="table-responsive-sm">
+          <table class="table">
+              <thead>
+                <tr>
+                    <th colspan="3"> <%= "#{@alumnos.count} Alumnos "%> desde <%= "#{I18n.t('date.month_names')[@fecha.strftime('%m').to_i].upcase}-#{@fecha.strftime('%Y')} hasta #{I18n.t('date.month_names')[@fechaFin.strftime('%m').to_i].upcase}-#{@fechaFin.strftime('%Y')}" %>  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+              <% @alumnos.order(:nombre).each do |almn| %>
+                  <tr>
+                      <td> <%=almn.nombre %> </td>
+                      <td> <%= link_to "Ver" , alumnos_path(almn) %> </td>
+                      <td> <%= link_to "Ficha" , alumnos_path(almn, format: :pdf) %> </td>
+                      <% if almn.regalo then %>
+                          <% color = "text-success" %>
+                      <% else %>
+                          <% color = "text-danger" %>
+                      <%end%>
+                      <td> <%= link_to "Regalo" , alumnos_regalo_path(almn), class: color %> </td>
+                  </tr>
+              <%end%>
+              </tbody>
+          </table>
+      </div>
+  </div>
+</div>

@@ -1,2 +1,36 @@
-<h1>Instructor#show</h1>
-<p>Find me in app/views/instructor/show.html.erb</p>
+
+<table>
+    <thead>
+        <tr>
+            <th> Dia </td>
+            <td> Alumnos </td> 
+            <td> Precio Hora </td>
+        </tr>
+    </thead>
+    <tbody>
+        <% importeTotal = 0 %>
+        <% @clases.each do |cl| %>
+            <tr>
+                    <td> <%= " #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase}  #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  " %></td>
+                <td> <%= cl.claseAlumno.where(claseAlumnoEstado_id: 2).count %> </td>
+                <% importe = 0 %>
+                <% if cl.claseAlumno.where(claseAlumnoEstado_id: 2).count < 7 %>
+                        <% importe = 12 %>
+                    <% elsif cl.claseAlumno.where(claseAlumnoEstado_id: 2).usuario.count < 9 %>
+                        <% importe = 18 %>
+                    <% else %>
+                        <% importe = 20 %>
+                <% end %>
+                <% importeTotal += importe %>
+
+                <td> <%= importe  %> </td>
+            </tr>
+        <% end %>
+        <tr>
+            <td colspan="2"> Improrte Total  </td>
+            <td> <%= importeTotal %> </td>
+    </tbody>
+</table>
+        
+
+

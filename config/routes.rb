@@ -16,13 +16,15 @@ Rails.application.routes.draw do
   post 'horario/crear_horario_semanal', to: 'horario#crearClases'
 
   get 'instructor/index'
-  get 'instructor/show'
+  get 'instructor/show/:id',   to: 'instructor#show', as: 'instructor'
 
-  get 'alumnos/index'
-  get 'alumnos/show/:id', to: 'alumnos#show', as: 'alumnos'
-  get 'alumnos/ficha/:id', to: 'alumnos#ficha', as: 'alumnos_ficha'
-  get 'alumnos/sepa/:id', to: 'alumnos#sepa', as: 'alumnos_sepa'
-  
+  get  'alumnos/index'
+  get  'alumnos/show/:id',          to: 'alumnos#show',      as: 'alumnos'
+  get  'alumnos/regalo/:id',        to: 'alumnos#regalo',    as: 'alumnos_regalo'
+  get  'alumnos/ficha/:id',         to: 'alumnos#ficha',     as: 'alumnos_ficha'
+  get  'alumnos/sepa/:id',          to: 'alumnos#sepa',      as: 'alumnos_sepa'
+  post 'alumnos/business/',         to: 'alumnos#business',  as: 'alumnos/business'
+
   get 'indice',       to: 'comun#indice'
   get 'inicio',       to: 'comun#inicio'
   get 'michon',       to: 'comun#michon'

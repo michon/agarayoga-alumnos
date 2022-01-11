@@ -65,7 +65,7 @@
             <tr>
                 <td> <%= web[0].nombre %> </td>
                 <td> <%= web[1] %> dia </td>
-                <td> <%= web[2].codgrupo %></td>
+                <td> <%= web[2].codgrupo unless web[2].blank? %></td>
                 <td> <%= web[3].to_i %></td>
             </tr>
         <%end%>

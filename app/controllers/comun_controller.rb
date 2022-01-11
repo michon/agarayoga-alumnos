@@ -62,7 +62,11 @@ class ComunController < ApplicationController
         @aFacturar[idx] = Array.new
         @aFacturar[idx] << Usuario.find(alm[0]) << alm[1]
         @aFacturar[idx] << Cliente.find_by(codcliente: @aFacturar[idx][0].codigofacturacion)
-        grupo = @aFacturar[idx][2].codgrupo
+        if @aFacturar[idx][2].blank?
+            grupo = 'No'
+        else
+            grupo = @aFacturar[idx][2].codgrupo
+        end
         importe = 0
         case grupo
         when  "dos"

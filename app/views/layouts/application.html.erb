@@ -19,13 +19,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav">
-                    <%= link_to 'Inicio', indice_path, class: "nav-item nav-link" %>
-                    <a href="#" class="nav-item nav-link active">Home</a>
-                    <a href="#" class="nav-item nav-link">Services</a>
-                    <a href="#" class="nav-item nav-link">About</a>
-                    <a href="#" class="nav-item nav-link">Contact</a>
-                </div>
+                <ul class="navbar-nav">
+                  <li class="nav-item"> <%= link_to 'Michon', indice_path, class: "nav-item nav-link" %></li>
+                  <li class="nav-item">  <a href="#" class="nav-item nav-link active">Inicio</a></li>
+                  <li class="nav-item dropdown" id="desplegableClases">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"> Clases </a>
+                    <ul class="submenu dropdown-menu">
+                      <li> <a class="dropdowm-item" href="#">Clases de hoy </a></li>
+                      <li> <%= link_to "Clases de hoy", clase_seleccion_dia_path(fecha: '2021-12-07'), method: :post %></li>
+                      <li> <a class="dropdowm-item" href="#">submnenu 2 </a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item"><a href="#" class="nav-item nav-link">Clases</a></li>
+                  <li class="nav-item"><a href="#" class="nav-item nav-link">Alumnos</a></li>
+                  <li class="nav-item"><a href="#" class="nav-item nav-link">Horario</a></li>
+                </ul>
                 <div class="navbar-nav ms-auto">
                     <% if current_usuario %>
                         <%= link_to 'Abandonar la sesión', destroy_usuario_session_path, class: "nav-item nav-link", method: :delete %>
