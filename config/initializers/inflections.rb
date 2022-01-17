@@ -16,8 +16,9 @@
 # end
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.irregular 'comun', 'comunes'
+  inflect.irregular 'comun',        'comunes'
   inflect.irregular 'cuentabcocli', 'cuentasbcocli'
-  inflect.irregular 'dircliente', 'dirclientes'
-  inflect.irregular 'instructor', 'instructores'
+  inflect.irregular 'dircliente',   'dirclientes'
+  inflect.irregular 'instructor',   'instructores'
+  inflect.irregular 'grupo_alumno', 'grupos_alumnos'
 end

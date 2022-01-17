@@ -97,7 +97,18 @@ RailsAdmin.config do |config|
       field :nombre
   end
 
+  config.model 'GrupoAlumno' do
+      object_label_method do 
+          :grupo_alumno_label_method
+      end
+      field :nombre
+      field :codigoFacturacion
+  end
 
+
+  def grupo_alumno_label_method
+      self.nombre
+  end
 
   def prueba_label_method
       self.nombre

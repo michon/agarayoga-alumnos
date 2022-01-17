@@ -14,12 +14,24 @@
             </div>
 
             <%= form_tag(clase_estado_path, method: :post) do %>
+            <% idx = 0 %>
                 <div class="card-body">
-                    <% cl.claseAlumno.order(:claseAlumnoEstado_id).each do |clalm| %>
-                      <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
-                        <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
-                        <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
-                      </div>
+                    <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% unless clalm.usuario.grupoAlumno_id == 5 %>
+                          <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+                            <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
+                            <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
+                          </div>
+                      <%end %>
+                    <%end %>
+
+                    <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% if clalm.usuario.grupoAlumno_id == 5 %>
+                          <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+                            <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
+                            <label class="form-check-label text-muted"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
+                          </div>
+                      <%end %>
                     <%end %>
                 </div>
                 <% unless cl.pruebas.blank? %>

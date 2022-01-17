@@ -7,8 +7,8 @@
         </div>
         <div class="card-body">
         <%hr.each do |cl|%>
-            <% if cl.usuario.count < 10 %>
-                <li> hay <mark> <%=10 -cl.usuario.count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %> </li>
+            <% if cl.usuario.where.not(grupoAlumno: 5).count < 10 %>
+                <li> hay <mark> <%=10 -cl.usuario.where.not(grupoAlumno: 5).count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %> </li>
             <%end%>
         <%end%>
         </div>

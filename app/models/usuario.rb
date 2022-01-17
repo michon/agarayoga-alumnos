@@ -1,6 +1,7 @@
 class Usuario < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  belongs_to :grupoAlumno
   has_many :horarioAlumno
   has_one_attached :image, :dependent => :destroy
 

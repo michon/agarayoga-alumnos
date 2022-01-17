@@ -8,7 +8,7 @@
 
           <div class="car-body py-3 m-3 text-center">
 
-            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horario semanal -->
+            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista clases semanal -->
               <div class="row mb-3">
                 <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
@@ -19,7 +19,7 @@
               </div>
             <% end %>
 
-            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista horario dia -->
+            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista clases del dia -->
               <div class="row mb-3">
                 <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
@@ -30,7 +30,7 @@
               </div>
             <% end %>
 
-            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horas libre semanal -->
+            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horas libres semanal -->
               <div class="row mb-3">
                 <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
@@ -41,7 +41,7 @@
               </div>
             <% end %>
 
-            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista hoara libres dia -->
+            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista horas libres dia -->
               <div class="row mb-3">
                 <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />

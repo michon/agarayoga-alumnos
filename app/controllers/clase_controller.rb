@@ -24,6 +24,12 @@ class ClaseController < ApplicationController
       end
   end
 
+  # Presenta las clases proyectadas para hoy
+  def actual
+        params[:fecha] = DateTime.now
+        redirect_to dia
+  end
+
   # Presenta las clases proyectadas para un día
   def dia
     fecha = params[:fecha].to_datetime

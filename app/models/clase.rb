@@ -6,6 +6,6 @@ class Clase < ApplicationRecord
 
 
   def asistentes
-      self.claseAlumno.where("claseAlumnoEstado_id < 3").count + self.pruebas.all.count
+      self.claseAlumno.where("claseAlumnoEstado_id < 3").count + self.pruebas.all.count - self.usuario.where(grupoAlumno_id: 5).count
   end
 end

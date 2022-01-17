@@ -1,4 +1,15 @@
 namespace :sincronizar do
+    desc "recorre los usuarios y actualiza el grupo al que pertenecen"
+    task grupo: :environment do
+        Usuario.all.each do |usr|
+           if Cliente.exists?(["codcliente = ?", usr.codigofacturacion])
+               cli = Cliente.where("codcliente = ?", usr.codigofacturacion).first
+               usr.grupoAlumno = GrupoAlumno.find_by(codigoFacturacion: cli.codgrupo)
+               usr.save
+           end
+        end
+    end
+
     desc "accede a la base de datos de facturación y sincroniza los datos"
     task actualizar: :environment do
         Cliente.all.each do |cli| 
@@ -14,6 +25,11 @@ namespace :sincronizar do
                 usr.debaja = cli.debaja
                 usr.codigofacturacion = cli.codcliente
                 usr.pais = 'ES'
+                if GrupoAlumno.find_by(codigoFacturacion: cli.codgrupo).blank?
+                    usr.grupoAlumno = GrupoAlumno.all.first
+                else
+                    usr.grupoAlumno = GrupoAlumno.find_by(codigoFacturacion: cli.codgrupo)
+                end
                 if Dircliente.exists?(["codcliente = ?", cli.codcliente])
                     puts "Actualizando direccion ... "
                     dir =  Dircliente.where("codcliente = ?", cli.codcliente).first
@@ -43,6 +59,11 @@ namespace :sincronizar do
                 usr.password = cli.nombre.gsub(' ','_')
                 usr.password_confirmation = cli.nombre.gsub(' ','_')
                 usr.pais = 'ES'
+                if GrupoAlumno.find_by(codigoFacturacion: cli.codgrupo).blank?
+                    usr.grupoAlumno = GrupoAlumno.all.first
+                else
+                    usr.grupoAlumno = GrupoAlumno.find_by(codigoFacturacion: cli.codgrupo)
+                end
                 if Dircliente.exists?(["codcliente = ?", cli.codcliente])
                     puts "Actualizando direccion ... "
                     dir =  Dircliente.where("codcliente = ?", cli.codcliente).first
