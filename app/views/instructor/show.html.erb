@@ -2,9 +2,9 @@
 <table>
     <thead>
         <tr>
-            <th> Dia </td>
-            <td> Alumnos </td> 
-            <td> Precio Hora </td>
+            <th scope="col"> Dia </th>
+            <th scope="col"> Alumnos </th> 
+            <th scope="col"> Precio Hora </th>
         </tr>
     </thead>
     <tbody>
@@ -16,7 +16,7 @@
                 <% importe = 0 %>
                 <% if cl.claseAlumno.where(claseAlumnoEstado_id: 2).count < 7 %>
                         <% importe = 12 %>
-                    <% elsif cl.claseAlumno.where(claseAlumnoEstado_id: 2).usuario.count < 9 %>
+                    <% elsif cl.claseAlumno.where(claseAlumnoEstado_id: 2).count < 9 %>
                         <% importe = 18 %>
                     <% else %>
                         <% importe = 20 %>

@@ -1,5 +1,5 @@
 
-<!-- Dibuja un card por clase  que contiene cada uno de los alumnos -->
+  <!-- Dibuja un card por clase  que contiene cada uno de los alumnos -->
   <div class="row">
     <% @clasesHoy.each do |cl| %>
     <div class="col-md-6 col-lg-4">
@@ -127,15 +127,31 @@
     <div class="card-header">
         <h5 class="text-warning">Selecciona otro dia </h5>
     </div>
+    
     <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
     <div class="card-body">
         <input class="col col-12 text-warning" id="fecha" name="fecha" class="form-control" type="date" value="<%=@clasesHoy.first.diaHora.to_date.to_s%>" />
     </div>
+
     <div class="card-footer">
-        <button class="btn btn-warning" type="submit"> Ver clases </button>
-    </div>
+        <div class="btn-group" role="group" arial-label="movimiento entre dias">
+            <button class="me-2 btn btn-warning" type="submit"> Ver clases </button>
+            <div class="dropdown">
+              <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown">
+                Selecciona un día
+              </button>
+              <ul class="dropdown-menu">
+                <% (@fecha.at_beginning_of_week .. @fecha.at_end_of_week-2).each do |d| %>
+                    <li><%= link_to  I18n.t('date.day_names')[d.strftime('%w').to_i].upcase  + " " + d.strftime('%d'), clase_dia_path(:fecha => d), method: :post, class: "dropdown-item" %></li>
+                <%end%>
+
+              </ul>
+             </div>
+        </div>
+     </div> <!-- cierre footer -->
     <% end %>
 </div>
+
 
 <!-- formularios Modales para altas Alumnos-->
 <% @clasesHoy.each do |cl| %>

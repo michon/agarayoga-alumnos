@@ -105,6 +105,17 @@ RailsAdmin.config do |config|
       field :codigoFacturacion
   end
 
+  config.model 'Proceso' do
+      object_label_method do 
+          :proceso_label_method
+      end
+      field :nombre
+      field :procesoEstados
+  end
+
+  def proceso_label_method
+      self.nombre
+  end
 
   def grupo_alumno_label_method
       self.nombre

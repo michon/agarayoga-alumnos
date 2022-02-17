@@ -1,129 +1,121 @@
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
-      aria-selected="true">Home</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-      aria-selected="false">Profile</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
-      aria-selected="false">Contact</a>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">Raw denim you
-    probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master
-    cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro
-    keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip
-    placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi
-    qui.</div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">Food truck fixie
-    locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit,
-    blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee.
-    Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum
-    PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS
-    salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit,
-    sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester
-    stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Etsy mixtape
-    wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack
-    lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard
-    locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify
-    squid 8-bit cred pitchfork. Williamsburg banh mi whatever gluten-free, carles pitchfork biodiesel fixie
-    etsy retro mlkshk vice blog. Scenester cred you probably haven't heard of them, vinyl craft beer blog
-    stumptown. Pitchfork sustainable tofu synth chambray yr.</div>
-</div>
 
 
+<div class="container py-5 custom_tab_style1_outer">
+      <div class="row">
+        <div class="col-md-12 text-left">
+            <h2 class="main_title main_title_left bi bi-card-checklist"><%=@almn.nombre%></h2>
+        </div>
+        <div class="col-md-12">
+          <ul class="nav nav-tabs custom_tab_style1" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#Personal" type="button" role="tab" aria-controls="personal" aria-selected="false">Peronal</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="asistencia-tab" data-bs-toggle="tab" data-bs-target="#Asistencia" type="button" role="tab" aria-controls="asistencia" aria-selected="true">Asistencia</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="facturacion-tab" data-bs-toggle="tab" data-bs-target="#Facturacion" type="button" role="tab" aria-controls="facturacion" aria-selected="false">Facturación</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="procesos-tab" data-bs-toggle="tab" data-bs-target="#Procesos" type="button" role="tab" aria-controls="procesos" aria-selected="false">Procesos</button>
+            </li>
+          </ul>
+          <div class="tab-content mt-5" id="myTabContent">
+            <div class="tab-pane fade show active" id="Personal" role="tabpanel" aria-labelledby="personal-tab">
+              <div class="member_card_style">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="row">
+                      <div class="col-md-4 left_img">
+                        <% unless @almn.image.blank? then %>
+                          <%= image_tag rails_storage_proxy_path(@almn.image), class: "rounded-circle img-fluid" %>
+                        <% end %>
+                      </div>
+                      <div class="col-md-8 d-flex align-items-center">
+                        <div class="member-info">
+                          <h4 ><%=@almn.nombre%></h4>
+                          <h6 class="p-2 bi bi-calendar2-day">       Antigüedad                              </h6>
+                          <h6 class="p-2 bi bi-envelope">            <%=@almn.email%>                        </h6>
+                          <h6 class="p-2 bi bi-credit-card-2-front"> <%=@almn.dni%>                          </h6>
+                          <h6 class="p-2 bi bi-telephone">           <%=@almn.movil%> -- <%=@almn.telefono%> </h6>
+                          <h6 class="p-2 bi bi-house">               <%=@almn.direccion%>                    </h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="Asistencia" role="tabpanel" aria-labelledby="personal-tab">
+                <%= @claseAlumno.where(claseAlumnoEstado: 1).order(:created_at).first.created_at.to_s %>
+                <% @estados.each do |estado| %>
+                    <p><%=estado.nombre%>: <%=@claseAlumno.where(claseAlumnoEstado_id: estado.id).count %></p>
+                <% end %>
+    <h1>CLASES por seamana </h1>
+                <!-- LISTADO DE CLASES POR SEMANA -->
+                <%= t2 = @clases.reverse.first[1]["clase"].diaHora.at_end_of_week.to_s%>
+                <%= t1 = @clases.reverse.last[1]["clase"].diaHora.at_beginning_of_week.to_s%>
 
+                <div class="row">
+                  <% (t1.to_datetime..t2.to_datetime).step(7).each do |dia| %>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="pb-4 mb-3 card">
+                            <div class="card-header">
+                                <h5 class="d-flex justify-content-between">
+                                  <%=" Semana del #{dia.strftime('%d')} al #{(dia+6).strftime('%d')} de #{I18n.t('date.abbr_month_names')[dia.strftime('%m').to_i]} del #{dia.strftime('%Y')}" %>
+                                </h5>
+                            </div>
+                            <div classo="card-body">
+                              <ul>
+                              <% (dia .. dia+6).each do |sem| %>
+                                <li> <%= sem.to_date %> </li>
+                                <% @clases.each do |i|  %>
+                                    <% if i[0].to_date == sem.to_date %> 
+                                        <li> <%=i[0].to_date%> si </li>
+                                    <% end%>
+                                <% end %>
+                                <% @clases.select{|i| i[0].to_date = sem.to_date }.each do |k| %>
+                                    <li> k es <%= k.to_s %> </li>
+                                <%end%>
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#agara" type="button" role="tab" aria-controls="agara" aria-selected="true">agara</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab" aria-controls="personal" aria-selected="false">personal</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#banco" type="button" role="tab" aria-controls="banco" aria-selected="false">banco</button>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="agara" role="tabpanel" aria-labelledby="agara-tab">...</div>
-  <div class="tab-pane fade" id="personal" role="tabpanel" aria-labelledby="personal-tab">...</div>
-  <div class="tab-pane fade" id="banco" role="tabpanel" aria-labelledby="banco-tab">...</div>
-</div>
+                              <% end %>
+                              </ul>
+                              cuerpo
+                            </div>
+                            <div class="card-footer">
+                              pie
+                            </div>
 
+                        </div>
+                    </div>
+                  <% end %>
+                </div>
+                <h1>LISTADO DE CLASES </h1>
+                <!-- LISTADO DE CLASES COMPLETO -->
+                <ul>
+                  <% @clases.reverse.each do |cl| %>
+                    <li class= "text-<%=cl[1]["claseAlumno"].claseAlumnoEstado.color%>">
+                      <%=" #{I18n.t('date.day_names')[cl[1]["clase"].diaHora.strftime('%w').to_i]}  #{cl[1]["clase"].diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl[1]["clase"].diaHora.strftime('%m').to_i]} a las #{cl[1]["clase"].diaHora.strftime('%H:%M')}" %>
+                      <%= cl[1]["claseAlumno"].claseAlumnoEstado.nombre %>
+                    </li>
+                  <%end%>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="Facturacion" role="tabpanel" aria-labelledby="facturacion-tab">
+                <% @estados.each do |estado| %>
+                    <p><%=estado.nombre%>: <%=@claseAlumno.where(claseAlumnoEstado_id: estado.id).count %></p>
+                <% end %>
+            </div>
+            <div class="tab-pane fade" id="Procesos" role="tabpanel" aria-labelledby="procesos-tab">
+                <% @estados.each do |estado| %>
+                    <p><%=estado.nombre%>: <%=@claseAlumno.where(claseAlumnoEstado_id: estado.id).count %></p>
+                <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
 
-
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
-</div>
-
-
-var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
-triggerTabList.forEach(function (triggerEl) {
-  var tabTrigger = new bootstrap.Tab(triggerEl)
-
-  triggerEl.addEventListener('click', function (event) {
-    event.preventDefault()
-    tabTrigger.show()
-  })
-})
-
-
-<%= @id %> 
-<ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="#">agara</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">personal</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">banco</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-  </li>
-</ul>
-
-<ol>
-    <li><%= @almn.nombre %></li>
-</ol>
-<ol>
-    <li><%= @almn.dni %></li>
-    <li><%= @almn.email %></li>
-    <li><%= @almn.telefono %></li>
-    <li><%= @almn.movil %></li>
-    <li><%= @almn.direccion %></li>
-    <li><%= @almn.pais %></li>
-    <li><%= @almn.localidad %></li>
-    <li><%= @almn.provincia %></li>
-    <li><%= @almn.cp %></li>
-</ol>
-<ol>
-    <li><%= @almn.iban %></li>
-    <li><%= @almn.lugarfirma %></li>
-    <li><%= @almn.fechafirma %></li>
-    <li><%= @almn.debaja %></li>
-    <li><%= @almn.codigofacturacion %></li>
-</ol>
 
 <%= link_to( 'Volver al indice', alumnos_index_path) %>
 <%= link_to( 'obtener ficha', alumnos_path(@almn, format: :pdf)) %>

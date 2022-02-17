@@ -9,7 +9,7 @@ class ClaseController < ApplicationController
       @fecha = params[:fecha].to_datetime
       diasSemana = Clase.select("date_format(diaHora, '%w') as dia").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:dia).distinct
       horasDistintas = Clase.select("date_format(diaHora, '%H:%i') as hora").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:hora).distinct
-      
+
       @horarioSemana = Hash.new()
       for idx in diasSemana.first.dia.to_i..diasSemana.last.dia.to_i do #generamos todos los dias
           @horarioSemana.store(idx, Hash.new)
@@ -33,6 +33,7 @@ class ClaseController < ApplicationController
   # Presenta las clases proyectadas para un día
   def dia
     fecha = params[:fecha].to_datetime
+    @fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
     @alumnosActivos = Usuario.where(debaja: false)
     @estados = ClaseAlumnoEstado.all

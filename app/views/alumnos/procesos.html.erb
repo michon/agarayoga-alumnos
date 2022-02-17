@@ -1,0 +1,33 @@
+<%= form_with url: alumnos_procesos_url, method: :post do |frm|%>
+  <%=frm.label :query, "buscar proceso" %>
+  <%=frm.collection_select(:proceso, @procesos.all, :id, :nombre, selected: @proceso) %>
+  <%=frm.submit "buscar"%>
+<% end %>
+
+<% @procesoLista.sort.each_with_index do |alumno, idx| %>
+    <div class="row" style=<%='background-color:lavender;' if idx.odd?%>>
+        <div class="col">
+            <%=alumno[2].id %>
+            <%=alumno[2].nombre %>
+        </div>
+        <% alumno[1].each do |proceso| %>
+            <div class="col">
+                <% if proceso[1].blank? then %>
+                    <% etiquetaBoton = "Añadir #{proceso[0].name}" %>
+                    <% color = "primary" %>
+                <% else%>
+                    <% etiquetaBoton = "Eliminar #{proceso[0].name}" %>
+                    <% color = "success"%>
+                <%end%>
+                <li class="text-<%=color%>"><%=proceso[0].name %> -- <%= proceso[1].updated_at.strftime("%d-%m-%Y") unless proceso[1].blank? %></li>
+                <%= form_with url: alumnos_procesos_alta_url, method: :post do |frm_proceso|%>
+                    <%=frm_proceso.hidden_field :proceso, {value: proceso[0].id}%>
+                    <%=frm_proceso.hidden_field :alumno, {value: alumno[2].id}%>
+                    <%=frm_proceso.submit etiquetaBoton, class: "btn btn-#{color}"%>
+                <%end%>
+            </div>
+        <%end%>
+        
+    </div>
+<%end%>
+

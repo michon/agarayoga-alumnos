@@ -1,3 +1,2 @@
 class ClaseAlumnoEstado < ApplicationRecord
-    
 end

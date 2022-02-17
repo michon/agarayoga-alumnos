@@ -7,6 +7,9 @@
     <%= csp_meta_tag %>
 
     <meta charset="utf-8">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" integrity="sha384-ejwKkLla8gPP8t2u0eQyL0Q/4ItcnyveF505U0NIobD/SMsNyXrLti6CWaD0L52l" crossorigin="anonymous">
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
@@ -26,7 +29,7 @@
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Clases</a>
                     <ul class="dropdown-menu">
                       <li> <%= link_to "Clases de hoy",         clase_dia_path(:fecha => DateTime.now),    method: :post, class: "dropdown-item" %></li>
-                      <li> <%= link_to "Clases de esta semana", clase_semana_path(:fecha => DateTime.now), method: :post, class: "dropdown-item" %></li>
+                      <li> <%= link_to "Clases de esta semana", clase_semana_path(:fecha => Date.today), method: :post, class: "dropdown-item" %></li>
                     </ul>
                   </li>
 
@@ -35,6 +38,7 @@
                     <ul class="submenu dropdown-menu">
                       <li><%= link_to 'Listado alumnos', alumnos_index_path, class: "dropdown-item"  %></li>
                       <li> <%= link_to "Últimas incorporaciones", alumnos_business_get_path(:fecha => DateTime.now), method: :post, class: "dropdown-item"  %></li>
+                      <li> <%= link_to "Procesos", alumnos_procesos_path(), method: :post, class: "dropdown-item"  %></li>
                     </ul>
                   </li>
 
