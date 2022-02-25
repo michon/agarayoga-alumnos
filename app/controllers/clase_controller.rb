@@ -80,6 +80,8 @@ class ClaseController < ApplicationController
       clAlm.usuario_id = clAlmParam[:usuario_id]
       clAlm.clase_id = clAlmParam[:clase_id]
       clAlm.claseAlumnoEstado_id = clAlmParam[:claseAlumnoEstado_id]
+      clAlm.diaHora = Clase.find(clAlmParam[:clase_id]).diaHora 
+      clAlm.instructor_id = Clase.find(clAlmParam[:clase_id]).instructor_id 
       clAlm.save
 
       redirect_to clase_dia_url(params[:fecha])

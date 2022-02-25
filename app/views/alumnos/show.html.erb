@@ -8,10 +8,10 @@
         <div class="col-md-12">
           <ul class="nav nav-tabs custom_tab_style1" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#Personal" type="button" role="tab" aria-controls="personal" aria-selected="false">Peronal</button>
+              <button class="nav-link" id="personal-tab" data-bs-toggle="tab" data-bs-target="#Personal" type="button" role="tab" aria-controls="personal" aria-selected="false">Peronal</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="asistencia-tab" data-bs-toggle="tab" data-bs-target="#Asistencia" type="button" role="tab" aria-controls="asistencia" aria-selected="true">Asistencia</button>
+              <button class="nav-link active" id="asistencia-tab" data-bs-toggle="tab" data-bs-target="#Asistencia" type="button" role="tab" aria-controls="asistencia" aria-selected="true">Asistencia</button>
             </li>
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="facturacion-tab" data-bs-toggle="tab" data-bs-target="#Facturacion" type="button" role="tab" aria-controls="facturacion" aria-selected="false">Facturación</button>
@@ -21,7 +21,7 @@
             </li>
           </ul>
           <div class="tab-content mt-5" id="myTabContent">
-            <div class="tab-pane fade show active" id="Personal" role="tabpanel" aria-labelledby="personal-tab">
+            <div class="tab-pane fade" id="Personal" role="tabpanel" aria-labelledby="personal-tab">
               <div class="member_card_style">
                 <div class="row">
                   <div class="col-md-8">
@@ -46,41 +46,32 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" id="Asistencia" role="tabpanel" aria-labelledby="personal-tab">
-                <%= @claseAlumno.where(claseAlumnoEstado: 1).order(:created_at).first.created_at.to_s %>
+            <div class="tab-pane fade show active" id="Asistencia" role="tabpanel" aria-labelledby="asistencia-tab">
+                <%= @claseAlumno.where(claseAlumnoEstado: 1).order(:created_at).first.created_at.to_s unless @claseAlumno.where(claseAlumnoEstado: 1).blank? %>
                 <% @estados.each do |estado| %>
                     <p><%=estado.nombre%>: <%=@claseAlumno.where(claseAlumnoEstado_id: estado.id).count %></p>
                 <% end %>
-    <h1>CLASES por seamana </h1>
-                <!-- LISTADO DE CLASES POR SEMANA -->
-                <%= t2 = @clases.reverse.first[1]["clase"].diaHora.at_end_of_week.to_s%>
-                <%= t1 = @clases.reverse.last[1]["clase"].diaHora.at_beginning_of_week.to_s%>
 
-                <div class="row">
-                  <% (t1.to_datetime..t2.to_datetime).step(7).each do |dia| %>
-                    <div class="col-md-6 col-lg-4">
+                <!-- LISTADO DE CLASES POR SEMANA -->
+                <h3>Clases por semana</h3>
+                <% t2 = @clases.reverse.first[1]["clase"].diaHora.at_end_of_week.to_s%>
+                <% t1 = @clases.reverse.last[1]["clase"].diaHora.at_beginning_of_week.to_s%>
+
+                <div class="row flex-row-reverse flex-wrap-reverse ">
+                  <% (t1.to_datetime..t2.to_datetime).step(7).each_with_index do |dia, i| %>
+                        <div class="col-md-6 col-lg-4 ">
                         <div class="pb-4 mb-3 card">
                             <div class="card-header">
-                                <h5 class="d-flex justify-content-between">
-                                  <%=" Semana del #{dia.strftime('%d')} al #{(dia+6).strftime('%d')} de #{I18n.t('date.abbr_month_names')[dia.strftime('%m').to_i]} del #{dia.strftime('%Y')}" %>
+                                <h5 class=" d-flex justify-content-center">
+                                <%=" del  #{dia.strftime('%d')} de #{I18n.t('date.abbr_month_names')[dia.strftime('%m').to_i]} al  #{(dia+6).strftime('%d')} de #{I18n.t('date.abbr_month_names')[(dia+6).strftime('%m').to_i]}" %>
                                 </h5>
                             </div>
                             <div classo="card-body">
-                              <ul>
-                              <% (dia .. dia+6).each do |sem| %>
-                                <li> <%= sem.to_date %> </li>
-                                <% @clases.each do |i|  %>
-                                    <% if i[0].to_date == sem.to_date %> 
-                                        <li> <%=i[0].to_date%> si </li>
-                                    <% end%>
-                                <% end %>
-                                <% @clases.select{|i| i[0].to_date = sem.to_date }.each do |k| %>
-                                    <li> k es <%= k.to_s %> </li>
-                                <%end%>
-
-                              <% end %>
-                              </ul>
-                              cuerpo
+                                <ul>
+                                    <% @claseAlumno.where(diaHora: dia .. (dia+6) ).each do |sem| %>
+                                        <li class="text-<%=sem.claseAlumnoEstado.color%>"><%= "El #{I18n.t('date.abbr_day_names')[sem.diaHora.strftime('%w').to_i]} dia #{sem.diaHora.strftime('%d')} a las  #{sem.diaHora.strftime('%H:%M')}"%> - <%= sem.claseAlumnoEstado.nombre %></li>
+                                    <%end%>
+                                </ul>
                             </div>
                             <div class="card-footer">
                               pie
