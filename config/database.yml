@@ -19,7 +19,7 @@ default: &default
 
 development:
   <<: *default
-  database: ytp3dew5_agarayoga 
+  database: ytp3dew5_agarayoga
   username: ytp3dew5_agarayo
   password: RbA(wFJWmF6pv6FbUyPX
 
@@ -52,16 +52,14 @@ test:
 #
 production:
   <<: *default
-  database: ytp3dew5_agarayoga 
+  database: ytp3dew5_agarayoga
   username: ytp3dew5_agarayo
   password: RbA(wFJWmF6pv6FbUyPX
 
 external_reporting_table:
   adapter: mysql2
   encoding: utf8
-  database: agara
-  host: 170.253.1.55
+  database: agara_yoga
+  host: 170.253.18.13
   username: michon
   password: herishef
-
-

@@ -16,9 +16,11 @@ Rails.application.routes.draw do
   post 'horario/crear_horario_semanal', to: 'horario#crearClases'
 
   get 'instructor/index'
-  get 'instructor/show/:id',   to: 'instructor#show', as: 'instructor'
+  get 'instructor/show/:id/:fecha',     to: 'instructor#show', as: 'instructor'
 
   get  'alumnos/index'
+  get  'alumnos/clientes'
+  get  'alumnos/actualizar/:id',         to: 'alumnos#actualizar',    as: 'alumnos/actualizar'
   get  'alumnos/show/:id',               to: 'alumnos#show',          as: 'alumnos'
   get  'alumnos/regalo/:id',             to: 'alumnos#regalo',        as: 'alumnos_regalo'
   get  'alumnos/ficha/:id',              to: 'alumnos#ficha',         as: 'alumnos_ficha'

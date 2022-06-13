@@ -47,6 +47,8 @@
               </div>
             </div>
             <div class="tab-pane fade show active" id="Asistencia" role="tabpanel" aria-labelledby="asistencia-tab">
+                <%= line_chart({"2021-01-01" => 2, "2021-01-02" => 3}) %>
+                <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>
                 <%= @claseAlumno.where(claseAlumnoEstado: 1).order(:created_at).first.created_at.to_s unless @claseAlumno.where(claseAlumnoEstado: 1).blank? %>
                 <% @estados.each do |estado| %>
                     <p><%=estado.nombre%>: <%=@claseAlumno.where(claseAlumnoEstado_id: estado.id).count %></p>

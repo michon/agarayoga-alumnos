@@ -1,36 +1,88 @@
 
-<table>
-    <thead>
-        <tr>
-            <th scope="col"> Dia </th>
-            <th scope="col"> Alumnos </th> 
-            <th scope="col"> Precio Hora </th>
-        </tr>
-    </thead>
-    <tbody>
-        <% importeTotal = 0 %>
-        <% @clases.each do |cl| %>
-            <tr>
-                    <td> <%= " #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase}  #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  " %></td>
-                <td> <%= cl.claseAlumno.where(claseAlumnoEstado_id: 2).count %> </td>
-                <% importe = 0 %>
-                <% if cl.claseAlumno.where(claseAlumnoEstado_id: 2).count < 7 %>
-                        <% importe = 12 %>
-                    <% elsif cl.claseAlumno.where(claseAlumnoEstado_id: 2).count < 9 %>
-                        <% importe = 18 %>
-                    <% else %>
-                        <% importe = 20 %>
+    <div class="" id="heading-">
+        <div class="d-flex justify-content-around w-100 mb-3">
+          <div class="p-2">
+              <h2><%= @clases.first.instructor.nombre %></h2>
+           </div>
+          <div class="p-2">
+              <h2><%= I18n.t('date.month_names')[@fecha.strftime('%m').to_i]%></h2>
+           </div>
+          <div class="p-2">
+              <h2><%= number_to_currency(@total) %></h2>
+           </div>
+        </div>
+    </div>
+
+
+<div class="accordion" id="accordionExample">
+
+      <div class="accordion-item">
+        <div class="" id="heading-0">
+            <div class="d-flex justify-content-around w-100 mb-3">
+              <div class="p-2">
+                  <h3>Dia </h3>
+              </div>
+
+              <div class="p-2">
+                  <h3>Alumnos que asistieron</h3>
+              </div>
+
+              <div class="p-2">
+                  <h3>Euros a pagar</h3>
+              </div>
+            </div>
+        </div>
+      </div>
+
+    <% @clases.each do |cl| %>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading-<%=cl.id.to_s%>">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%=cl.id.to_s%>" aria-expanded="false" aria-controls="collapseThree">
+            <div class="d-flex justify-content-around w-100 mb-3">
+              <div class="p-2">
+                <%= "El #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i]}  #{cl.diaHora.strftime('%d')} de  #{I18n.t('date.month_names')[cl.diaHora.strftime('%m').to_i]} " %>
+              </div>
+
+              <div class="p-2">
+                <%= "En clase #{cl.claseAlumno.count} vinieron #{cl.claseAlumno.where(claseAlumnoEstado_id: 2).count} alumnos " %>
+              </div>
+
+              <div class="p-2">
+                    <% if cl.claseAlumno.count < 7 %>
+                            <% importe = 12 %>
+                        <% elsif cl.claseAlumno.count < 9 %>
+                            <% importe = 18 %>
+                        <% else %>
+                            <% importe = 20 %>
+                    <% end %>
+                    <span class="text-center"> <%= importe  %></span>
+              </div>
+            </div>
+          </button>
+        </h2>
+        <div id="collapse-<%=cl.id.to_s%>" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+                <ol>
+                <% cl.claseAlumno.order(:claseAlumnoEstado_id).each do |clAlm| %>
+                    <li  class='text-<%=clAlm.claseAlumnoEstado.color%>'><%= clAlm.usuario.nombre %></li>
                 <% end %>
-                <% importeTotal += importe %>
+                </ol>
+          </div>
+        </div>
+      </div>
+    <%end%>
+</div>
 
-                <td> <%= importe  %> </td>
-            </tr>
-        <% end %>
-        <tr>
-            <td colspan="2"> Improrte Total  </td>
-            <td> <%= importeTotal %> </td>
-    </tbody>
-</table>
-        
-
-
+    <div class="" id="heading-">
+        <div class="d-flex justify-content-around w-100 mb-3">
+          <div class="p-2">
+              <h2><%= @clases.first.instructor.nombre %></h2>
+           </div>
+          <div class="p-2">
+              <h2><%= I18n.t('date.month_names')[@fecha.strftime('%m').to_i]%></h2>
+           </div>
+          <div class="p-2">
+              <h2><%= number_to_currency(@total) %></h2>
+           </div>
+        </div>
+    </div>

@@ -1,0 +1,23 @@
+
+<div class="listado">
+    <div class="table-responsive-sm">
+        <table class="table">
+            <thead>
+              <tr>
+                  <th> <%= "Alumnos (#{@alumnos.count})"%> </th>
+                  <th> </th>
+                  <th> </th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <% @alumnos.order(:nombre).each do |almn| %>
+                <tr>
+                    <td> <%=almn.nombre %> </td>
+                    <td> <%= link_to "Actualicar" , alumnos_actualizar_path(almn) %> </td>
+                </tr>
+            <%end%>
+            </tbody>
+        </table>
+    </div>
+</div>

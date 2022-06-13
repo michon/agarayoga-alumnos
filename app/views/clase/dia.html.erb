@@ -1,5 +1,6 @@
 
   <!-- Dibuja un card por clase  que contiene cada uno de los alumnos -->
+
   <div class="row">
     <% @clasesHoy.each do |cl| %>
     <div class="col-md-6 col-lg-4">
@@ -127,7 +128,7 @@
     <div class="card-header">
         <h5 class="text-warning">Selecciona otro dia </h5>
     </div>
-    
+
     <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
     <div class="card-body">
         <input class="col col-12 text-warning" id="fecha" name="fecha" class="form-control" type="date" value="<%=@clasesHoy.first.diaHora.to_date.to_s%>" />

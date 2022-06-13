@@ -16,6 +16,7 @@
 // const imagePath = (name) => images(name, true)
 
 import "bootstrap"
+import "chartkick/chart.js"
 console.log('Hello World from Webpacker')
 
 var jQuery = require('jquery')

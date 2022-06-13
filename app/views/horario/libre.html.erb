@@ -6,7 +6,7 @@
             <h5 class="d-flex justify-content-between"><%=hr.first.hora_humano%></h5>
         </div>
         <div class="card-body">
-        <%hr.each do |cl|%>
+        <% hr.each do |cl|%>
             <% if cl.usuario.where.not(grupoAlumno: 5).count < 10 %>
                 <li> hay <mark> <%=10 -cl.usuario.where.not(grupoAlumno: 5).count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %> </li>
             <%end%>
@@ -16,4 +16,13 @@
   <%end%>
 </div>
 
-<%= @libres.to_json %>
+<h2> Para enviar </h2>
+<% @libres.each do |hr| %>
+    <p>  a las <%=hr.first.hora_humano%> hay
+    <% hr.each do |cl|%>
+            <% if cl.usuario.where.not(grupoAlumno: 5).count < 10 %>
+                <br> <mark> <%=10 -cl.usuario.where.not(grupoAlumno: 5).count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %>
+            <% end %>
+    <% end %>
+   </p>
+ <% end %>

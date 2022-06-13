@@ -55,7 +55,7 @@ RailsAdmin.config do |config|
     end
   end
 
-  config.model 'Horario' do 
+  config.model 'Horario' do
       object_label_method do
           :horario_label_method
       end
@@ -79,7 +79,7 @@ RailsAdmin.config do |config|
       field :usuario
   end
 
-  config.model 'Clase' do 
+  config.model 'Clase' do
       object_label_method do
           :clase_label_method
       end
@@ -90,36 +90,14 @@ RailsAdmin.config do |config|
   end
 
   config.model 'Prueba' do
-      object_label_method do 
+      object_label_method do
           :prueba_label_method
       end
       field :clase
       field :nombre
   end
 
-  config.model 'GrupoAlumno' do
-      object_label_method do 
-          :grupo_alumno_label_method
-      end
-      field :nombre
-      field :codigoFacturacion
-  end
 
-  config.model 'Proceso' do
-      object_label_method do 
-          :proceso_label_method
-      end
-      field :nombre
-      field :procesoEstados
-  end
-
-  def proceso_label_method
-      self.nombre
-  end
-
-  def grupo_alumno_label_method
-      self.nombre
-  end
 
   def prueba_label_method
       self.nombre

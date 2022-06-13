@@ -35,6 +35,9 @@ class ClaseController < ApplicationController
     fecha = params[:fecha].to_datetime
     @fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
+    if @clasesHoy.blank?
+      clase_vacia
+    end
     @alumnosActivos = Usuario.where(debaja: false)
     @estados = ClaseAlumnoEstado.all
   end
@@ -80,8 +83,8 @@ class ClaseController < ApplicationController
       clAlm.usuario_id = clAlmParam[:usuario_id]
       clAlm.clase_id = clAlmParam[:clase_id]
       clAlm.claseAlumnoEstado_id = clAlmParam[:claseAlumnoEstado_id]
-      clAlm.diaHora = Clase.find(clAlmParam[:clase_id]).diaHora 
-      clAlm.instructor_id = Clase.find(clAlmParam[:clase_id]).instructor_id 
+      clAlm.diaHora = Clase.find(clAlmParam[:clase_id]).diaHora
+      clAlm.instructor_id = Clase.find(clAlmParam[:clase_id]).instructor_id
       clAlm.save
 
       redirect_to clase_dia_url(params[:fecha])
@@ -124,6 +127,11 @@ class ClaseController < ApplicationController
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:fecha, accion, alumnos_ids:[])
+  end
+
+  private
+  def clase_vacia
+    redirect_to michon_path(), alert: "Ese día no hay clase"
   end
 
 end
