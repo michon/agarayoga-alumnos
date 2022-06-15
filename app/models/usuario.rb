@@ -11,6 +11,13 @@ class Usuario < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  enum rol: [:yogui, :instructor, :admin, :michon]
+
+  after_initialize :set_default_rol, :if => :new_record?
+
+  def set_default_rol
+    sef_rol ||= :usuario
+  end
   def ibanImpreso
       ibanImp = ""
       (self.iban.length/4).times do |i|

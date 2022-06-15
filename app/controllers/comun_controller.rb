@@ -3,12 +3,14 @@ class ComunController < ApplicationController
     skip_before_action :authenticate_usuario!, :only => [:inicio]
 
   def indice
-      if current_usuario && current_usuario.admin
+      if current_usuario && current_usuario.michon?
           redirect_to michon_path
-      elsif current_usuario
+      elsif current_usuario && current_usuario.instructor?
+          redirect_to michon_path
+      elsif current_usuario && current_usuario.yogui?
           redirect_to alumnos_path(current_usuario.id)
       else
-        CarteroMailer.bienvenido_email("hola").deliver!
+          redirect_to inicio_path()
       end
   end
 
