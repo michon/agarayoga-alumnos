@@ -15,8 +15,14 @@ Rails.application.routes.draw do
   get 'horario/libre'
   post 'horario/crear_horario_semanal', to: 'horario#crearClases'
 
-  get 'instructor/index'
-  get 'instructor/show/:id/:fecha',     to: 'instructor#show', as: 'instructor'
+  get  'instructor/index'
+  get  'instructor/show/:id/:fecha',     to: 'instructor#show', as: 'instructor'
+  get  'instructor/dia/:fecha',          to: 'instructor#dia',  as: "instructor/dia"
+  post 'instructor/dia',                 to: 'instructor#seleccionDia', as: "instructor/seleccion_dia"
+  post   'instructor/altaAlumno',    to: 'instructor#altaAlumno',   as: "instructor/alta_alumno"
+  post   'instructor/bajaAlumnos',   to: 'instructor#bajaAlumnos',  as: "instructor/baja_alumnos"
+  post   'instructor/altaPrueba',    to: 'instructor#altaPrueba',   as: "instructor/alta_prueba"
+  post   'instructor/bajaPrueba',    to: 'instructor#bajaPrueba',   as: "instructor/baja_prueba"
 
   get  'alumnos/index'
   get  'alumnos/clientes'
@@ -28,7 +34,7 @@ Rails.application.routes.draw do
   get  'alumnos/business/:fecha',        to: 'alumnos#business',      as: 'alumnos/business_get'
   post 'alumnos/business/',              to: 'alumnos#business',      as: 'alumnos/business'
   post 'alumnos/procesos/',              to: 'alumnos#procesos',      as: 'alumnos/procesos'
-  get  'alumnos/procesos/',              to: 'alumnos#procesos',      as: 'alumnos/procesos_get'
+  get  'alumnos/procesos/:proceso',      to: 'alumnos#procesos',      as: 'alumnos/procesos_get'
   post 'alumnos/procesosAlta/',          to: 'alumnos#procesosAlta',  as: 'alumnos/procesos_alta'
   get  'alumnos/procesosAlta/:proceso',  to: 'alumnos#procesosAlta',  as: 'alumnos/procesos_alta_get'
 
@@ -37,7 +43,11 @@ Rails.application.routes.draw do
   get 'michon',       to: 'comun#michon'
   get 'facturacion',  to: 'comun#facturacion'
 
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+
+  # solo michon accede al entorno de administración
+  authenticate :usuario, lambda { |u| u.rol == "michon" } do
+    mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
   devise_for :usuario

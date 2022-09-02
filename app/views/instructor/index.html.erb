@@ -1,6 +1,36 @@
-<ol>
-    <% @instructores.each do |ins| %>
-        <li> <%= ins.nombre %> </li> 
-        <li> <%= link_to ins.nombre, instructor_path(ins.id) %>
-    <%end%>
-</ol>
+
+
+<section class="container">
+    <div class="card-group">
+        <div class="m-3 card ">
+          <div class="card-header">
+            <h5>Clases</h5>
+          </div>
+            <%= form_tag(instructor_seleccion_dia_path, method: :post) do %> <!-- Vista clases del dia -->
+              <div class="row mb-3">
+                <div class="col col6">
+                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                </div>
+                <div class="col col6">
+                    <button class="btn btn-primary w-100" type="submit"> Ver clases </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+        <div class="m-3 card ">
+          <div class="card-header">
+            <h5>Alumnos</h5>
+          </div>
+           <%= link_to "Procesos", alumnos_procesos_get_path(Proceso.last.id), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
+        </div>
+
+        <div class="m-3 card ">
+          <div class="card-header">
+            <h5>Clases dadas</h5>
+          </div>
+            <%= link_to 'Mes actual',     instructor_path(:id => 2, :fecha => DateTime.now()), class: 'btn btn-primary w-100 mb-3', role: "button" %>
+            <%= link_to 'Mes anterior',   instructor_path(:id => 2, :fecha => DateTime.now()-1.month), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
+        </div>
+      </div> <!-- fin clase card -->
+</section>

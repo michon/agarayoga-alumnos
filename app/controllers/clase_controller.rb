@@ -6,6 +6,10 @@ class ClaseController < ApplicationController
       # tenemos en el horario, cada una de estas entradas  contendrá otro hash
       # cuya clave será la hora de la clase y el contenido un registro de hoario (una clase).
 
+      unless ClasePolicy.new(current_usuario).verSemana?
+        render :file => "public/401.html", :status => :unauthorized
+      end
+
       @fecha = params[:fecha].to_datetime
       diasSemana = Clase.select("date_format(diaHora, '%w') as dia").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:dia).distinct
       horasDistintas = Clase.select("date_format(diaHora, '%H:%i') as hora").where(:diaHora => @fecha.beginning_of_week..@fecha.end_of_week).order(:hora).distinct
@@ -26,12 +30,18 @@ class ClaseController < ApplicationController
 
   # Presenta las clases proyectadas para hoy
   def actual
+      unless ClasePolicy.new(current_usuario).verDia?
+        render :file => "public/401.html", :status => :unauthorized
+      end
         params[:fecha] = DateTime.now
         redirect_to dia
   end
 
   # Presenta las clases proyectadas para un día
   def dia
+      unless ClasePolicy.new(current_usuario).verDia?
+        render :file => "public/401.html", :status => :unauthorized
+      end
     fecha = params[:fecha].to_datetime
     @fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)

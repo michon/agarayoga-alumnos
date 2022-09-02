@@ -43,13 +43,17 @@ class HorarioController < ApplicationController
 
 
   def crearClases
-      require 'horario_clase.rb'
-      objHorario = HorarioClase.new()
+      if HorarioPolicy.new(current_usuario).crearClases?
+        require 'horario_clase.rb'
+        objHorario = HorarioClase.new()
 
-      fecha = params[:fecha].to_datetime
+        fecha = params[:fecha].to_datetime
 
-      objHorario.crearClases(fecha)
-      redirect_to action: 'index'
+        objHorario.crearClases(fecha)
+        redirect_to action: 'index'
+      else
+        render :file => "public/401.html", :status => :unauthorized
+      end
   end
 
   protected

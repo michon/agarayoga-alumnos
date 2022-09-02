@@ -1,0 +1,289 @@
+  <!-- Dibuja un card por clase  que contiene cada uno de los alumnos -->
+
+  <div class="row">
+    <% @clasesHoy.each do |cl| %>
+    <div class="col-md-6 col-lg-4">
+        <div class="pb-4 mb-3 card">
+            <div class="card-header">
+                <h5 class="d-flex justify-content-between">
+                    <span class="card-title"><%= "#{cl.diaHora.strftime('%H:%M')}" %> </span>
+                    <span class="text-right"><%= cl.asistentes %></span>
+                </h5>
+                <span class="card-subtitle text-muted"> <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase}" %></span>
+                <span class="card-subtitle text-muted text-end">--<%= cl.instructor.nombre %></span>
+            </div>
+
+            <%= form_tag(clase_estado_path, method: :post) do %>
+            <% idx = 0 %>
+                <div class="card-body">
+                    <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% unless clalm.usuario.grupoAlumno_id == 5 %>
+                          <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+                            <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
+                            <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
+                          </div>
+                      <%end %>
+                    <%end %>
+
+                    <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% if clalm.usuario.grupoAlumno_id == 5 %>
+                          <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+                            <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
+                            <label class="form-check-label text-muted"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
+                          </div>
+                      <%end %>
+                    <%end %>
+                </div>
+                <% unless cl.pruebas.blank? %>
+                    <ol>
+                        <% cl.pruebas.each do |prb| %>
+                            <li> <%="#{prb.nombre} - #{prb.movil}"%> </li>
+                        <% end %>
+                    </ol>
+                <%end%>
+
+                <div class="card-footer">
+                  <div class="pb-4 row">
+                      <div class="col col-9">
+                          <div class="row">
+                            <div class="col col-6">
+                                <div class="form-check form-check-inline" >
+                                  <input class="form-check-input" type="radio" id="falto-<%=cl.id%>", name="accion#<%=cl.id%>" value="4">
+                                  <label class="form-check-label" for="falto-<%=cl.id%>"> Faltó </label>
+                                </div>
+
+                                <div class="form-check form-check-inline" >
+                                  <input class="form-check-input" type="radio" id="aviso-<%=cl.id%>", name="accion#<%=cl.id%>" value="3">
+                                  <label class="form-check-label" for="aviso-<%=cl.id%>"> Avisó </label>
+                                </div>
+                            </div>
+
+                            <div class="col col-6">
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" id="asistio-<%=cl.id%>", name="accion#<%=cl.id%>" checked value="2">
+                                  <label class="form-check-label" for="asistio-<%=cl.id%>"> Asistió </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" id="vendra-<%=cl.id%>", name="accion#<%=cl.id%>" value="1">
+                                  <label class="form-check-label" for="vendra-<%=cl.id%>"> Vendrá </label>
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+
+                      <div class="col col-3">
+                        <button type="submit" class="btn btn-primary">Haz</button>
+                      </div>
+                  </div>
+
+                  <div class="row"> <!-- Fila de botones -->
+                      <div class="col col-9">
+                        <div class="pb-4 row justify-content-left">
+                          <div class="col col-6">
+                              <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#altaAlumno-<%=cl.id%>">
+                              +Alumno
+                            </button>
+                          </div>
+                          <div class="col col-6">
+                             <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#quitar-<%=cl.id%>">
+                              -Alumno
+                            </button>
+                          </div>
+                        </div>
+
+                        <div class="row justify-content-left">
+                          <div class="col col-6">
+                             <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#altaPrueba-<%=cl.id%>">
+                              +Prueba
+                            </button>
+                          </div>
+                          <div class="col col-6">
+                             <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#quitarPrueba-<%=cl.id%>">
+                              -Prueba
+                            </button>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="col col-3">
+                       <% @estados.each do |est| %>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input border-light bg-<%=est.color%>" type="checkbox"  checked id="colorCheck-<%=cl.id%>-<%=est.id%>">
+                        </div>
+                        <%end%>
+                    </div>
+                </div> <!-- fila de botones -->
+
+                </div> <!--- card body -->
+            <%end %> <!-- form end -->
+        </div> <!-- card -->
+      </div> <!-- div class col -->
+    <% end %> <!-- each de clase -->
+  </div> <!-- div row -->
+
+
+<!-- Formulario para seleccionar otro día -->
+<div class="card border border-info mb-3" >
+    <div class="card-header">
+        <h5 class="text-warning">Selecciona otro dia </h5>
+    </div>
+
+    <%= form_tag(instructor_seleccion_dia_path, method: :post) do %>
+    <div class="card-body">
+        <input class="col col-12 text-warning" id="fecha" name="fecha" class="form-control" type="date" value="<%=@clasesHoy.first.diaHora.to_date.to_s%>" />
+    </div>
+
+    <div class="card-footer">
+        <div class="btn-group" role="group" arial-label="movimiento entre dias">
+            <button class="me-2 btn btn-warning" type="submit"> Ver clases </button>
+            <div class="dropdown">
+              <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown">
+                Selecciona un día
+              </button>
+              <ul class="dropdown-menu">
+                <% (@fecha.at_beginning_of_week .. @fecha.at_end_of_week-2).each do |d| %>
+                    <li><%= link_to  I18n.t('date.day_names')[d.strftime('%w').to_i].upcase  + " " + d.strftime('%d'), clase_dia_path(:fecha => d), method: :post, class: "dropdown-item" %></li>
+                <%end%>
+
+              </ul>
+             </div>
+        </div>
+     </div> <!-- cierre footer -->
+    <% end %>
+</div>
+
+
+<!-- formularios Modales para altas Alumnos-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="altaAlumno-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="altaAlumno-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_for(ClaseAlumno.new, url: instructor_alta_alumno_path) do |f| %>
+              <div class="modal-body">
+                      <%= f.collection_select :usuario_id, Usuario.where(debaja: false).order(:nombre), :id, :nombre, prompt: true %> </br>
+                      <%= f.hidden_field :clase_id, value: cl.id %>
+                      <%= f.hidden_field :claseAlumnoEstado_id, value: 1 %>
+                      <input type="hidden" id="fecha_dia" name="fecha" value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Añadir Alumno </button>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+<%end%>
+
+<!-- formularios Modales para quitar alumnos-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="quitar-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="quitar-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_tag(instructor_baja_alumnos_path, method: :post) do %>
+              <div class="modal-body">
+                  <select class="form-select"  name="clase_alumno_id" id="baja_clase_alumno_id">
+                      <% cl.claseAlumno.each do |clAlm|%>
+                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre%> </option>
+                      <% end %>
+                  </select>
+                  <input type="hidden" id="baja_fecha_dia" name="fecha"    value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Quitar Alumno </button>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+<%end%>
+
+<!-- formularios Modales para altas Pruebas-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="altaPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="altaPrueba-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <%= form_tag(clase_alta_prueba_path, method: :post) do %>
+              <div class="modal-body">
+                  <label for="alta_prueba_nombre", class="form-label"> Nombre del alumno </label>
+                  <input type="text" class="form-control" id="alta_prueba_nombre" name="nombre" placeholder="nombre del alumno" >
+                  <label for="alta_prueba_movil", class="form-label"> Móvil </label>
+                  <input type="text"  class="form-control" id="alta_prueba_movil" name="movil" placeholder="móvil del alumno" >
+                  <input type="hidden" id="alta_prueba_clase_id" name="clase_id"    value="<%=cl.id%>" >
+                  <input type="hidden" id="alta_prueba_fecha"    name="fecha"       value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir prueba"> Añadir para probar </button>
+              </div>
+            <% end %>
+        </div>
+      </div>
+    </div>
+<%end%>
+
+<!-- formularios Modales para quitar Pruebas-->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="quitarPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalQuitarPrueba" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="quitarPrueba-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <%= form_tag(instructor_baja_prueba_path, method: :post) do %>
+                  <div class="modal-body">
+                      <select class="form-select"  name="prueba_id" id="baja_clase_alumno_id">
+                          <% cl.pruebas.each do |clPrb|%>
+                              <option value="<%=clPrb.id%>"> <%=clPrb.nombre%> </option>
+                          <% end %>
+                      </select>
+                      <input type="hidden" id="baja_prueba_fecha"    name="fecha"       value="<%=cl.diaHora.to_s%>" >
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="commit" value="baja prueba"> quitar para probar </button>
+                  </div>
+              <% end %>
+          </div>
+      </div>
+    </div>
+<%end%>
+
+
+
+<script>
+// jQuery función para ocultar los alumnos según su estado en la vista dia del controlador clase
+$(document).ready(function() {
+  //set initial state.
+  $('#colorCheck-126-1').val($(this).is(':checked'));
+
+  $('#colorCheck-126-1').change(function() {
+    $('#textbox1').val($(this).is(':checked'));
+  });
+
+  $('#colorCheck-126-1#').click(function() {
+    if (!$(this).is(':checked')) {
+      return confirm("Are you sure?");
+    }
+  });
+});
+</script>

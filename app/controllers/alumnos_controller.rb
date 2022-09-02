@@ -2,18 +2,27 @@ class AlumnosController < ApplicationController
   require 'ficha_alumno.rb'
 
   def index
+      unless AlumnosPolicy.new(current_usuario).verIndex?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @alumnos = Usuario.where(debaja: [false,  nil]).all
   end
 
   def clientes
+      unless AlumnosPolicy.new(current_usuario).verClientes?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @alumnos = Cliente.all
   end
 
   def actualizar
+      unless AlumnosPolicy.new(current_usuario).verActualizar?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @cliente = Cliente.find(params[:id])
       cli = @cliente
       if Usuario.exists?(["codigofacturacion = ?", cli.codcliente])
-                puts "... Actualizando ... " 
+                puts "... Actualizando ... "
                 usr = Usuario.where("codigofacturacion = ?", cli.codcliente).first
                 usr.email = cli.email
                 usr.nombre = cli.nombre
@@ -45,7 +54,7 @@ class AlumnosController < ApplicationController
                 puts "\n"
                 usr.save
             else
-                puts "... Alta ... " 
+                puts "... Alta ... "
                 usr = Usuario.new
                 usr.email = cli.email
                 usr.nombre = cli.nombre
@@ -84,7 +93,7 @@ class AlumnosController < ApplicationController
                         puts msg
                         puts "\n"
                     end
-                        
+
                 else
                     puts "sin error"
                     usr.errors.full_messages
@@ -93,6 +102,9 @@ class AlumnosController < ApplicationController
   end
 
   def procesos
+      unless AlumnosPolicy.new(current_usuario).verProcesos?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       if params[:proceso].blank?
           proceso = 2
       else
@@ -127,16 +139,23 @@ class AlumnosController < ApplicationController
       else
           ProcesoEstadoAlumno.new(Usuario_id: alumno, procesoEstado_id: proceso).save
       end
-      redirect_to alumnos_procesos_path(proceso: proceso)
+
+      redirect_to alumnos_procesos_get_path(ProcesoEstado.where(id: proceso).first.proceso_id)
   end
 
   def business
+      unless AlumnosPolicy.new(current_usuario).verBusiness?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @fecha = params[:fecha].to_datetime
       @fechaFin = DateTime.now
       @alumnos = Usuario.where(debaja: [false,  nil]).where(created_at: @fecha.beginning_of_month..@fechaFin.end_of_month).all
   end
 
   def show
+      unless AlumnosPolicy.new(current_usuario).verShow?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @id = params[:id]
       @almn = Usuario.find(params[:id])
       @claseAlumno = ClaseAlumno.where(usuario_id: @id)
@@ -162,16 +181,25 @@ class AlumnosController < ApplicationController
   end
 
   def ficha
+      unless AlumnosPolicy.new(current_usuario).verFicha?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @id = params[:id]
       @almn = Usuario.find(params[:id])
   end
 
   def sepa
+      unless AlumnosPolicy.new(current_usuario).verSepa?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       @id = params[:id]
       @almn = Usuario.find(params[:id])
   end
 
   def regalo
+      unless AlumnosPolicy.new(current_usuario).verRegalo?
+        render :file => "public/401.html", :status => :unauthorized
+      end
       usr= Usuario.find(params[:id])
       usr.regalo = (not usr.regalo)
       usr.save

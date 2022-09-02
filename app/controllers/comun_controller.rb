@@ -6,7 +6,7 @@ class ComunController < ApplicationController
       if current_usuario && current_usuario.michon?
           redirect_to michon_path
       elsif current_usuario && current_usuario.instructor?
-          redirect_to michon_path
+          redirect_to instructor_index_path
       elsif current_usuario && current_usuario.yogui?
           redirect_to alumnos_path(current_usuario.id)
       else
@@ -15,11 +15,19 @@ class ComunController < ApplicationController
   end
 
   def michon
-      @fechaHoy = Date.today
-      @alumnosTotal = Horario.first.alumnosTotal
+      if ComunPolicy.new(current_usuario).verMichon?
+        @fechaHoy = Date.today
+        @alumnosTotal = Horario.first.alumnosTotal
+      else
+        render :file => "public/401.html", :status => :unauthorized
+      end
   end
 
   def facturacion
+      unless ComunPolicy.new(current_usuario).verFacturacion?
+        render :file => "public/401.html", :status => :unauthorized
+      end
+
       @fechaHoy = Date.today
       @alumnosTotal = HorarioAlumno.select("distinct usuario_id")
       @clientes = Cliente.where(debaja: :false)

@@ -53,6 +53,22 @@ RailsAdmin.config do |config|
     list do
         scopes [:activo]
     end
+    field :nombre
+    field :dni
+    field :telefono
+    field :movil
+    field :direccion
+    field :pais
+    field :localidad
+    field :provincia
+    field :cp
+    field :iban
+    field :debaja
+    field :codigofacturacion
+    field :admin
+    field :regalo
+    field :grupoAlumno
+    field :rol
   end
 
   config.model 'Horario' do
@@ -97,7 +113,17 @@ RailsAdmin.config do |config|
       field :nombre
   end
 
+  config.model 'GrupoAlumno' do
+      object_label_method do
+          :grupoAlumno_label_method
+      end
+  end
 
+
+
+  def grupoAlumno_label_method
+      self.nombre
+  end
 
   def prueba_label_method
       self.nombre

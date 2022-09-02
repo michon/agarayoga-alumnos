@@ -1,0 +1,42 @@
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand">AgâraYoga</a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                <ul class="navbar-nav navbar-dark">
+                  <%= link_to 'instructor', indice_path, class: "nav-item nav-link active" %>
+
+                  <li class="nav-item dropdown" id="desplegableClases">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Clases</a>
+                    <ul class="dropdown-menu">
+                      <li> <%= link_to "Clases de hoy",         instructor_dia_path(:fecha => DateTime.now),    method: :post, class: "dropdown-item" %></li>
+                      <li> <%= link_to "Clases de esta semana", clase_semana_path(:fecha => Date.today), method: :post, class: "dropdown-item disabled" %></li>
+                    </ul>
+                  </li>
+
+
+                  <li class="nav-item dropdown" id="desplegableHorarios">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"> Horario </a>
+                    <ul class="submenu dropdown-menu">
+                      <li><%= link_to 'General',      horario_index_path, class: "dropdown-item disabled" %></li>
+                    </ul>
+                  </li>
+
+                  <li class="nav-item dropdown" id="desplegableHorarios">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"> Alumnos </a>
+                    <ul class="submenu dropdown-menu">
+                      <li> <%= link_to "Procesos", alumnos_procesos_get_path(Proceso.last.id), class: "dropdown-item"  %></li>
+                    </ul>
+                  </li>
+
+                </ul>
+
+
+                <%= render 'layouts/menu_usuario' %>
+
+            </div>
+        </div>
+    </nav>

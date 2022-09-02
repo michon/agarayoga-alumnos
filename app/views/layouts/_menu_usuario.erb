@@ -1,0 +1,18 @@
+
+                <ul class="navbar-nav navbar-dark">
+                    <% if current_usuario %>
+                        <li class="dropdown" id="desplegableUsuarios">
+                          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"> <%=" #{current_usuario.nombre} (#{current_usuario.rol})"  %> </a>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                              <%= link_to 'Abandonar sesión', destroy_usuario_session_path, data: { turbo: false }, class: "dropdown-item" %>
+                          </ul>
+                        </li>
+                    <%else%>
+                          <li class="nav-item nav-menu-end">
+                              <%= link_to 'Autenticarse', new_usuario_session_path,       class: "nav-link" %>
+                          </li>
+                          <li class="nav-item nav-menu-end">
+                              <%= link_to 'Darse de alta', new_usuario_registration_path, class: "nav-link" %>
+                          </li>
+                    <%end%>
+                </ul>
