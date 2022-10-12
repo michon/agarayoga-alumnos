@@ -1,12 +1,154 @@
+
+<!-- Título de la página -->
+<% content_for :title,  "Horario Completo" %>
+
+<div class="container py-5 custom_tab_style1_outer">
+      <ul class="nav nav-tabs custom_tab_style1" id="myTab" role="button">
+        <% @instructores.each do |ins| %>
+          <li class="nav-item" role="presentation" type="button">
+            <button class="nav-link bg-<%= ins.color%> text-black" id="<%=ins.id.to_s%>-tab" data-bs-toggle="tab" data-bs-target="#instructor-<%=ins.id.to_s%>" type="button" role="tab" aria-controls="<%=ins.id.to_s%>" aria-selected="false"><%=ins.nombre%></button>
+          </li>
+        <% end %>
+        <li class="nav-item" role="presentation" type="button">
+          <button class="nav-link active bg-light text-black" id="instructor-9" data-bs-toggle="tab" data-bs-target="#instructor-9" type="button" role="tab" aria-controls="9" aria-selected="false">Crear Horario</button>
+        </li>
+        <li class="nav-item" role="presentation" type="button">
+          <button class="nav-link active bg-light text-black" id="instructor-10" data-bs-toggle="tab" data-bs-target="#instructor-10" type="button" role="tab" aria-controls="10" aria-selected="false">Completo</button>
+        </li>
+      </ul>
+
+      <div class="tab-content  mt-5" id="myTabContent">
+
+
+        <% @instructores.each do |ins| %>
+          <div class="tab-pane fade" id="instructor-<%=ins.id.to_s%>" role="tabpanel" aria-labelledby="<%=ins.id%>-tab">
+            <div class= "container">
+              <% @horasDistintasInstructor.where(instructor_id: ins.id).each do |hr| %>
+                <div class="row"  >
+                  <% @diasDistintos.each do |dia| %>
+                  <% cl = @horario.where(diaSemana: dia.diaSemana, hora: hr.hora, minuto: hr.minuto).first %>
+                  <div class="col-md-3 col-lg-2">
+                    <div class="mb-3 card shadow-2 border-<%= ins.color %>">
+                      <div class="card-header bg-<%= ins.color %> border-<%= ins.color %>">
+                          <h5 class="d-flex justify-content-between">
+                              <span class="card-title"><%= "#{hr.hora.to_s.rjust(2,'0')}:#{hr.minuto.to_s.rjust(2,'0')}" %> </span>
+                              <span class="card-title"><%= "#{I18n.t('date.day_names')[dia.diaSemana.to_i].upcase}"%> </span>
+                          </h5>
+                      </div>
+                      <div class="card-body p-2">
+                          <%unless cl.blank?   %>
+                             <% horarioAlumno_array = cl.horarioAlumno.to_a %>
+                            <% (0..9).each do |idx| %>
+                              <% unless horarioAlumno_array[idx].blank? || horarioAlumno_array[idx].horario.instructor_id != ins.id %>
+                                 <p> <%= horarioAlumno_array[idx].usuario.nombre[0..15]  unless horarioAlumno_array[idx].blank? %></p>
+                              <% else %>
+                                 <p> <br /> </p>
+                              <% end %>
+                            <%end%>
+                          <%else%>
+                            <% (0..9).each do |idx| %>
+                              <p> <br /> </p>
+                            <%end%>
+                          <%end%>
+                      </div>
+                      <div class="card-footer">
+                        <p>
+                          <span class="text-primary"> <%= "#{cl.horarioAlumno.count unless cl.blank?}" %> </span> alumnos
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <% end %>
+
+        <div class="tab-pane fade" id="instructor-9" role="tabpanel" ariaabelledby="9-tab">
+          <h3> Horario Completo </h3>
+          <div class= "container">
+              <% @horasDistintas.each do |hr| %>
+                <div class="row"  >
+                  <% @diasDistintos.each do |dia| %>
+                  <% cl = @horario.where(diaSemana: dia.diaSemana, hora: hr.hora, minuto: hr.minuto).first %>
+                  <div class="col-md-3 col-lg-2">
+                    <div class="mb-3 card shadow-2 border-<%= cl.instructor.color unless cl.blank?  %>">
+                    <div class="card-header bg-<%= cl.instructor.color unless cl.blank? %> border-<%= cl.instructor.color unless cl.blank? %>">
+                          <h5 class="d-flex justify-content-between">
+                              <span class="card-title"><%= "#{hr.hora.to_s.rjust(2,'0')}:#{hr.minuto.to_s.rjust(2,'0')}" %> </span>
+                              <span class="card-title"><%= "#{I18n.t('date.day_names')[dia.diaSemana.to_i].upcase}"%> </span>
+                          </h5>
+                          <h7 class="d-flex justify-content-between">
+                            <%unless cl.blank? %>
+                              <span> <%= cl.horarioAlumno.count %></span>
+                              <span> <%= cl.instructor.nombre.split(' ').first%> </span>
+                            <%else%>
+                              <span><br> </span>
+                              <span><br> </span>
+                            <%end%>
+                          </h7>
+                      </div>
+                      <div class="card-body p-2">
+                          <%unless cl.blank? %>
+                             <% horarioAlumno_array = cl.horarioAlumno.to_a %>
+                            <% (0..9).each do |idx| %>
+                              <% unless horarioAlumno_array[idx].blank? %>
+                                 <p title="<%= horarioAlumno_array[idx].usuario.nombre %>"> <%= horarioAlumno_array[idx].usuario.nombre[0..15]  unless horarioAlumno_array[idx].blank? %></p>
+                              <% else %>
+                                 <p> <br /> </p>
+                              <% end %>
+                            <%end%>
+                          <%else%>
+                            <% (0..9).each do |idx| %>
+                              <p> <br /> </p>
+                            <%end%>
+                          <%end%>
+                      </div>
+                      <div class="card-footer ">
+                          <%unless cl.blank? %>
+                            <p><%= cl.instructor.nombre %></p>
+                          <%else%>
+                            <p><br></p>
+                          <%end%>
+                      </div>
+                    </div>
+                  </div>
+                  <% end %>
+                </div>
+              <% end %>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="instructor-10" role="tabpanel" aria-labelledby="10-tab">
+          <div class= "container">
+            <div class="row"  >
+              <div class="col-md-12 col-lg-12">
+                <div class="mb-3 card shadow-2 border-light  %>">
+                  <div class="card-header bg-light border-light">
+                    <p>formulario</p>
+                  </div>
+                  <div class="card-body p-2">
+                  </div>
+                    <%= form_tag('/horario/crear_horario_semanal', method: :post) do %>
+                        <label for="fecha">comienzo de Semana</label>
+                        <input id="fecha" name="fecha" class="form-control" type="date" />
+                        <button type="submit"> crear horario para la fecha </button>
+                    <% end %>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+  </div>
+</div>
+
 <div class="container-fluid">
 <h1>Horario: Plantilla General</h1>
 
 
-<%= form_tag('/horario/crear_horario_semanal', method: :post) do %>
-    <label for="fecha">comienzo de Semana</label>
-    <input id="fecha" name="fecha" class="form-control" type="date" />
-    <button type="submit"> crear horario para la fecha </button>
-<% end %>
 
 
 <table class="table-responsibe table-bordered">
@@ -34,7 +176,6 @@
                             <% end %>
                         </ol>
                         <%end%>
-
                     </td>
                 <% end %>
             </tr>

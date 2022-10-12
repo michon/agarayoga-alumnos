@@ -62,8 +62,9 @@ class ClaseController < ApplicationController
   # Método POST
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaPrueba
+      clAlmId = Prueba.find(params[:prueba_id]).clase_id
       Prueba.find(params[:prueba_id]).destroy
-      redirect_to clase_dia_url(params[:fecha])
+      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
   end
 
   # Método POST
@@ -72,14 +73,15 @@ class ClaseController < ApplicationController
       fecha = params[:fecha]
 
       Prueba.new(nombre: params[:nombre], movil: params[:movil], clase_id: params[:clase_id]).save
-      redirect_to clase_dia_url(params[:fecha])
+      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{params[:clase_id]}")
   end
 
   # Método POST
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaAlumnos
+      clAlmId = ClaseAlumno.find(params[:clase_alumno_id]).clase_id
       ClaseAlumno.find(params[:clase_alumno_id]).destroy
-      redirect_to clase_dia_url(params[:fecha])
+      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
   end
 
   # Método POST
@@ -97,7 +99,7 @@ class ClaseController < ApplicationController
       clAlm.instructor_id = Clase.find(clAlmParam[:clase_id]).instructor_id
       clAlm.save
 
-      redirect_to clase_dia_url(params[:fecha])
+      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlm.clase_id}")
   end
 
   # Método POST
@@ -112,15 +114,17 @@ class ClaseController < ApplicationController
   # con la tabla claseAlumnoEstado.
   def estado
     accion = 0
+    clase = " "
     params.each do |p|
         if p[0].start_with?('accion') then
             accion = p[1]
+            clase = p[0]
         end
      end
 
      fijarEstado(params[:alumnos_ids],accion.to_i)
 
-     redirect_back(fallback_location: clase_semana_url(Date.today))
+     redirect_to "#{request.referrer}#clase-#{clase.split('#')[1]}"
   end
 
   protected

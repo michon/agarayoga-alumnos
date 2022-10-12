@@ -69,12 +69,20 @@ RailsAdmin.config do |config|
     field :regalo
     field :grupoAlumno
     field :rol
+    field :instructor
   end
 
   config.model 'Horario' do
+      list do
+        field :clase_humano
+        field :instructor
+
+        sort_by 'diaSemana, hora, minuto'
+      end
       object_label_method do
           :horario_label_method
       end
+
       field :diaSemana, :enum do
         enum_method do
             :diasemana_enum
@@ -96,6 +104,9 @@ RailsAdmin.config do |config|
   end
 
   config.model 'Clase' do
+    list do
+      sort_by :diaHora
+    end
       object_label_method do
           :clase_label_method
       end

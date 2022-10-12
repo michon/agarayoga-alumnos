@@ -1,11 +1,14 @@
+<!-- Título de la página -->
+<% cl = @clasesHoy.first %>
+<% content_for :title,  " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase}" %>
+
 
   <!-- Dibuja un card por clase  que contiene cada uno de los alumnos -->
-
   <div class="row">
     <% @clasesHoy.each do |cl| %>
     <div class="col-md-6 col-lg-4">
         <div class="pb-4 mb-3 card">
-            <div class="card-header">
+            <div id="clase-<%=cl.id%>" class="card-header">
                 <h5 class="d-flex justify-content-between">
                     <span class="card-title"><%= "#{cl.diaHora.strftime('%H:%M')}" %> </span>
                     <span class="text-right"><%= cl.asistentes %></span>
@@ -18,20 +21,24 @@
             <% idx = 0 %>
                 <div class="card-body">
                     <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% unless clalm.usuario.blank? %>
                       <% unless clalm.usuario.grupoAlumno_id == 5 %>
                           <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
                             <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                             <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
                           </div>
                       <%end %>
+                      <%end %>
                     <%end %>
 
                     <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% unless clalm.usuario.blank? %>
                       <% if clalm.usuario.grupoAlumno_id == 5 %>
                           <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
                             <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                             <label class="form-check-label text-muted"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
                           </div>
+                      <%end %>
                       <%end %>
                     <%end %>
                 </div>
@@ -195,7 +202,7 @@
               <div class="modal-body">
                   <select class="form-select"  name="clase_alumno_id" id="baja_clase_alumno_id">
                       <% cl.claseAlumno.each do |clAlm|%>
-                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre%> </option>
+                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre unless clAlm.usuario.blank? %> </option>
                       <% end %>
                   </select>
                   <input type="hidden" id="baja_fecha_dia" name="fecha"    value="<%=cl.diaHora.to_s%>" >
@@ -267,6 +274,7 @@
           </div>
       </div>
     </div>
+  </div>
 <%end%>
 
 

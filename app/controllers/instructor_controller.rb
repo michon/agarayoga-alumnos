@@ -18,7 +18,7 @@ class InstructorController < ApplicationController
 
         @recibos = Reciboscli.all
         @Usuario = Usuario
-        
+
        #Deberia comprobar la tabla reciboscli de la facturación para ver si no tiene recibos pendientes.
        #En caso afirmativo, se cuenta para pagar a Raquel
        #En caso negativo no.
@@ -42,7 +42,7 @@ class InstructorController < ApplicationController
       end
 
     @fecha = params[:fecha].to_datetime
-    @clasesHoy = Clase.where(:diaHora => @fecha.beginning_of_day..@fecha.end_of_day, instructor: 2).order(:diaHora)
+    @clasesHoy = Clase.where(:diaHora => @fecha.beginning_of_day..@fecha.end_of_day, instructor: current_usuario.instructor_id).order(:diaHora)
     if @clasesHoy.blank?
       clase_vacia
     end

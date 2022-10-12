@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>AgarayogaAlumnos</title>
+  <head class="container">
+    <title> <%= yield(:title) %></title>
+    <%= favicon_link_tag '/favicon.ico' %>
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -14,7 +16,7 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>
+  <body class="container">
       <% if current_usuario && current_usuario.michon? %>
           <%= render 'layouts/menu_michon' %>
       <%elsif current_usuario && current_usuario.admin?%>
@@ -35,7 +37,7 @@
         <%= yield %>
     </div>
 
-    <footer>
+    <footer class="container">
         <div class="row">
             <div class="col-md-6">
                 <p>Copyright &copy; 2021 Tutorial Republic</p>

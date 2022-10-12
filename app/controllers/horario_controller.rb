@@ -3,6 +3,8 @@ class HorarioController < ApplicationController
 
   def index
 
+      @instructores = Instructor.all
+
       # horarioGeneral es un hash que tiene una entrada por cada hora (key) que
       # tenemos en el horario, cada una de estas entradas  contendrá otro hash
       # cuya clave será el día de la semana y el contenido un resitro de hoario.
@@ -10,7 +12,11 @@ class HorarioController < ApplicationController
       if HorarioPolicy.new(current_usuario).verIndex?
         @horarioGeneral = Hash.new
         @horasDistintas = Horario.select(:hora, :minuto).order(:hora).distinct
+        @horasDistintasInstructor = Horario.select(:instructor_id, :hora, :minuto).order(:instructor_id, :hora).distinct
+        @alumnosPorInstructor = HorarioAlumno.all
+        @alumnosInstrucorYClase = Horario.joins(:horarioAlumno).group(:instructor_id, :horario_id).select('horarios.*, count(horario_id) as cuenta').order(cuenta: :DESC)
         @diasDistintos = Horario.select(:diaSemana).order(:diaSemana).distinct
+        @horario = Horario.all
 
         @diasArray = Array.new
         @horasDistintas.each do |h|

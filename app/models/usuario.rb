@@ -3,6 +3,7 @@ class Usuario < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   belongs_to :grupoAlumno
   has_many :horarioAlumno
+  has_one :instructor
   has_one_attached :image, :dependent => :destroy
 
   scope :activo, -> {where(debaja: false)}

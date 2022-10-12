@@ -17,20 +17,24 @@
             <% idx = 0 %>
                 <div class="card-body">
                     <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% unless clalm.usuario.blank? %>
                       <% unless clalm.usuario.grupoAlumno_id == 5 %>
                           <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
                             <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                             <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
                           </div>
                       <%end %>
+                      <%end %>
                     <%end %>
 
                     <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                      <% unless clalm.usuario.blank? %>
                       <% if clalm.usuario.grupoAlumno_id == 5 %>
                           <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
                             <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                             <label class="form-check-label text-muted"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
                           </div>
+                      <%end %>
                       <%end %>
                     <%end %>
                 </div>
@@ -194,7 +198,7 @@
               <div class="modal-body">
                   <select class="form-select"  name="clase_alumno_id" id="baja_clase_alumno_id">
                       <% cl.claseAlumno.each do |clAlm|%>
-                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre%> </option>
+                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre unless clAlm.usuario.blank? %> </option>
                       <% end %>
                   </select>
                   <input type="hidden" id="baja_fecha_dia" name="fecha"    value="<%=cl.diaHora.to_s%>" >
