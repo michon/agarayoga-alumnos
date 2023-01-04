@@ -1,0 +1,3 @@
+class ReciboEstado < ApplicationRecord
+
+end

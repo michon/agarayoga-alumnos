@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+
+  get    'recibo/pagos/',      to: 'recibo#pagos',        as: 'recibo/pagos'
+  get    'recibo/facturar',    to: 'recibo#facturar',     as: 'recibo/facturar'
+  get    'recibo/pagar/:id',          to: 'recibo#pagar',     as: 'recibo/pagar'
+  get    'recibo/generar/:fecha',     to: 'recibo#generar',   as: 'recibo/generar'
+  get    'recibo/estado/:id/:estado', to: 'recibo#estado',    as: 'recibo/estado'
+  post   'recibo/busqueda',           to: 'recibo#busqueda',  as: "recibo/busqueda"
+  post   'recibo/remesar',            to: 'recibo#remesar',   as: "recibo/remesar"
+
   get    'clase/semana/:fecha', to: "clase#semana",       as: "clase/semana"
   get    'clase/dia/:fecha',    to: 'clase#dia',          as: "clase/dia"
   get    'clase/actual'
@@ -11,18 +20,18 @@ Rails.application.routes.draw do
   post   'clase/estado',        to: 'clase#estado',       as: "clase/estado"
 
 
-  get 'horario/index'
-  get 'horario/libre'
-  post 'horario/crear_horario_semanal', to: 'horario#crearClases'
+  get    'horario/index'
+  get    'horario/libre'
+  post   'horario/crear_horario_semanal', to: 'horario#crearClases'
 
-  get  'instructor/index'
-  get  'instructor/show/:id/:fecha',     to: 'instructor#show', as: 'instructor'
-  get  'instructor/dia/:fecha',          to: 'instructor#dia',  as: "instructor/dia"
-  post 'instructor/dia',                 to: 'instructor#seleccionDia', as: "instructor/seleccion_dia"
-  post   'instructor/altaAlumno',    to: 'instructor#altaAlumno',   as: "instructor/alta_alumno"
-  post   'instructor/bajaAlumnos',   to: 'instructor#bajaAlumnos',  as: "instructor/baja_alumnos"
-  post   'instructor/altaPrueba',    to: 'instructor#altaPrueba',   as: "instructor/alta_prueba"
-  post   'instructor/bajaPrueba',    to: 'instructor#bajaPrueba',   as: "instructor/baja_prueba"
+  get    'instructor/index'
+  get    'instructor/show/:id/:fecha',to: 'instructor#show', as: 'instructor'
+  get    'instructor/dia/:fecha',     to: 'instructor#dia',  as: "instructor/dia"
+  post   'instructor/dia',            to: 'instructor#seleccionDia', as: "instructor/seleccion_dia"
+  post   'instructor/altaAlumno',     to: 'instructor#altaAlumno',   as: "instructor/alta_alumno"
+  post   'instructor/bajaAlumnos',    to: 'instructor#bajaAlumnos',  as: "instructor/baja_alumnos"
+  post   'instructor/altaPrueba',     to: 'instructor#altaPrueba',   as: "instructor/alta_prueba"
+  post   'instructor/bajaPrueba',     to: 'instructor#bajaPrueba',   as: "instructor/baja_prueba"
 
   get  'alumnos/index'
   get  'alumnos/clientes'

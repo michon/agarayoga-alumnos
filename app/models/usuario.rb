@@ -3,11 +3,13 @@ class Usuario < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   belongs_to :grupoAlumno
   has_many :horarioAlumno
+  has_many :recibos
   has_one :instructor
   has_one_attached :image, :dependent => :destroy
 
   scope :activo, -> {where(debaja: false)}
   scope :inactivos, -> {where(debaja: true)}
+  default_scope { order(nombre: :desc) }
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable

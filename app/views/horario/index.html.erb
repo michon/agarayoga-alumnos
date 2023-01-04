@@ -2,7 +2,16 @@
 <!-- Título de la página -->
 <% content_for :title,  "Horario Completo" %>
 
+
 <div class="container py-5 custom_tab_style1_outer">
+  <div class="">
+    <%= form_tag('/horario/crear_horario_semanal', method: :post) do %>
+      <label for="fecha">comienzo de Semana</label>
+      <input id="fecha" name="fecha" class="form-control" type="date" />
+      <button type="submit"> crear horario para la fecha </button>
+    <% end %>
+  </div>
+
       <ul class="nav nav-tabs custom_tab_style1" id="myTab" role="button">
         <% @instructores.each do |ins| %>
           <li class="nav-item" role="presentation" type="button">
@@ -65,7 +74,7 @@
           </div>
           <% end %>
 
-        <div class="tab-pane fade" id="instructor-9" role="tabpanel" ariaabelledby="9-tab">
+        <div class="tab-pane fade show active" id="instructor-9" role="tabpanel" ariaabelledby="9-tab">
           <h3> Horario Completo </h3>
           <div class= "container">
               <% @horasDistintas.each do |hr| %>

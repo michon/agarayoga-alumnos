@@ -1,0 +1,110 @@
+
+<div class="row justify-content-left">
+  <div class="col-8 col-lg-6 col-xl-5">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCard" aria-expanded="false" aria-controls="filtrosCard">
+      Filtros
+    </button>
+    <div class="card collapse" id="filtrosCard">
+      <div class="card-body p-4 p-md-5">
+        <%= form_tag(recibo_busqueda_path, method: :post) do %>
+          <div class="form-outline mb-4 justify-content-left">
+            <div class="row mb-4 ">
+              <div class="d-flex justify-content-between flex-row-reverse ">
+                  <% (1..4).each do |idx| %>
+                    <input name="busquedaMes" class="btn-check" type="radio" value="<%=idx%>" <%= @parametros[:busquedaMes].to_i == idx ? 'checked' : '' %> id="checkMes-<%=idx%>">
+                    <label class="btn btn-outline-primary flex-fill" for="checkMes-<%=idx%>">
+                        <%= I18n.t('date.month_names')[(idx+3).month.ago.month.to_i].capitalize %>
+                    </label>
+                  <% end %>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="d-flex justify-content-between flex-row-reverse">
+                <input name="busquedaMes" class="btn-check" type="radio" value="13" id="checkMes-13">
+                <label class="btn btn-outline-primary flex-fill" for="checkMes-13">
+                    Todos
+                </label>
+                <% (1..3).each do |idx| %>
+                    <input name="busquedaMes" class="btn-check" type="radio" value="<%=idx%>" <%= @parametros[:busquedaMes].to_i == idx ? 'checked' : '' %> id="checkMes-<%=idx%>">
+                    <label class="btn btn-outline-primary flex-fill" for="checkMes-<%=idx%>">
+                        <%= I18n.t('date.month_names')[(idx.month.ago).month.to_i].capitalize unless idx < 1%>
+                    </label>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="d-flex justify-content-between">
+                <% @rcbEstado.each do |stdo| %>
+                  <% estado = ''%>
+                  <% unless @parametros[:busquedaEstado].blank? then %>
+                    <% if @parametros[:busquedaEstado].include?(stdo.id.to_s) then %>
+                      <% estado = 'checked' %>
+                    <% end %>
+                  <% end %>
+
+                  <input name="busquedaEstado[]" class="btn-check" type="checkbox" value="<%=stdo.id%>" <%= estado  %> id="checkEstado-<%=stdo.id%>">
+                  <label class="flex-fill btn btn-outline-<%=stdo.color%>" for="checkEstado-<%=stdo.id%>">
+                    <%= stdo.nombre %>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <input id="nombre" type="text" name="busquedaNombre" value="<%= @parametros[:busquedaNombre]%>" class="form-control", placeholder="Nombre del Alumno">
+            </div>
+
+            <div class="row mb-4">
+              <button class="btn btn-primary btn-block mb-4kkO" type="submit"> Filtrar </button>
+            </div>
+          </div>
+        <% end %>
+    </div>
+  </div>
+</div>
+
+
+<div class="d-flex w-100 justify-content-end">
+  <% @rcbEstado.each do |stdo| %>
+    <button class="p-2 m-2 btn btn-<%=stdo.color%>" type="submit"><%=stdo.nombre%></button>
+  <% end %>
+</div>
+
+<ul class="list-group">
+<% @rcbs.each do |rcb| %>
+  <li class="list-group-item ">
+    <div class="m-0 p-0 d-flex w-100 justify-content-between">
+      <div class="flex-fill btn btn-<%=rcb.reciboEstado.color%> ">
+        <h5><%= rcb.usuario.nombre + ' (' + rcb.importe.to_s + '€) ' unless rcb.usuario.blank? %> </h5>
+      </div>
+      <div class="d-flex justify-content-between">
+        <% @rcbEstado.each do |stdo| %>
+          <% unless rcb.reciboEstado_id == stdo.id  then %>
+              <%= form_tag(recibo_busqueda_path, method: :post) do %> <!-- Vista horario dia -->
+                <% unless @parametros[:busquedaEstado].blank? then %>
+                  <% @parametros[:busquedaEstado].each do |id| %>
+                    <%= hidden_field_tag "busquedaEstado[]", id %>
+                  <% end %>
+                <%end %>
+                    <input name="busquedaMes"  type="hidden" value="<%= @parametros[:busquedaMes]%>">
+                    <input name="busquedaNombre"  type="hidden" value="<%= @parametros[:busquedaNombre]%>">
+                    <input name="accion"  type="hidden" value="<%= stdo.id %>">
+                    <input name="recibo"  type="hidden" value="<%= rcb.id %>">
+
+                    <button class="m-2 btn btn<%= (rcb.reciboEstado_id == stdo.id) ? "-" : "-outline-" %><%= stdo.color %>" type="submit"> <%= stdo.nombre %> </button>
+              <% end %>
+          <%else%>
+              <button class="m-2 btn btn<%= (rcb.reciboEstado_id == stdo.id) ? "-" : "-outline-" %><%= stdo.color %>" disabled type="submit"> <%= stdo.nombre %> </button>
+          <%end%>
+        <% end %>
+        <a class="m-2 btn btn-primary" href="#" role="button">Imprimir</a>
+        <a class="m-2 btn btn-primary" href="#" role="button">Modificar</a>
+        <a class="m-2 btn btn-primary" href="#" role="button">Ver</a>
+        <a class="m-2 btn btn-danger" href="#" role="button">Factura</a>
+      </div>
+    </div>
+  </li>
+
+<% end %>
+</ul>

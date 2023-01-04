@@ -106,6 +106,15 @@
 
           <div class="car-body m-3 py-3 text-center">
               <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+              <%= link_to 'Generar Recibos',    recibo_generar_path(:fecha => DateTime.now), class: 'btn btn-primary w-100 mb-3', role: "button" %>
+              <%= form_tag(recibo_busqueda_path, method: :post) do %>
+                    <input name="busquedaEstado[]"  type="hidden" value="1"  id="checkEstado-1">
+                    <input name="busquedaMes"  type="hidden" value="<%=Date.current.month%>"  id="checkMes-<%=Date.current.month%>">
+                    <button class="btn btn-primary w-100" type="submit"> Pagos de Recibos </button>
+              <% end %>
+              <%= form_tag(recibo_remesar_path, method: :post) do %> <!-- Remesar  -->
+                    <button class="btn btn-primary w-100" type="submit"> Remesar </button>
+              <% end %>
           </div>
         </div>
         <!-- fin horario card -->

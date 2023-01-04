@@ -40,6 +40,9 @@ RailsAdmin.config do |config|
     # history_show
   end
 
+  config.model 'Inscripcion' do
+  end
+
   config.model 'Instructor' do
     object_label_method do
         :custom_label_method
@@ -130,7 +133,16 @@ RailsAdmin.config do |config|
       end
   end
 
+  config.model 'ReciboEstado' do
+      object_label_method do
+        :reciboEstado_label_method
+      end
+  end
 
+
+  def reciboEstado_label_method
+      self.nombre
+  end
 
   def grupoAlumno_label_method
       self.nombre

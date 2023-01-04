@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  usuario: one
+  rebidoEstado: 
+  importe: 9.99
+
+two:
+  usuario: two
+  rebidoEstado: 
+  importe: 9.99

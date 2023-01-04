@@ -25,7 +25,9 @@ class InstructorController < ApplicationController
        #Luego el proceso normal si tiene menos de 7 12 e si son 7 u 8  18 y si mp 20
 
        @clases.each do |cl|
-         if cl.claseAlumno.count < 7
+         if cl.claseAlumno.count == 0
+                 @total = @total
+             elsif cl.claseAlumno.count < 7
                  @total = @total + 12
              elsif cl.claseAlumno.count < 9
                  @total = @total + 18

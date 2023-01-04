@@ -48,7 +48,9 @@
               </div>
 
               <div class="p-2">
-                    <% if cl.claseAlumno.count < 7 %>
+                    <% if cl.claseAlumno.count == 0 %>
+                            <% importe = 0 %>
+                        <% elsif cl.claseAlumno.count < 7 %>
                             <% importe = 12 %>
                         <% elsif cl.claseAlumno.count < 9 %>
                             <% importe = 18 %>
@@ -64,7 +66,7 @@
           <div class="accordion-body">
                 <ol>
                 <% cl.claseAlumno.order(:claseAlumnoEstado_id).each do |clAlm| %>
-                    <li  class='text-<%=clAlm.claseAlumnoEstado.color%>'><%= clAlm.usuario.nombre %></li>
+                    <li  class='text-<%=clAlm.claseAlumnoEstado.color%>'><%= clAlm.usuario.nombre unless clAlm.usuario.blank? %></li>
                 <% end %>
                 </ol>
           </div>
