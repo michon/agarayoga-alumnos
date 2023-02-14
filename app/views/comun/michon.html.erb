@@ -1,3 +1,4 @@
+<p> parametro <%= @rcb  %> </p>
 
 <section class="container">
     <div class="card-group">
@@ -10,45 +11,29 @@
 
             <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista clases semanal -->
               <div class="row mb-3">
-                <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
-                </div>
-                <div class="col col6">
-                    <button class="btn btn-primary w-100" type="submit"> Ver semana </button>
-                </div>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Ver semana </button>
               </div>
             <% end %>
 
             <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista clases del dia -->
               <div class="row mb-3">
-                <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                </div>
-                <div class="col col6">
-                    <button class="btn btn-primary w-100" type="submit"> Ver clases </button>
-                </div>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Ver clases </button>
               </div>
             <% end %>
 
             <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horas libres semanal -->
               <div class="row mb-3">
-                <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
-                </div>
-                <div class="col col6">
-                    <button class="btn btn-primary w-100" type="submit"> libre esta semana </button>
-                </div>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> libre esta semana </button>
               </div>
             <% end %>
 
             <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista horas libres dia -->
               <div class="row mb-3">
-                <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                </div>
-                <div class="col col6">
-                    <button class="btn btn-primary w-100" type="submit"> libre este dia </button>
-                </div>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> libre este dia </button>
               </div>
             <% end %>
 
@@ -67,12 +52,8 @@
               <%= link_to 'Listado alumnos', alumnos_index_path,   class: 'btn btn-primary w-100 mb-3', role: "button" %>
             <%= form_tag(alumnos_business_path, method: :post) do %> <!-- Vista horario dia -->
               <div class="row mb-3">
-                <div class="col col6">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                </div>
-                <div class="col col6">
-                    <button class="btn btn-primary w-100" type="submit"> Altas e </button>
-                </div>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Altas en </button>
               </div>
             <% end %>
           </div>
@@ -107,13 +88,15 @@
           <div class="car-body m-3 py-3 text-center">
               <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
               <%= link_to 'Generar Recibos',    recibo_generar_path(:fecha => DateTime.now), class: 'btn btn-primary w-100 mb-3', role: "button" %>
+
               <%= form_tag(recibo_busqueda_path, method: :post) do %>
                     <input name="busquedaEstado[]"  type="hidden" value="1"  id="checkEstado-1">
                     <input name="busquedaMes"  type="hidden" value="<%=Date.current.month%>"  id="checkMes-<%=Date.current.month%>">
-                    <button class="btn btn-primary w-100" type="submit"> Pagos de Recibos </button>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Pagos de Recibos </button>
               <% end %>
+
               <%= form_tag(recibo_remesar_path, method: :post) do %> <!-- Remesar  -->
-                    <button class="btn btn-primary w-100" type="submit"> Remesar </button>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Remesar </button>
               <% end %>
           </div>
         </div>

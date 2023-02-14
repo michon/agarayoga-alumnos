@@ -2,7 +2,7 @@
 class HorarioClase
 
     def initialize
-        
+
     end
 
     #crea las clases para una fecha especificada a partir de la plantilla del
@@ -13,7 +13,7 @@ class HorarioClase
             fechaClase = fechaClase.change(hour: h.hora, min: h.minuto)
             cl = Clase.new(diaHora: fechaClase, instructor: h.instructor)
             h.horarioAlumno.each do |ha|
-               cl.claseAlumno.new(usuario: ha.usuario, claseAlumnoEstado_id: 1, diaHora: fechaClase, instructor_id: h.instructor.id) 
+               cl.claseAlumno.new(usuario: ha.usuario, claseAlumnoEstado_id: 1, diaHora: fechaClase, instructor_id: h.instructor.id)
             end
             cl.save
         end

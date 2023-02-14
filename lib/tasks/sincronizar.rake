@@ -1,4 +1,54 @@
 namespace :sincronizar do
+
+    desc "recorre los usuarios y actualiza la referencia del mandato"
+    task referencia: :environment do
+      Usuario.all.each do |usr|
+       unless usr.codigofacturacion.blank?
+         usr.referencia = usr.codigofacturacion + "0"*12 + "1"
+         usr.save
+       end
+      end
+    end
+
+    desc "recorre los recibos y actualiza el concepto "
+    task rcbConcepto: :environment do
+      Recibo.all.each do |rcb|
+       if rcb.concepto.blank?
+         rcb.concepto = "Cuota mensual de AgâraYoga " + I18n.translate(:"date.month_names", :locale => :es)[rcb.created_at.mon] + " " + rcb.created_at.year.to_s
+         rcb.save
+       end
+      end
+    end
+
+    desc "recorre los usuarios y actualiza la serie "
+    task serie: :environment do
+        Usuario.all.each do |usr|
+           if Cliente.exists?(["codcliente = ?", usr.codigofacturacion])
+               cli = Cliente.where("codcliente = ?", usr.codigofacturacion).first
+               unless cli.blank?
+                 usr.serie = cli.codserie
+                 usr.remesa = cli.codserie == "A"
+                 usr.save
+               end
+           end
+        end
+    end
+
+    desc "recorre los usuarios y actualiza el bic y el iban"
+    task banco: :environment do
+        Usuario.all.each do |usr|
+           if Cliente.exists?(["codcliente = ?", usr.codigofacturacion])
+               cli = Cliente.where("codcliente = ?", usr.codigofacturacion).first
+               cta = Cuentasbcocli.find_by(codcliente: cli.codcliente)
+               unless cta.blank?
+                 usr.iban = cta.iban
+                 usr.bic = cta.bic
+                 usr.save
+               end
+           end
+        end
+    end
+
     desc "recorre los usuarios y actualiza el grupo al que pertenecen"
     task grupo: :environment do
         Usuario.all.each do |usr|
@@ -12,10 +62,10 @@ namespace :sincronizar do
 
     desc "accede a la base de datos de facturación y sincroniza los datos"
     task actualizar: :environment do
-        Cliente.all.each do |cli| 
+        Cliente.all.each do |cli|
             puts "Nombre: #{cli.nombre}"
             if Usuario.exists?(["codigofacturacion = ?", cli.codcliente])
-                puts "... Actualizando ... " 
+                puts "... Actualizando ... "
                 usr = Usuario.where("codigofacturacion = ?", cli.codcliente).first
                 usr.email = cli.email
                 usr.nombre = cli.nombre
@@ -47,7 +97,7 @@ namespace :sincronizar do
                 puts "\n"
                 usr.save
             else
-                puts "... Alta ... " 
+                puts "... Alta ... "
                 usr = Usuario.new
                 usr.email = cli.email
                 usr.nombre = cli.nombre
@@ -86,7 +136,7 @@ namespace :sincronizar do
                         puts msg
                         puts "\n"
                     end
-                        
+
                 else
                     puts "sin error"
                     usr.errors.full_messages
@@ -95,5 +145,3 @@ namespace :sincronizar do
         end # each cliente
     end # task
 end # name space
-
-

@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
 
-  get    'recibo/pagos/',      to: 'recibo#pagos',        as: 'recibo/pagos'
-  get    'recibo/facturar',    to: 'recibo#facturar',     as: 'recibo/facturar'
+  get    'recibo/pagos/',             to: 'recibo#pagos',        as: 'recibo/pagos'
+  get    'recibo/facturar',           to: 'recibo#facturar',     as: 'recibo/facturar'
+  get    'recibo/facturacion',        to: 'recibo#facturacion',  as: 'recibo/facturacion'
   get    'recibo/pagar/:id',          to: 'recibo#pagar',     as: 'recibo/pagar'
   get    'recibo/generar/:fecha',     to: 'recibo#generar',   as: 'recibo/generar'
   get    'recibo/estado/:id/:estado', to: 'recibo#estado',    as: 'recibo/estado'
   post   'recibo/busqueda',           to: 'recibo#busqueda',  as: "recibo/busqueda"
   post   'recibo/remesar',            to: 'recibo#remesar',   as: "recibo/remesar"
+  post   'recibo/modificar',       to: 'recibo#modificar', as: "recibo/modificar"
 
   get    'clase/semana/:fecha', to: "clase#semana",       as: "clase/semana"
   get    'clase/dia/:fecha',    to: 'clase#dia',          as: "clase/dia"

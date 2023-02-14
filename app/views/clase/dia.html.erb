@@ -173,7 +173,7 @@
           </div>
           <%= form_for(ClaseAlumno.new, url: clase_alta_alumno_path) do |f| %>
               <div class="modal-body">
-                      <%= f.collection_select :usuario_id, Usuario.where(debaja: false).order(:nombre), :id, :nombre, prompt: true %> </br>
+                      <%= f.collection_select :usuario_id, Usuario.where(debaja: false).order(:nombre), :id, :nombre, prompt: true, autofocus: true %> </br>
                       <%= f.hidden_field :clase_id, value: cl.id %>
                       <%= f.hidden_field :claseAlumnoEstado_id, value: 1 %>
                       <input type="hidden" id="fecha_dia" name="fecha" value="<%=cl.diaHora.to_s%>" >

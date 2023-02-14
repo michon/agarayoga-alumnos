@@ -29,11 +29,14 @@
           <%= render 'layouts/menu_michon' %>
       <%end%>
 
-    <div class="container-fluid py-4 my-5">
-      <%= render 'layouts/alerts' %>
-    </div>
 
-    <div class="container-fluid py-4 my-5">
+    <% if !notice.blank? or !alert.blank? then %>
+      <div class="container-fluid py-4 my-5">
+        <%= render 'layouts/alerts' %>
+      </div>
+    <%end%>
+
+    <div class="container-fluid py-4 my-2">
         <%= yield %>
     </div>
 

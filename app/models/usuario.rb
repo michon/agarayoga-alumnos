@@ -9,7 +9,7 @@ class Usuario < ApplicationRecord
 
   scope :activo, -> {where(debaja: false)}
   scope :inactivos, -> {where(debaja: true)}
-  default_scope { order(nombre: :desc) }
+  default_scope { order(nombre: :asc) }
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable

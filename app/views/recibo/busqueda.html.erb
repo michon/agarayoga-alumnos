@@ -73,7 +73,7 @@
 
 <ul class="list-group">
 <% @rcbs.each do |rcb| %>
-  <li class="list-group-item ">
+  <li class="list-group-item border-1 rounded-3 mb-2">
     <div class="m-0 p-0 d-flex w-100 justify-content-between">
       <div class="flex-fill btn btn-<%=rcb.reciboEstado.color%> ">
         <h5><%= rcb.usuario.nombre + ' (' + rcb.importe.to_s + '€) ' unless rcb.usuario.blank? %> </h5>
@@ -99,11 +99,60 @@
           <%end%>
         <% end %>
         <a class="m-2 btn btn-primary" href="#" role="button">Imprimir</a>
-        <a class="m-2 btn btn-primary" href="#" role="button">Modificar</a>
-        <a class="m-2 btn btn-primary" href="#" role="button">Ver</a>
+        <button class="m-2 btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
+          Modificar
+        </button>
+        <button class="m-2 btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
+          ver
+        </button>
         <a class="m-2 btn btn-danger" href="#" role="button">Factura</a>
       </div>
     </div>
+    <div id="frmOculto-<%=rcb.id%>" class="oculto  collapse">
+
+      <div class="row d-flex justify-content-center">
+        <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center  rounded-3 m-2 border border-2 border-<%=rcb.reciboEstado.color%> ">
+          <%= form_tag(recibo_modificar_path, method: :post) do %>
+            <div class="form-outline mb-6">
+              <h2 class="text-end"> Recibo número <%= rcb.id %></h2>
+              <input class="form-control " type="hidden" name="rcb[id]" value="<%=rcb.id%>" aria-describedby="nombre-descripcion" readonly>
+
+              <div class="input-group input-group-lg mb-4">
+                <span class="input-group-text" id="nombre-descripcion">Recido de: </span>
+                <input class="form-control" type="text" name="rcb[nombre]" value="<%=rcb.usuario.nombre%>" aria-describedby="nombre-descripcion" readonly>
+              </div>
+
+              <div class="input-group input-group-lg mb-4">
+                <span class="input-group-text" id="importe-descripcion">la cantidad de: </span>
+                <input class="form-control text-end me-2" type="number" name="rcb[importe]" value="<%=rcb.importe%>" aria-describedby="importe-descripcion" >
+                <span class="input-group-text" id="estado-descripcion">Estado:  </span>
+                <input class="form-control text-center bg-<%=rcb.reciboEstado.color%>" type="text" name="rcb[estado]" value="<%=rcb.reciboEstado.nombre%>" aria-describedby="estado-descripcion" readonly>
+              </div>
+
+              <div class="input-group input-group-lg mb-4">
+                <span class="input-group-text" id="concepto-descripcion">En concepto de: </span>
+                <input class="form-control" type="text" name="rcb[concepto]" value="<%=rcb.concepto%>" aria-describedby="concepto-descripcion" >
+              </div>
+
+              <div class="input-group  input-group-lg mb-4">
+                <span class="input-group-text" id="lugar-descripcion">En: </span>
+                <input class="form-control me-2 text-center" type="text" name="rcb[lugar]" value="<%=rcb.lugar%>LUGO" aria-describedby="lugar-descripcion" >
+                <span class="input-group-text" id="pago-descripcion"> a </span>
+                <input class="form-control text-center" type="date" name="rcb[pago]" value="<%=rcb.pago.blank? ? Date.today.strftime("%Y-%m-%d") : rcb.pago.strftime("%Y-%m-%d") %>" aria-describedby="pago-descripcion" >
+              </div>
+
+              <div class="input-group  input-group-lg mb-4 d-flex justify-content-right content-ali">
+                <button class="form-control btn btn-primary  mb-4" type="submit"> Modificar </button>
+                <button class="form-control btn btn-primary  mb-4" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      </div>
   </li>
 
 <% end %>
