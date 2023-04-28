@@ -1,14 +1,23 @@
 Rails.application.routes.draw do
 
-  get    'recibo/pagos/',             to: 'recibo#pagos',        as: 'recibo/pagos'
-  get    'recibo/facturar',           to: 'recibo#facturar',     as: 'recibo/facturar'
-  get    'recibo/facturacion',        to: 'recibo#facturacion',  as: 'recibo/facturacion'
-  get    'recibo/pagar/:id',          to: 'recibo#pagar',     as: 'recibo/pagar'
-  get    'recibo/generar/:fecha',     to: 'recibo#generar',   as: 'recibo/generar'
-  get    'recibo/estado/:id/:estado', to: 'recibo#estado',    as: 'recibo/estado'
-  post   'recibo/busqueda',           to: 'recibo#busqueda',  as: "recibo/busqueda"
-  post   'recibo/remesar',            to: 'recibo#remesar',   as: "recibo/remesar"
-  post   'recibo/modificar',       to: 'recibo#modificar', as: "recibo/modificar"
+  get    'caja/listado'
+  get    'caja/modificar'
+  get    'caja/ver'
+  post   'cajas/nuevo',               to: 'caja#nuevo',          as: 'caja/nuevo'
+
+  get    'recibo/pagos/',                to: 'recibo#pagos',                as: 'recibo/pagos'
+  get    'recibo/facturar',              to: 'recibo#facturar',             as: 'recibo/facturar'
+  get    'recibo/facturacion',           to: 'recibo#facturacion',          as: 'recibo/facturacion'
+  get    'recibo/pagar/:id',             to: 'recibo#pagar',                as: 'recibo/pagar'
+  get    'recibo/generar/:fecha',        to: 'recibo#generar',              as: 'recibo/generar'
+  get    'recibo/remesar_seleccionar/',  to: 'recibo#remesarSeleccionar',   as: 'recibo/remesarSeleccionar'
+  get    'recibo/estado/:id/:estado' ,   to: 'recibo#estado',               as: 'recibo/estado'
+  post   'recibo/generarPost',           to: 'recibo#generarPost',          as: 'recibo/generarPost'
+  post   'recibo/busqueda',              to: 'recibo#busqueda',             as: "recibo/busqueda"
+  post   'recibo/remesar',               to: 'recibo#remesar',              as: "recibo/remesar"
+  post   'recibo/modificar',             to: 'recibo#modificar',            as: "recibo/modificar"
+  post   'recibo/descargarFacturacion',  to: 'recibo#descargarFacturacion', as: "recibo/descargarFacturacion"
+  resources :recibo, only: [:destroy]
 
   get    'clase/semana/:fecha', to: "clase#semana",       as: "clase/semana"
   get    'clase/dia/:fecha',    to: 'clase#dia',          as: "clase/dia"
@@ -20,6 +29,7 @@ Rails.application.routes.draw do
   post   'clase/altaPrueba',    to: 'clase#altaPrueba',   as: "clase/alta_prueba"
   post   'clase/bajaPrueba',    to: 'clase#bajaPrueba',   as: "clase/baja_prueba"
   post   'clase/estado',        to: 'clase#estado',       as: "clase/estado"
+  resources :clase, only: [:destroy]
 
 
   get    'horario/index'

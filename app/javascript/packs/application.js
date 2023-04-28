@@ -17,10 +17,7 @@
 
 import "bootstrap"
 import "chartkick/chart.js"
-console.log('Hello World from Webpacker')
 
 var jQuery = require('jquery')
 global.$ = global.jQuery = jQuery;
 window.$ = window.jQuery = jQuery;
-
-

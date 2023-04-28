@@ -28,6 +28,10 @@ class ClaseController < ApplicationController
       end
   end
 
+  def destroy
+    Clase.find(params[:id]).destroy
+  end
+
   # Presenta las clases proyectadas para hoy
   def actual
       unless ClasePolicy.new(current_usuario).verDia?

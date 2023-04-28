@@ -1,78 +1,185 @@
-<p><%= @clientes.count %> total clientes de alta </p>
-<p><%= @alumnosTotal.count %> Alumnos totales en horario</p>
+<section class="container">
+  <div class="card-group">
+    <div class="m-3 card border-primary">
+      <div class="card-header border-primary">
+        <h5 class="card-title">Datos de facturación</h5>
+      </div>
+      <div class="car-body py-3 m-3 text-center">
+        <ul class="list-group list-group-light list-group-small">
+          <li class="list-group-item px-3">Alumnos en horario: <span class="text-primary"> <%= @alumnosTotal.count %>                             </span> </li>
+          <li class="list-group-item px-3">Importe a facturar: <span class="text-primary"> <%= humanized_money(@importeTotal.to_f)%> €                  </span> </li>
+          <li class="list-group-item px-3">Importe medio por alumno: <span class="text-primary"> <%= humanized_money((@importeTotal.to_f/@alumnosTotal.count)) %> € </span> </li>
+          <li class="list-group-item px-3">Pago por Banco: <span class="text-primary"> <%= @usuariosEnHorario.where(serie: 'A').count%> € </span> </li>
+          <li class="list-group-item px-3">Pago por Banco: <span class="text-primary"> <%= @usuariosEnHorario.where(serie: 'B').count%> € </span> </li>
+          <% @alumnosVeces.each do |alm| %>
+          <li class="list-group-item px-3"> <%="Alumnos que vienen #{alm[0]} veces : #{alm[1]}"%> </span> </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
 
+    <div class="m-3 card border-primary">
+      <div class="card-header border-primary">
+        <h5 class="card-title">Sobre alumnos</h5>
+      </div>
+      <div class="car-body py-3 m-3 text-center">
+        <ul class="list-group list-group-light list-group-small">
+          <li class="list-group-item px-3 ">
+            <% if @usuariosSinHorario.count > 0 then %>
+                <a class="text-danger" data-bs-toggle="collapse" href="#UsrNoHr" aria-expanded="false" aria-controls="collapseExample">
+                  Usuarios que no tienen horario asignado
+                </a>
+            <%else%>
+              <span class="text-success">Todos los usuarios están en horario </span>
+            <%end%>
 
-<h4> Alumnos sin codigo de facturacion </h4>
-<h6> De la tabla usuario, los que no tienen código de facturación </h6>
-<% if @clientesSinUsuario.count > 0 then %>
-    <ol>
-    <% @alumnosSinCodigoFacturacion.each do |noLink| %>
-        <li> <%= noLink.id %> - <%= noLink.nombre %> <%= noLink.codigofacturacion %> </li>
-    <%end%>
-    </ol>
-<% else %>
-    <p class="text-success"> No hay ningún Alumno en este caso </p>
-<%end%>
-
-
-<h4> Usuarios de alta que ya no vienen </h4>
-<h6> Aparecen de alta como usuarios y no están en Horario </h6>
-<ol>
-<% @usuariosSinHorario.each do |noLink| %>
-    <li> <%= noLink.id %> - <%= noLink.nombre %>  </li>
-<%end%>
-</ol>
-
-<h4> Clientes de factuación que no estan en Hoario </h4>
-<h6> Clientes dados de alta en factuación y no tienen usuario registrado </h6>
-<% if @clientesSinUsuario.count > 0 then %>
-    <ol>
-    <% @clientesSinUsuario.each do |noUsr| %>
-        <li><%= noUsr.nombre %></li>
-    <%end%>
-    </ol>
-<% else %>
-    <p class="text-success"> No hay ningún cliente en este caso </p>
-<%end%>
-
-
-
-<h4>Clientes de facturacion que no estan viniendo</h4>
-<h6> Clientes dados de alta en factuación y no están en el horario</h6>
-<% if  @clientesSinHorario.count > 0 then %>
-    <ol>
-    <% @clientesSinHorario.each do |noUsr| %>
-        <li><%= noUsr.nombre %></li>
-    <%end%>
-    </ol>
-<% else %>
-    <p class="text-success"> No hay ningún cliente en este caso </p>
-<%end%>
+            <div class="card collapse" id="UsrNoHr">
+              <ul class="list-group list-group-light list-group-small">
+                <% if @usuariosSinHorario.count > 0 then %>
+                  <% @usuariosSinHorario.each do |noLink| %>
+                      <li class="list-group-item px-3 ">
+                        <span class="text-danger"><%= noLink.id %> - <%= noLink.nombre %></span>
+                      </li>
+                  <%end%>
+                <%end%>
+              </ul>
+            </div>
+          </li>
 
 
 
-<table>
-    <tr>
-        <th> Alumno </th>
-        <th> Cuota </th>
-        <th> Grupo </th>
-        <th> Importe €</th>
-    </tr>
+          <li class="list-group-item px-3 ">
+            <% if @clientesSinUsuario.count > 0 then %>
+                <a class="text-danger" data-bs-toggle="collapse" href="#CliFacNoUsr" aria-expanded="false" aria-controls="collapseExample">
+                  Clientes de factuación que no tienen usuario asignado
+                </a>
+            <% else %>
+              <span class="text-success">Todos los clientes tienen usuario asignado  </span>
+            <%end%>
 
-    <tbody>
-        <!-- recorremos todos los alumnos que tenemos en el horario y cotejamos -->
-        <% @aFacturar.each do |web| %>
-            <tr>
-                <td> <%= web[0].nombre %> </td>
-                <td> <%= web[1] %> dia </td>
-                <td> <%= web[2].codgrupo unless web[2].blank? %></td>
-                <td> <%= web[3].to_i %></td>
-            </tr>
-        <%end%>
-    </tbody>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td><%= @importeTotal%></td>
-</table>
+            <div class="card collapse" id="CliFacNoUsr">
+              <ul class="list-group list-group-light list-group-small">
+                  <% if @clientesSinUsuario.count > 0 then %>
+                    <% @clientesSinUsuario.each do |noUsr| %>
+                      <li class="list-group-item px-3 ">
+                        <span class="text-danger"><%= noUsr.nombre %> </span>
+                      </li>
+                    <%end%>
+                  <%end%>
+              </ul>
+            </div>
+          </li>
+
+          <li class="list-group-item px-3 ">
+            <% if  @clientesSinHorario.count > 0 then %>
+              <a class="text-danger" data-bs-toggle="collapse" href="#CliFacNoVin" aria-expanded="false" aria-controls="collapseExample">
+                Clientes de facturación que no estan viniendo
+              </a>
+            <%else%>
+              <span class="text-primary">Todos los clientes están viniendo a clase</span>
+            <%end%>
+            <ul class="list-group list-group-light list-group-small">
+              <div class="card collapse" id="CliFacNoVin">
+                  <% if  @clientesSinHorario.count > 0 then %>
+                      <% @clientesSinHorario.each do |noUsr| %>
+                          <li class="list-group-item px-3 ">
+                            <span class="text-danger"><%= noUsr.nombre %> </span>
+                          </li>
+                      <%end%>
+                  <%end%>
+                </div>
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+<section class="container">
+  <p><%= @clientes.count %> Total clientes de alta </p>
+  <p><%= @alumnosTotal.count %> Alumnos totales en horario</p>
+  <p><%= @usrAlta.count %> Total usuarios de alta </p>
+
+
+  <h4> Alumnos sin codigo de facturacion </h4>
+  <h6> De la tabla usuario, los que no tienen código de facturación </h6>
+  <% if @clientesSinUsuario.count > 0 then %>
+      <ol>
+      <% @alumnosSinCodigoFacturacion.each do |noLink| %>
+          <li> <%= noLink.id %> - <%= noLink.nombre %> <%= noLink.codigofacturacion %> </li>
+      <%end%>
+      </ol>
+  <% else %>
+      <p class="text-success"> No hay ningún Alumno en este caso </p>
+  <%end%>
+
+
+  <h4> Usuarios de alta que ya no vienen </h4>
+  <h6> Aparecen de alta como usuarios y no están en Horario </h6>
+  <ol>
+  <% @usuariosSinHorario.each do |noLink| %>
+      <li> <%= noLink.id %> - <%= noLink.nombre %>  </li>
+  <%end%>
+  </ol>
+
+  <h4> Clientes de factuación que no estan en Horario </h4>
+  <h6> Clientes dados de alta en factuación y no tienen usuario registrado </h6>
+  <% if @clientesSinUsuario.count > 0 then %>
+      <ol>
+      <% @clientesSinUsuario.each do |noUsr| %>
+          <li><%= noUsr.nombre %></li>
+      <%end%>
+      </ol>
+  <% else %>
+      <p class="text-success"> No hay ningún cliente en este caso </p>
+  <%end%>
+
+
+
+  <h4>Clientes de facturacion que no estan viniendo</h4>
+  <h6> Clientes dados de alta en factuación y no están en el horario</h6>
+  <% if  @clientesSinHorario.count > 0 then %>
+      <ol>
+      <% @clientesSinHorario.each do |noUsr| %>
+          <li><%= noUsr.nombre %></li>
+      <%end%>
+      </ol>
+  <% else %>
+      <p class="text-success"> No hay ningún cliente en este caso </p>
+  <%end%>
+
+
+
+  <table>
+      <tr>
+          <th> # </th>
+          <th> Alumno </th>
+          <th> Cuota </th>
+          <th> Grupo </th>
+          <th> Importe €</th>
+      </tr>
+
+      <tbody>
+          <!-- recorremos todos los alumnos que tenemos en el horario y cotejamos -->
+          <% @aFacturar.each_with_index do |web, idx| %>
+              <tr>
+                  <td> <%= idx + 1 %> </td>
+                  <td> <%= web[0].nombre %> </td>
+                  <td> <%= web[1] %> dia </td>
+                  <td> <%= web[2].codgrupo unless web[2].blank? %></td>
+                  <td> <%= web[3].to_i %></td>
+              </tr>
+          <%end%>
+      </tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><%= @importeTotal%></td>
+  </table>
+</section>

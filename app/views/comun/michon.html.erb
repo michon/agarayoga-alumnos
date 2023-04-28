@@ -1,7 +1,7 @@
-<p> parametro <%= @rcb  %> </p>
-
 <section class="container">
     <div class="card-group">
+
+        <!-- clase card -->
         <div class="m-3 card ">
           <div class="card-header">
             <h5>Clases</h5>
@@ -9,28 +9,32 @@
 
           <div class="car-body py-3 m-3 text-center">
 
-            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista clases semanal -->
+            <!-- Vista clases semanal -->
+            <%= form_tag(clase_seleccion_path, method: :post) do %>
               <div class="row mb-3">
                     <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Ver semana </button>
               </div>
             <% end %>
 
-            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista clases del dia -->
+            <!-- Vista clases del dia -->
+            <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
               <div class="row mb-3">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Ver clases </button>
               </div>
             <% end %>
 
-            <%= form_tag(clase_seleccion_path, method: :post) do %> <!-- Vista horas libres semanal -->
+            <!-- Vista horas libres semanal -->
+            <%= form_tag(clase_seleccion_path, method: :post) do %>
               <div class="row mb-3">
                     <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
                     <button class="btn btn-primary w-100 mb-3" type="submit"> libre esta semana </button>
               </div>
             <% end %>
 
-            <%= form_tag(clase_seleccion_dia_path, method: :post) do %> <!-- Vista horas libres dia -->
+            <!-- Vista horas libres dia -->
+            <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
               <div class="row mb-3">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
                     <button class="btn btn-primary w-100 mb-3" type="submit"> libre este dia </button>
@@ -39,7 +43,8 @@
 
           </div>
 
-        </div> <!-- fin clase card -->
+        </div>
+        <!-- fin clase card -->
 
 
         <!-- Alumnos card -->
@@ -58,7 +63,8 @@
             <% end %>
           </div>
 
-        </div> <!-- fin alumno card -->
+        </div>
+        <!-- fin alumno card -->
 
 
         <!-- H O R A R I O    card -->
@@ -87,7 +93,11 @@
 
           <div class="car-body m-3 py-3 text-center">
               <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-              <%= link_to 'Generar Recibos',    recibo_generar_path(:fecha => DateTime.now), class: 'btn btn-primary w-100 mb-3', role: "button" %>
+
+              <%= form_tag(recibo_generarPost_path, method: :post) do %>
+                <input class="form-control"   name="fecha"  type="date" value="<%=Date.current%>"  id="checkMes-<%=Date.current%>">
+                <button class="btn btn-primary w-100 mb-3" type="submit"> Generar Recibos </button>
+              <% end %>
 
               <%= form_tag(recibo_busqueda_path, method: :post) do %>
                     <input name="busquedaEstado[]"  type="hidden" value="1"  id="checkEstado-1">
@@ -95,12 +105,26 @@
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Pagos de Recibos </button>
               <% end %>
 
+              <%= link_to 'Apuntes en caja', caja_listado_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+
               <%= form_tag(recibo_remesar_path, method: :post) do %> <!-- Remesar  -->
+                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Remesar </button>
               <% end %>
+
+              <%= form_tag(recibo_descargarFacturacion_path, method: :post) do %> <!-- Remesar  -->
+                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Descargar ODS </button>
+              <% end %>
+
+              <%= link_to 'Generar Remesa', recibo_remesarSeleccionar_path(), class: 'btn btn-primary w-100 mb-3', role: "button" %>
+
+
           </div>
         </div>
-        <!-- fin horario card -->
+        <!-- fin FACTURACIÓN card -->
 
   </div> <!-- fin de fila -->
 </section>

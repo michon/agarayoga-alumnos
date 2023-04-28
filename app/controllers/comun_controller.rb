@@ -29,15 +29,17 @@ class ComunController < ApplicationController
       end
 
       @fechaHoy = Date.today
-      @alumnosTotal = HorarioAlumno.select("distinct usuario_id")
       @clientes = Cliente.where(debaja: :false)
-      @alumnosSinCodigoFacturacion = Usuario.where(debaja: :false).where(codigofacturacion: [nil]).where(admin: false)
+      @alumnosTotal = HorarioAlumno.select("distinct usuario_id")
+      @alumnosVeces = HorarioAlumno.group(:usuario_id).count.pluck(1).tally  #array que contiene las veces que vienen y cuantos vienen
+      @alumnosSinCodigoFacturacion = Usuario.where(debaja: :false).where(codigofacturacion: [nil]).where("admin = false and (instructor_id = 0 or instructor_id is null)k")
 
-      usrAlta = Usuario.where(debaja: false).where(admin: false)
+
+      @usrAlta = Usuario.where( "debaja = false and admin = false and (instructor_id = 0 or instructor_id is null)")
 
       #usuarios que estan como alta en la web y no estan en el horario
       @usuariosSinHorario = Array.new
-      usrAlta.each do |usr|
+      @usrAlta.each do |usr|
           if @alumnosTotal.find_by(usuario_id: usr.id).blank? then
               @usuariosSinHorario  << usr
           end
@@ -67,6 +69,8 @@ class ComunController < ApplicationController
       # Alumnos a facturar según el horario general actual
       @aFacturar = Array.new
 
+      #Listado de usuarios que están actualmente en horario
+      @usuariosEnHorario = Usuario.where(id: HorarioAlumno.group(:usuario_id).pluck(:usuario_id))
       @importeTotal = 0
       HorarioAlumno.group(:usuario_id).count.each_with_index do |alm, idx|
         @aFacturar[idx] = Array.new
@@ -95,6 +99,22 @@ class ComunController < ApplicationController
         @aFacturar[idx] << importe
         @importeTotal += importe
       end
+
+      # Establecemos los colores para la salida
+      if @aFacturar.count == @clientes.count then
+        @colorClientes =  "success"
+      else
+        @colorClientes =  "danger"
+      end
+
+      if @aFacturar.count == @usrAlta.count then
+        @colorUsuarios =  "success"
+      else
+        @colorUsuarios =  "danger"
+      end
+
+
+      @colorFacturar
   end
 
 

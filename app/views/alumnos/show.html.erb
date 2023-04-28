@@ -20,7 +20,10 @@
               <button class="nav-link" id="procesos-tab" data-bs-toggle="tab" data-bs-target="#Procesos" type="button" role="tab" aria-controls="procesos" aria-selected="false">Procesos</button>
             </li>
           </ul>
+
+
           <div class="tab-content mt-5" id="myTabContent">
+
             <div class="tab-pane fade" id="Personal" role="tabpanel" aria-labelledby="personal-tab">
               <div class="member_card_style">
                 <div class="row">
@@ -39,6 +42,7 @@
                           <h6 class="p-2 bi bi-credit-card-2-front"> <%=@almn.dni%>                          </h6>
                           <h6 class="p-2 bi bi-telephone">           <%=@almn.movil%> -- <%=@almn.telefono%> </h6>
                           <h6 class="p-2 bi bi-house">               <%=@almn.direccion%>                    </h6>
+                          <h6 class="p-2 bi bi-house">               <%=@almn.serie%>                    </h6>
                         </div>
                       </div>
                     </div>
@@ -46,6 +50,7 @@
                 </div>
               </div>
             </div>
+
             <div class="tab-pane fade show active" id="Asistencia" role="tabpanel" aria-labelledby="asistencia-tab">
                 <%= line_chart({"2021-01-01" => 2, "2021-01-02" => 3}) %>
                 <line-chart :data="{'2017-05-13': 2, '2017-05-14': 5}"></line-chart>
@@ -94,10 +99,29 @@
                   <%end%>
                 </ul>
             </div>
+
             <div class="tab-pane fade" id="Facturacion" role="tabpanel" aria-labelledby="facturacion-tab">
-                <% @estados.each do |estado| %>
-                    <p><%=estado.nombre%>: <%=@claseAlumno.where(claseAlumnoEstado_id: estado.id).count %></p>
+              <table class="table table-sm table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Numero</th>
+                    <th scope="col">concepto</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">importe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <% @almn.recibos.each do |rcb| %>
+                  <tr class=" text-<%=rcb.reciboEstado.color%>">
+                    <td><%=rcb.created_at%></td>
+                    <td><%= rcb.id %></td>
+                    <td><%= rcb.concepto %></td>
+                    <td><%= rcb.reciboEstado.nombre%></td>
+                    <td><%= rcb.importe%></td>
                 <% end %>
+                </tbody>
+              </table>
             </div>
             <div class="tab-pane fade" id="Procesos" role="tabpanel" aria-labelledby="procesos-tab">
                 <% @estados.each do |estado| %>
@@ -108,8 +132,3 @@
         </div>
       </div>
   </div>
-
-
-<%= link_to( 'Volver al indice', alumnos_index_path) %>
-<%= link_to( 'obtener ficha', alumnos_path(@almn, format: :pdf)) %>
-<%= link_to( 'Obtener S.E.P.A', alumnos_sepa_path) %>

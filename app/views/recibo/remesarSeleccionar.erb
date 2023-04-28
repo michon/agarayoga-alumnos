@@ -1,0 +1,8 @@
+<% @rcb.each do |rcb| %>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="recibo-<%=rcb.id%>">
+  <label class="form-check-label" for="recibo-<%=rcb.id%>">
+    <%= " #{rcb.usuario.nombre.to_s}   #{rcb.importe}  #{rcb.created_at}" %>
+  </label>
+</div>
+ <% end %>

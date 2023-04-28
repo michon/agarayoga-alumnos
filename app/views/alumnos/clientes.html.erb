@@ -14,7 +14,7 @@
             <% @alumnos.order(:nombre).each do |almn| %>
                 <tr>
                     <td> <%=almn.nombre %> </td>
-                    <td> <%= link_to "Actualicar" , alumnos_actualizar_path(almn) %> </td>
+                    <td> <%= link_to "Actualizar" , alumnos_actualizar_path(almn) %> </td>
                 </tr>
             <%end%>
             </tbody>

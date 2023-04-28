@@ -1,15 +1,11 @@
-class ComunPolicy
+class ReciboPolicy
   attr_reader :usuario
 
   def initialize(usuario)
     @usuario = usuario
   end
 
-  def verMichon?
-    usuario.rol == 'michon'
-  end
-
-  def verFacturacion?
+  def descargarFacturacion?
     usuario.rol == 'admin' || usuario.rol == 'michon'
   end
 

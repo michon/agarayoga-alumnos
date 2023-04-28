@@ -10,7 +10,7 @@ namespace :sincronizar do
       end
     end
 
-    desc "recorre los recibos y actualiza el concepto "
+    desc "Recorre los recibos y actualiza el concepto "
     task rcbConcepto: :environment do
       Recibo.all.each do |rcb|
        if rcb.concepto.blank?
