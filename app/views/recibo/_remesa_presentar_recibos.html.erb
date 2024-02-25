@@ -1,0 +1,44 @@
+
+<%= form_with url:  recibo_remesarSeleccionarPost_path, class: "form-signin" do |f| %>
+  <div class=" d-flex p-3 mb-3 border justify-content-between">
+    <div class="">
+      <%= f.submit 'Crear Remesa', class: "btn btn-primary", name: 'submit'  %>
+    </div>
+    <div class="">
+      <%= link_to "Mes actual".html_safe,        recibo_remesar_seleccionar_actual_path,    :class=>"btn btn-primary" %>
+      <%= link_to "Mes anterior".html_safe,      recibo_remesar_seleccionar_anterior_path,  :class=>"btn btn-primary" %>
+      <%= link_to "Quitar selección".html_safe,  recibo_remesarSeleccionar_path,            :class=>"btn btn-primary" %>
+      <%= link_to "seleccionar Todos".html_safe, recibo_remesar_seleccionar_todos_path,     :class=>"btn btn-primary" %>
+    </div>
+  </div>
+
+  <% @rcb.each do |rcb| %>
+    <ul class="list-group">
+          <li class="list-group-item">
+            <div class="d-flex flex-row align-items-center from-check">
+              <div class="">
+                <% if @seleccionarRcbs.blank? %>
+                  <input id="rcb-<%=rcb.id%>" name="rcb_ids[]" class="form-check-input me-1" type="checkbox" value="<%=rcb.id%>" aria-label="..." <%= @seleccionarTodos ? "checked" : ""%> >
+                <% else %>
+                  <input id="rcb-<%=rcb.id%>" name="rcb_ids[]" class="form-check-input me-1" type="checkbox" value="<%=rcb.id%>" aria-label="..." <%= (@seleccionarRcbs.pluck(:id).include? rcb.id) ? "checked" : ""%> >
+                <% end %>
+              </div>
+              <label for="rcb-<%=rcb.id%>">
+                <div class="">
+                     <div class="d-flex flex-column ps-4">
+                      <div class=" flex-grow">
+                        <div class="fs-4"> <%="#{rcb.usuario.nombre.to_s}" %> </div>
+                       </div>
+                      <div class="d-flex flex-row">
+                        <div class="flex-fill"> <%="#{number_to_currency(rcb.importe)}" %> </div>
+                        <div class="flex-fill"> <%="#{I18n.l(rcb.vencimiento.to_date, locale: :es, format: :long) unless rcb.vencimiento.blank?}" %> </div>
+                      </div>
+                     </div>
+                </div>
+              </label>
+            </div>
+          </li>
+    </ul>
+  <% end %>
+  <%= f.submit %>
+<% end %>

@@ -64,8 +64,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'rails_admin', '~> 2.0'
 gem 'prawn'
-gem 'chartkick'
-gem 'groupdate'
 gem 'sepa_king'
 gem 'money-rails'
 gem 'spreadsheet_architect'

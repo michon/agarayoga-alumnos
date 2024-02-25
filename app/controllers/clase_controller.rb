@@ -1,6 +1,43 @@
 class ClaseController < ApplicationController
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  def calendario
+
+      #@fecha = params[:fecha].to_datetime
+
+      @fechaFin = Clase.all.last.diaHora
+
+      if params[:fecha].blank?
+        @fechaInicio = DateTime.now.beginning_of_week
+      else
+        @fechaInicio = params[:fecha].to_datetime
+      end
+
+
+      if current_usuario.michon? then
+        @cl = Clase.all
+      else
+        @cl = Clase.where(instructor_id: current_usuario.instructor_id)
+      end
+      @cl = @cl.where(diaHora: @fechaInicio..@fechaFin.end_of_week)
+
+      @instructores = Instructor.all
+
+
+  end
+
+  def clasesDesde
+    #@fecha = params[:fecha].to_datetime
+
+    @fecha = Clase.all.last.diaHora
+    @cl = Clase.where(instructor_id: current_usuario.instructor_id)
+    @cl = @cl.where(diaHora: DateTime.now.beginning_of_week..@fecha.end_of_week)
+end
+
+  def libre
+    @horario = Clase.where(diaHora: DateTime.now.beginning_of_week..DateTime.now.end_of_week)
+  end
+
   def semana()
       # horarioSemana es un hash que tiene una entrada por cada dia (key) que
       # tenemos en el horario, cada una de estas entradas  contendrá otro hash
@@ -29,7 +66,11 @@ class ClaseController < ApplicationController
   end
 
   def destroy
-    Clase.find(params[:id]).destroy
+    cl = Clase.find(params[:id])
+    params[:fecha] = cl.diaHora.to_datetime
+    fecha = cl.diaHora.to_datetime
+    cl.destroy
+    redirect_to clase_dia_path(fecha: fecha)
   end
 
   # Presenta las clases proyectadas para hoy
@@ -106,6 +147,28 @@ class ClaseController < ApplicationController
       redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlm.clase_id}")
   end
 
+  # Método POST
+  # Recibe una id ClaseAlumno_id y lo borra
+  def bajaSolicita
+      clAlmId = ClaseSolicitum.find(params[:clase_alumno_id]).clase_id
+      ClaseSolicitum.find(params[:clase_alumno_id]).destroy
+      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
+  end
+
+  # Método POST
+  # Recibe una Modelo claseSolicitum y lo da de alta en la tabla
+  def altaSolicita
+      clAlmParam = params[:clase_solicitum]
+
+      fecha = params[:fecha]
+
+      clAlm = ClaseSolicitum.new
+      clAlm.usuario_id = clAlmParam[:usuario_id]
+      clAlm.clase_id = clAlmParam[:clase_id]
+      clAlm.save
+
+      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlm.clase_id}")
+  end
   # Método POST
   # Recibe una fecha y envía a la presentación de ese día
   def seleccionDia

@@ -1,6 +1,7 @@
 class Horario < ActiveRecord::Base
 
     belongs_to :instructor
+    belongs_to :aula
     has_many :horarioAlumno, dependent: :destroy
     has_many :usuario, through: :horarioAlumno
 

@@ -40,7 +40,16 @@ RailsAdmin.config do |config|
     # history_show
   end
 
+  config.model 'Aula' do
+    object_label_method do
+        :custom_label_method
+    end
+  end
+
   config.model 'Inscripcion' do
+  end
+
+  config.model 'Remesa' do
   end
 
   config.model 'Instructor' do
@@ -68,6 +77,7 @@ RailsAdmin.config do |config|
     field :iban
     field :debaja
     field :codigofacturacion
+    field :serie
     field :admin
     field :regalo
     field :grupoAlumno
@@ -79,6 +89,7 @@ RailsAdmin.config do |config|
       list do
         field :clase_humano
         field :instructor
+        field :aula
 
         sort_by 'diaSemana, hora, minuto'
       end
@@ -94,6 +105,7 @@ RailsAdmin.config do |config|
       field :hora
       field :minuto
       field :instructor
+      field :aula
       field :usuario
   end
 
@@ -115,8 +127,7 @@ RailsAdmin.config do |config|
       end
       field :diaHora
       field :instructor
-      field :usuario
-      field :pruebas
+      field :aula
   end
 
   config.model 'Prueba' do
@@ -139,6 +150,15 @@ RailsAdmin.config do |config|
       end
   end
 
+  config.model 'Recibo' do
+      object_label_method do
+        :recibo_label_method
+      end
+  end
+
+  def recibo_label_method
+      "(#{self.id.to_s}) #{self.nombre} (#{self.id.to_s})"
+  end
 
   def reciboEstado_label_method
       self.nombre

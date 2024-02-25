@@ -32,7 +32,7 @@ class ComunController < ApplicationController
       @clientes = Cliente.where(debaja: :false)
       @alumnosTotal = HorarioAlumno.select("distinct usuario_id")
       @alumnosVeces = HorarioAlumno.group(:usuario_id).count.pluck(1).tally  #array que contiene las veces que vienen y cuantos vienen
-      @alumnosSinCodigoFacturacion = Usuario.where(debaja: :false).where(codigofacturacion: [nil]).where("admin = false and (instructor_id = 0 or instructor_id is null)k")
+      @alumnosSinCodigoFacturacion = Usuario.where(debaja: :false).where(codigofacturacion: [nil]).where("admin = false and (instructor_id = 0 or instructor_id is null)")
 
 
       @usrAlta = Usuario.where( "debaja = false and admin = false and (instructor_id = 0 or instructor_id is null)")
@@ -82,21 +82,19 @@ class ComunController < ApplicationController
             grupo = @aFacturar[idx][2].codgrupo
         end
         importe = 0
-        case grupo
-        when  "dos"
-          importe = 50
-        when "uno"
-          importe = 35
-        when "YN"
-          importe = 35
-        when "zoom"
-          importe = 40
-        when "tres"
-          importe = 60
-        else
-          importe = 0
+
+        # número de veces que aparece el alumno en el horario
+        case alm[1].to_i
+          when 1
+            importe = 40
+          when 2
+            importe = 55
+          when 3
+            importe = 65
         end
+
         @aFacturar[idx] << importe
+        @aFacturar[idx] << Cliente.find_by(codcliente: @aFacturar[idx][0].serie)
         @importeTotal += importe
       end
 

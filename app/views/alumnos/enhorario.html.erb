@@ -1,0 +1,57 @@
+<div class="listado">
+    <div class="table-responsive-sm">
+        <table class="table">
+            <thead>
+              <tr>
+                  <th> <%= "Alumnos en horario:  (#{@alumnos.count}) "%>  </th>
+                  <th> <%= "Camisetas entregados: (#{@alumnos.where(regalo: true).count})" %> </th>
+                  <th> <%= "Camisetas pendientes: (#{@alumnos.where(regalo: false).count})" %> </th>
+                  <th> </th>
+              </tr>
+              <tr>
+                  <th> <%= "Alumnos en horario:  (#{@alumnos.count}) "%>  </th>
+                  <th> <%= "Té entregado (#{@alumnos.where(navidad: true).count})" %> </th>
+                  <th> <%= "Té pendiente (#{@alumnos.where(navidad: false).count})" %> </th>
+                  <th> </th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+            <% @alumnos.where(navidad: false).each do |almn| %>
+                <tr class="m-0 p-0">
+                    <td class ="p-0 m-0"> <%=almn.nombre %> </td>
+                    <% if almn.regalo then %>
+                        <td class="p-2 m-0"> <%= link_to "Camiseta" , alumnos_regalo_path(almn),  class: 'btn btn-success w-100 mb-0' %> </td>
+                    <% else %>
+                        <td class="p-2 m-0"> <%= link_to "Camiseta" , alumnos_regalo_path(almn),  class: 'btn btn-info w-100 mb-0' %> </td>
+                    <%end%>
+                    <% if almn.navidad then %>
+                        <td class="p-2 m-0"> <%= link_to "Navidad" , alumnos_navidad_path(almn),  class: 'btn btn-success w-100 mb-0' %> </td>
+                    <% else %>
+                        <td class="p-2 m-0"> <%= link_to "Navidad.." , alumnos_navidad_path(almn),  class: 'btn btn-info w-100 mb-0' %> </td>
+                    <%end%>
+                </tr>
+            <%end%>
+
+            <% @alumnos.where(navidad: true).each do |almn| %>
+                <tr class="m-0 p-0">
+                    <td class ="p-0 m-0"> <%=almn.nombre %> </td>
+                    <% if almn.regalo then %>
+                        <td class="p-2 m-0"> <%= link_to "Camiseta" , alumnos_regalo_path(almn),  class: 'btn btn-success w-100 mb-0' %> </td>
+                    <% else %>
+                        <td class="p-2 m-0"> <%= link_to "Camiseta" , alumnos_regalo_path(almn),  class: 'btn btn-info w-100 mb-0' %> </td>
+                    <%end%>
+                    <% if almn.navidad then %>
+                        <td class="p-2 m-0"> <%= link_to "Navidad" , alumnos_navidad_path(almn),  class: 'btn btn-success w-100 mb-0' %> </td>
+                    <% else %>
+                        <td class="p-2 m-0"> <%= link_to "Navidad.." , alumnos_navidad_path(almn),  class: 'btn btn-info w-100 mb-0' %> </td>
+                    <%end%>
+                </tr>
+                </tr>
+            <%end%>
+
+            </tbody>
+        </table>
+    </div>
+</div>

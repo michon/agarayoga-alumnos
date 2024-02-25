@@ -29,8 +29,10 @@
           <div class="card-header">
             <h5>Clases dadas</h5>
           </div>
-            <%= link_to 'Mes actual',     instructor_path(:id => 2, :fecha => DateTime.now()), class: 'btn btn-primary w-100 mb-3', role: "button" %>
-            <%= link_to 'Mes anterior',   instructor_path(:id => 2, :fecha => DateTime.now()-1.month), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
+             <%= current_usuario.instructor.id %>
+            <%= link_to 'Mes actual',       instructor_path(:id => current_usuario.instructor.id, :fecha => DateTime.now()), class: 'btn btn-primary w-100 mb-3', role: "button" %>
+            <%= link_to 'Mes anterior',     instructor_path(:id => current_usuario.instructor.id, :fecha => DateTime.now()-1.month), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
+            <%= link_to 'Clases Asignadas', clase_clasesDesde_path(:fecha => DateTime.now()-1.month), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
         </div>
       </div> <!-- fin clase card -->
 </section>

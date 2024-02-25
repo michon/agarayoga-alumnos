@@ -1,12 +1,86 @@
 class ReciboController < ApplicationController
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+
+  # ---------------------------------------------------------------------------
   # Presenta en pantalla los recibos que no están remesados y permite
   # seleecionalos para generar una remesa
+  # ---------------------------------------------------------------------------
   def remesarSeleccionar
     @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
+    @rcb = @rcb.where(remesa_id: [nil, ""])
+    @seleccionarTodos = false
   end
 
+  # ---------------------------------------------------------------------------
+  # Presenta en pantalla los recibos que no están remesados y permite
+  # seleecionalos para generar una remesa
+  # ---------------------------------------------------------------------------
+  def remesar_seleccionar_todos
+    @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
+    @rcb = @rcb.where(remesa_id: [nil, ""])
+    @seleccionarTodos = true
+    render 'remesarSeleccionar'
+  end
+
+  def remesar_seleccionar_actual
+    @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
+    @rcb = @rcb.where(remesa_id: [nil, ""])
+    @seleccionarRcbs = Recibo.where(vencimiento: DateTime.now.at_beginning_of_month..DateTime.now.at_end_of_month)
+    @seleccionarTodos = false
+    render 'remesarSeleccionar'
+  end
+
+  def remesar_seleccionar_anterior
+    @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
+    @rcb = @rcb.where(remesa_id: [nil, ""])
+    @seleccionarRcbs = Recibo.where(vencimiento: 1.month.ago.at_beginning_of_month..1.month.ago.at_end_of_month)
+    @seleccionarTodos = false
+    render 'remesarSeleccionar'
+  end
+
+  # ---------------------------------------------------------------------------
+  # Crea una nueva remesa con los recibos que se le envia en rcb_ids
+  # ---------------------------------------------------------------------------
+  def remesarSeleccionarPost
+    unless params[:rcb_ids].blank?
+     @rcbs_seleccionados = Recibo.where(id: params[:rcb_ids])
+     rms = Remesa.new()
+     rms.nombre = "Remesa " + DateTime.now.strftime("%Y%m%d")
+     rms.bic = "BCOEESMM070"
+     rms.iban = "ES9630700030186209805420"
+     rms.empresa = "Miguel Rodríguez López (AgâraYoga)"
+     rms.save
+
+     @rcbs_seleccionados.each do |rcb|
+       RemesaRecibo.new(remesa_id: rms.id, emision: rcb.created_at, vencimiento: rcb.vencimiento, recibo_id: rcb.id).save
+     end
+     @rcbs_seleccionados.update_all(remesa_id: rms.id, reciboEstado_id: 2)
+   end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Añade los recibos que se le envia en rcb_ids a la remesa rms_id
+  # ---------------------------------------------------------------------------
+  def remesarAnadirPost
+    unless params[:rcb_ids].blank?
+     @rcbs_seleccionados = Recibo.where(id: params[:rcb_ids])
+     rms = Remesa.new()
+     rms.nombre = "Remesa " + DateTime.now.strftime("%Y%m%d")
+     rms.bic = "BCOEESMM070"
+     rms.iban = "ES9630700030186209805420"
+     rms.empresa = "Miguel Rodríguez López (AgâraYoga)"
+     rms.save
+
+     @rcbs_seleccionados.each do |rcb|
+       RemesaRecibo.new(remesa_id: rms.id, emision: rcb.created_at, vencimiento: rcb.vencimiento, recibo_id: rcb.id).save
+     end
+     @rcbs_seleccionados.update_all(remesa_id: rms.id, recbiodEstado_id: 2)
+   end
+  end
+
+  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   def descargarFacturacion
     unless ComunPolicy.new(current_usuario).verFacturacion?
       render :file => "public/401.html", :status => :unauthorized
@@ -45,8 +119,30 @@ class ReciboController < ApplicationController
     fechaFin = params[:fechaFin].to_datetime
 
     rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id'))
-    rcb.where(vecimiento: fechaInicio..fechaFin)
-    rcb.update_all(reciboEstado_id: '2')
+    rcb = rcb.where(vencimiento: fechaInicio..fechaFin)
+    rcb = rcb.where(reciboEstado_id: 1)
+    #Crear una nueva remesa
+    rms = Remesa.new
+    rms.nombre = "Remesa #{DateTime.now.strftime('%Y%m%d')} "
+    rms.bic = 'BCOEESMM070'
+    rms.iban = 'ES9630700030186209805420'
+    rms.empresa = 'Miguel Rodríguez López (AgâraYoga)'
+    rms.save
+
+    # Añadir los recibos a la nueva remesa
+    rcb.each do |r|
+      rmsRcb = RemesaRecibo.new
+      rmsRcb.remesa_id = rms.id
+      rmsRcb.recibo_id = r.id
+      rmsRcb.vencimiento = r.vencimiento
+      rmsRcb.emision = DateTime.now
+      rmsRcb.save
+    end
+    # Cambiar en el recibo el campo remesa_id
+     rcb.update_all(remesa_id: rms.id)
+    # Cambiar los recibos de estado a 2 (pagado)
+     rcb.update_all(reciboEstado_id: '2')
+
     redirect_to michon_path(), alert: "Recibos remesados entre  #{I18n.l(fechaInicio, format: '%A, %d de %B de %Y')} y #{I18n.l(fechaFin, format: '%A, %d de %B de %Y')}, en total #{rcb.count}, sin incidecias "
   end
 
@@ -99,9 +195,8 @@ class ReciboController < ApplicationController
       fecha = params[:fecha].to_datetime
     end
     #Comprobar que no existen recibos para el mes actual.
-    Rails.logger.debug " ----- ANTES DEL BUCLE  --------------------------------------------"
-    Rails.logger.debug " ----- fecha: #{fecha.to_s}"
     @rcbs = Recibo.where(:created_at => fecha.at_beginning_of_month..fecha.at_end_of_month)
+
     unless @rcbs.count > 0 then
       alerta = "Error en proceso de Generación"
       HorarioAlumno.group(:usuario_id).count.each_with_index do |alm, idx|
@@ -128,9 +223,7 @@ class ReciboController < ApplicationController
     #Comprobar que no existen recibos para el mes actual.
      @rcbs = Recibo.where(:created_at => fecha.at_beginning_of_month..fecha.at_end_of_month)
         unless @rcbs.count > 0 then
-          Rails.logger.debug " ----- ANTES DEL BUCLE  --------------------------------------------"
         HorarioAlumno.group(:usuario_id).order(:count_all).count.each_with_index do |alm, idx|
-          Rails.logger.debug " ----- En el bucle vuelta #{idx.to_s}"
           # generarRecibo(alm,fecha)
         end
       end
@@ -147,11 +240,11 @@ class ReciboController < ApplicationController
     rcb.concepto = "Cuota mensual de AgâraYoga " + I18n.translate(:"date.month_names", :locale => :es)[fecha.mon] + " " + fecha.year.to_s
     case alm[1].to_i
       when 1
-        rcb.importe = 35
+        rcb.importe = 40
       when 2
-        rcb.importe = 50
+        rcb.importe = 55
       when 3
-        rcb.importe = 60
+        rcb.importe = 65
     end
     rcb.nombre = usr.nombre
     rcb.bic =   usr.bic
@@ -292,7 +385,7 @@ class ReciboController < ApplicationController
   protected
 
   def configure_permitted_parameters
-    params.permit(fecha, busquedaNombre, busquedaEstado[],busquedaMes, recibo, accion, rcb[], usr, cuota, fechaFin, fechaInicio)
+    params.permit(fecha, busquedaNombre, busquedaEstado[],busquedaMes, rcb_ids[], recibo, accion, rcb[], usr, cuota, fechaFin, fechaInicio)
   end
 
 end

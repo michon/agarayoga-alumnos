@@ -1,0 +1,33 @@
+<% content_for :title,  "Clases del mes de julio para #{@usuariosEnJulio.first.nombre.split(' ')[0] unless @usuariosEnJulio.blank?}" %>
+
+
+
+<h1>Facturación A </h1>
+<ol>
+  <% @usuariosEnJulio.where(id: @usrSerieA.pluck(:id)).each do |usr| %>
+  <li>      <%= link_to usr.nombre, alumnos_clases_julio_path(usr.id) %> <%= usr.serie %>
+</li>
+      <li> <%= usr.nombre %> </li>
+  <% end %>
+</ol>
+
+<h1>Facturación B </h1>
+<ol>
+  <% @usuariosEnJulio.where(id: @usrSerieB.pluck(:id)).each do |usr| %>
+      <li> <%= usr.nombre %> </li>
+  <% end %>
+</ol>
+
+<% @usuariosEnJulio.each_with_index do |usr, idx| %>
+  <div class="row p-1 border rounded <%= idx.even? ? 'bg-light' : 'bg-white'%>">
+    <div class="col">
+      <%= link_to usr.nombre, alumnos_clases_julio_path(usr.id) %> <%= usr.serie %>
+    </div>
+    <div class="col">
+      <%= alumnos_clases_julio_url( usr.id) %> <br /><br />
+      Hola <%= "#{usr.nombre.split(' ')[0] unless @usuariosEnJulio.blank?}" %>. <br />
+      Este es tu horario para julio. Dime si está bien así.
+    </div>
+  </div>
+
+<% end %>

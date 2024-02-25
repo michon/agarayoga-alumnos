@@ -2,16 +2,32 @@
 <html>
   <head class="container">
     <title> <%= yield(:title) %></title>
-    <%= favicon_link_tag '/favicon.ico' %>
+    <meta name="description" content= <%= yield(:descripcion) %>  />
+    <meta name="author" content="MiguelRodríguez de AgâraYoga" />
+
+    <%= favicon_link_tag '/logo-agara.ico' %>
 
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+            <meta property="og:title" content="Agarâra Yoga " />
+            <meta property="og:url" content="http://agarayoga.es" />
+            <meta property="og:description" content= "<%= yield(:description) %>" />
+            <meta property="og:image" content="//agarayoga.eu/logo_agara_solo.png">
+            <meta property="og:image:url" content="//agarayoga.eu/logo_agara_solo.png">
+            <meta property="og:image:type" content="image/png" />
+            <meta property="og:image:width" content="288" />
+            <meta property="og:image:height" content="246" />
+            <meta property="og:image:alt" content="AgâraYoga" />
+
+            <!-- Favicon-->
+            <link rel="icon" type="image/x-icon" href="public/logo-agara.ico" />
+            <%= favicon_link_tag '//agarayoga.eu/logo_agara_solo.png' %>
 
     <meta charset="utf-8">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" integrity="sha384-ejwKkLla8gPP8t2u0eQyL0Q/4ItcnyveF505U0NIobD/SMsNyXrLti6CWaD0L52l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
@@ -24,9 +40,9 @@
       <%elsif current_usuario && current_usuario.instructor?%>
           <%= render 'layouts/menu_instructor' %>
       <%elsif current_usuario && current_usuario.yogui?%>
-          <%= render 'layouts/menu_michon' %>
+          <%= render 'layouts/menu_usuario' %>
       <%else%>
-          <%= render 'layouts/menu_michon' %>
+          <%= render 'layouts/menu_usuario' %>
       <%end%>
 
 

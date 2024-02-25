@@ -17,7 +17,16 @@
 
 import "bootstrap"
 import "chartkick/chart.js"
+// app/javascript/packs/application.js
+require("chartkick")
+require("chart.js")
 
+//= require Chart.bundle
+//= require chartkick
 var jQuery = require('jquery')
 global.$ = global.jQuery = jQuery;
 window.$ = window.jQuery = jQuery;
+import * as echarts from "echarts";
+import "echarts/theme/dark";
+
+window.echarts = echarts;

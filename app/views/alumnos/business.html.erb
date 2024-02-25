@@ -24,7 +24,8 @@
               <tbody>
               <% @alumnos.order(:nombre).each do |almn| %>
                   <tr>
-                      <td> <%=almn.nombre %> </td>
+                      <td>  <%=almn.id %> </td>
+                      <td>  <%=almn.nombre %> </td>
                       <td> <%= link_to "Ver" , alumnos_path(almn) %> </td>
                       <td> <%= link_to "Ficha" , alumnos_path(almn, format: :pdf) %> </td>
                       <% if almn.regalo then %>

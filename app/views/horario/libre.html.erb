@@ -1,28 +1,36 @@
-
-<div class="card-group">
-  <% @libres.each do |hr| %>
+<div class="card-group ">
+  <% @horario.group(:hora, :minuto, :aula_id).count.each do |horaAula| %>
     <div class="pb-4 m-3 card">
         <div class="card-header">
-            <h5 class="d-flex justify-content-between"><%=hr.first.hora_humano%></h5>
+            <h5 class="d-flex justify-content-between"><%= "#{horaAula[0][0].to_s.rjust(2,'0')}:#{horaAula[0][1].to_s.rjust(2,'0')}"%></h5>
         </div>
-        <div class="card-body">
-        <% hr.each do |cl|%>
-            <% if cl.usuario.where.not(grupoAlumno: 5).count < 10 %>
-                <li> hay <mark> <%=10 -cl.usuario.where.not(grupoAlumno: 5).count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %> </li>
-            <%end%>
-        <%end%>
+        <div class="card-body m-0 p-0">
+          <ul class="list-group m-0 p-0 ">
+          <% @horario.where("hora = ? and minuto = ? and aula_id = ?", horaAula[0][0], horaAula[0][1], horaAula[0][2]).each do |cl| %>
+              <% plazas = cl.aula.aforo - cl.horarioAlumno.count %>
+              <% if plazas > 0 then %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                   <%= cl.dia_humano.capitalize%><span class="badge bg-<%=cl.instructor.color%> rounded-pill"><%= plazas %></span>
+                </li>
+              <% end %>
+                <% if false %>
+                 <%= cl.clase_humano%> en el aula <%= cl.aula.nombre %> hay <%= cl.aula.aforo %> plazas  y quedan libres <%= cl.aula.aforo - cl.horarioAlumno.count %>
+                <% end %>
+          <% end %>
+          </ul>
         </div>
     </div>
-  <%end%>
+  <% end %>
 </div>
 
+
 <h2> Para enviar </h2>
-<% @libres.each do |hr| %>
-    <p>  a las <%=hr.first.hora_humano%> hay
-    <% hr.each do |cl|%>
-            <% if cl.usuario.where.not(grupoAlumno: 5).count < 10 %>
-                <br> <mark> <%=10 -cl.usuario.where.not(grupoAlumno: 5).count%> </mark> <%= " plazas libres el #{cl.clase_humano}" %>
-            <% end %>
+<% @horario.group(:hora, :minuto, :aula_id).count.each do |horaAula| %>
+    <% @horario.where("hora = ? and minuto = ? and aula_id = ?", horaAula[0][0], horaAula[0][1], horaAula[0][2]).each do |cl| %>
+        <% if (cl.aula.aforo - cl.horarioAlumno.count) > 0 %>
+          <li>
+            <%= cl.hora_humano%> <%= cl.dia_humano %> con <%= cl.instructor.nombre %>
+          </li>
+        <% end %>
     <% end %>
-   </p>
- <% end %>
+<% end %>

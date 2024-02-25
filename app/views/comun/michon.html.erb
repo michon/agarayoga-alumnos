@@ -1,4 +1,4 @@
-<section class="container">
+  <section class="container">
     <div class="card-group">
 
         <!-- clase card -->
@@ -9,19 +9,21 @@
 
           <div class="car-body py-3 m-3 text-center">
 
-            <!-- Vista clases semanal -->
-            <%= form_tag(clase_seleccion_path, method: :post) do %>
-              <div class="row mb-3">
-                    <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Ver semana </button>
-              </div>
-            <% end %>
+            <%= link_to 'Calendario Agendado', clase_calendario_path(fecha: Date.today),   class: 'btn btn-primary w-100 mb-3', role: "button" %>
 
             <!-- Vista clases del dia -->
             <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
               <div class="row mb-3">
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Ver clases </button>
+              </div>
+            <% end %>
+
+            <!-- Vista clases semanal -->
+            <%= form_tag(clase_seleccion_path, method: :post) do %>
+              <div class="row mb-3">
+                    <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Ver semana </button>
               </div>
             <% end %>
 
@@ -61,6 +63,15 @@
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Altas en </button>
               </div>
             <% end %>
+
+              <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
+                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
+
+                    <button class="btn btn-primary w-100 mb-3" type="submit"> Clases Agendadas </button>
+              <% end %>
+
+
           </div>
 
         </div>
@@ -120,11 +131,23 @@
               <% end %>
 
               <%= link_to 'Generar Remesa', recibo_remesarSeleccionar_path(), class: 'btn btn-primary w-100 mb-3', role: "button" %>
-
-
           </div>
         </div>
         <!-- fin FACTURACIÓN card -->
+
+        <!-- R E C I B O S  card -->
+        <div class="m-3 card">
+          <div class="card-header">
+              <h5 class="d-flex justify-content-between">
+                  <span> Remesas </span>
+                  <span><%= ' ' %> </span>
+            </h5>
+          </div>
+          <div class="car-body m-3 py-3 text-center">
+              <%= link_to 'Seleccionar Recibos', recibo_remesarSeleccionar_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+          </div>
+        </div>
+        <!-- fin R E C I B O S  card -->
 
   </div> <!-- fin de fila -->
 </section>

@@ -14,6 +14,7 @@
                     <ul class="dropdown-menu">
                       <li> <%= link_to "Clases de hoy",         instructor_dia_path(:fecha => DateTime.now),    method: :post, class: "dropdown-item" %></li>
                       <li> <%= link_to "Clases de esta semana", clase_semana_path(:fecha => Date.today), method: :post, class: "dropdown-item disabled" %></li>
+                      <li> <%= link_to "Clases asignadas",      clase_clasesDesde_path(:fecha => Date.today), method: :post, class: "dropdown-item" %></li>
                     </ul>
                   </li>
 

@@ -1,0 +1,56 @@
+<div class="container ">
+
+  <div class=" d-flex justify-content-between">
+    <div>
+      <h1 class="d-flex justify-content-center">
+        calendario del <%="#{@cl.first.diaHora.at_beginning_of_week.day} #{I18n.t('date.abbr_month_names')[@cl.first.diaHora.at_beginning_of_week.strftime('%m').to_i].upcase}"%>
+           al      <%="#{@cl.last.diaHora.at_end_of_week.day} #{I18n.t('date.abbr_month_names')[@cl.last.diaHora.at_end_of_week.strftime('%m').to_i].upcase}"%>
+       </h1>
+     </div>
+
+    <div>
+      <% @instructores.each do |ins| %>
+        <div class="text-<%= ins.color unless ins.blank? %>">
+          <%= ins.nombre %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+
+  <% (@cl.first.diaHora.beginning_of_week.to_date..@cl.last.diaHora.end_of_week.to_date).each do |dd| %>
+    <% if dd.monday? %> <div class="row"> <% end %>
+      <div class="col border p-0">
+        <div class="card border-0 ">
+          <div class="card-header">
+              <span class="card-title">
+                <p><%=" #{I18n.t('date.day_names')[dd.strftime('%w').to_i].capitalize}" %></p>
+                <p class="<text-s></text-s>m"><%= "#{ dd.strftime('%d ').to_s + I18n.t('date.abbr_month_names')[dd.strftime('%m').to_i].upcase}"%></p>
+             </span>
+           </div>
+
+
+          <div class="card-body border-0">
+            <% @cl.where(diaHora: (dd.beginning_of_day..dd.end_of_day)).order(:diaHora).each do |cl|   %>
+            <%= link_to clase_dia_path(fecha: cl.diaHora.to_s, target: '_blank', anchor: 'clase-'+cl.id.to_s) do %>
+              <div class="d-flex justify-content-between">
+                <div class="card-title text-<%= cl.instructor.color unless cl.blank? %>">
+                  <%= "#{cl.diaHora.strftime('%H:%M')}" %>
+                </div>
+                <div class="card-title text-<%= cl.instructor.color unless cl.blank? %>">
+                  <%= "#{cl.claseAlumno.count}" %>
+                </div>
+              </div>
+            <% end %>
+
+            <% end %>
+          </div>
+
+        </div>
+
+
+
+      </div>
+    <% if dd.sunday? %> </div> <% end %>
+  <% end %>
+</div>

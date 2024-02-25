@@ -37,7 +37,7 @@
                       <div class="card-body p-2">
                           <%unless cl.blank?   %>
                              <% horarioAlumno_array = cl.horarioAlumno.to_a %>
-                            <% (0..9).each do |idx| %>
+                            <% (0..14).each do |idx| %>
                               <% unless horarioAlumno_array[idx].blank? || horarioAlumno_array[idx].horario.instructor_id != ins.id %>
                                  <p> <%= horarioAlumno_array[idx].usuario.nombre[0..15]  unless horarioAlumno_array[idx].blank? %></p>
                               <% else %>
@@ -45,7 +45,7 @@
                               <% end %>
                             <%end%>
                           <%else%>
-                            <% (0..9).each do |idx| %>
+                            <% (0..14).each do |idx| %>
                               <p> <br /> </p>
                             <%end%>
                           <%end%>
@@ -92,7 +92,7 @@
                     <div class="card-body p-2">
                         <%unless cl.blank? %>
                            <% horarioAlumno_array = cl.horarioAlumno.to_a %>
-                          <% (0..9).each do |idx| %>
+                          <% (0..14).each do |idx| %>
                             <% unless horarioAlumno_array[idx].blank? %>
                                <p title="<%= horarioAlumno_array[idx].usuario.nombre %>"> <%= horarioAlumno_array[idx].usuario.nombre[0..15]  unless horarioAlumno_array[idx].blank? %></p>
                             <% else %>
@@ -100,7 +100,7 @@
                             <% end %>
                           <%end%>
                         <%else%>
-                          <% (0..9).each do |idx| %>
+                          <% (0..14).each do |idx| %>
                             <p> <br /> </p>
                           <%end%>
                         <%end%>

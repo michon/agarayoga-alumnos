@@ -61,6 +61,7 @@
                     <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
                       <% unless clalm.usuario.blank? %>
                       <% if clalm.usuario.grupoAlumno_id == 5 %>
+                          <button type="button" class="btn btn-primary btn-sm">.</button>
                           <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
                             <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                             <label class="form-check-label text-muted"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
@@ -68,14 +69,56 @@
                       <%end %>
                       <%end %>
                     <%end %>
+
+                    <!-- presenta la gente que va a hacer la prueba en esta clase -->
+                    <% unless cl.pruebas.blank? %>
+                      <div class="border border-primary p-0 mb-2 rounded rounded-2">
+                        <div class="d-grid gap-2 border-0 m-0 p-0 ">
+                          <button class="btn m-0 p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#pruebas-<%=cl.id%>" aria-expanded="false" aria-controls="pruebas-<%=cl.id%>">
+                            <p class="d-flex justify-content-start text-info rounded py-0 my-0">
+                                <i class="bi bi-arrows-collapse"> Pruebas</i>
+                            </p>
+                          </button>
+                        </div>
+                        <ul id="pruebas-<%=cl.id%>" class="list-group list-group-flush px-2 my-0 collapse">
+                            <% cl.pruebas.each do |prb| %>
+                              <div class="form-check" id="colordiv-info">
+                                <input id="prueba-<%=prb.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=prb.id%>" >
+                                <label class="form-check-label text-info"  for="prueba-<%=prb.id%>" > <%="#{prb.nombre.capitalize} - #{prb.movil}"%>   </label>
+                              </div>
+                            <% end %>
+                        </ul>
+                      </div>
+                    <%end%>
+
+
+                    <!-- presenta la gente que solicita plaza en esta clase -->
+                    <% unless cl.claseSolicitum.blank? %>
+                      <div class="border border-secondary p-0 rounded rounded-2">
+                        <div class="d-grid gap-2 border-0 m-0 p-0">
+                          <button class="btn m-0 p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#solicita-<%=cl.id%>" aria-expanded="false" aria-controls="solicita-<%=cl.id%>">
+                            <p class="d-flex justify-content-start text-warning rounded py-0 my-0 ">
+                              <span class="mt-1">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8Zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0Zm-.5 11.707-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793Z"/>
+                              </svg>
+                              </span>
+                              <span class="m-1 me-3">Solicitudes</span>
+                            </p>
+                          </button>
+                        </div>
+                        <ul id="solicita-<%=cl.id%>" class="list-group list-group-flush px-2 my-0 collapse">
+                            <% cl.claseSolicitum.each do |prb| %>
+                              <div class="form-check" id="colordiv-info">
+                                <input id="solicita-<%=prb.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=prb.id%>" >
+                                <label class="form-check-label text-warning"  for="solicita-<%=prb.id%>" > <%="#{prb.usuario.nombre.capitalize}"%>   </label>
+                              </div>
+                            <% end %>
+                        </ul>
+                      </div>
+                    <%end%>
+
                 </div>
-                <% unless cl.pruebas.blank? %>
-                    <ol>
-                        <% cl.pruebas.each do |prb| %>
-                            <li> <%="#{prb.nombre} - #{prb.movil}"%> </li>
-                        <% end %>
-                    </ol>
-                <%end%>
 
                 <div class="card-footer">
                   <div class="pb-4 row">
@@ -112,6 +155,9 @@
                       </div>
                   </div>
 
+                  <!-- ******************************************************************************************************* -->
+                  <!-- **************************************  Fila de bontones   ******************************************** -->
+                  <!-- ******************************************************************************************************* -->
                   <div class="row"> <!-- Fila de botones -->
                       <div class="col col-9">
                         <div class="pb-4 row justify-content-left">
@@ -123,6 +169,19 @@
                           <div class="col col-6">
                             <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#quitar-<%=cl.id%>">
                               <i class="bi bi-person-dash-fill"></i> Alumno
+                            </button>
+                          </div>
+                        </div>
+
+                        <div class="pb-4 row justify-content-left">
+                          <div class="col col-6">
+                            <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#altaSolicita-<%=cl.id%>">
+                              <i class="bi bi-person-plus"></i> Solicitud
+                            </button>
+                          </div>
+                          <div class="col col-6">
+                            <button type="button" class="btn btn-primary col-12" data-bs-toggle="modal" data-bs-target="#quitarSolicita-<%=cl.id%>">
+                              <i class="bi bi-person-dash"></i> Solicitud
                             </button>
                           </div>
                         </div>
@@ -157,7 +216,9 @@
   </div> <!-- div row -->
 
 
-<!-- Formulario para seleccionar otro día -->
+<!-- ******************************************************************************************************* -->
+<!-- ******************************* Formulario para seleccionar otro día ********************************** -->
+<!-- ******************************************************************************************************* -->
 <div class="card border border-info mb-3" >
     <div class="card-header">
         <h5 class="text-warning">Selecciona otro dia </h5>
@@ -188,7 +249,9 @@
 </div>
 
 
-<!-- formularios Modales para altas Alumnos-->
+<!-- ******************************************************************************************************* -->
+<!-- ******************************* Formulario para Modales de alta alumno ******************************** -->
+<!-- ******************************************************************************************************* -->
 <% @clasesHoy.each do |cl| %>
     <div class="modal fade" id="altaAlumno-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
       <div class="modal-dialog">
@@ -215,7 +278,9 @@
     </div>
 <%end%>
 
-<!-- formularios Modales para quitar alumnos-->
+<!-- ******************************************************************************************************* -->
+<!-- ***************************** Formulario para Modales de quitar alumno ******************************** -->
+<!-- ******************************************************************************************************* -->
 <% @clasesHoy.each do |cl| %>
     <div class="modal fade" id="quitar-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
       <div class="modal-dialog">
@@ -244,7 +309,67 @@
     </div>
 <%end%>
 
-<!-- formularios Modales para altas Pruebas-->
+<!-- ******************************************************************************************************* -->
+<!-- ******************************* Formulario para Modales de ALTA SOLICITUD ***************************** -->
+<!-- ******************************************************************************************************* -->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="altaSolicita-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="altaSolicita-<%=cl.id%>">
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_for(ClaseSolicitum.new, url: clase_alta_solicita_path) do |f| %>
+              <div class="modal-body">
+                      <%= f.collection_select :usuario_id, Usuario.where(debaja: false).order(:nombre), :id, :nombre, prompt: true, autofocus: true %> </br>
+                      <%= f.hidden_field :clase_id, value: cl.id %>
+                      <input type="hidden" id="fecha_dia" name="fecha" value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Añadir Alumno </button>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+<%end%>
+
+<!-- ******************************************************************************************************* -->
+<!-- *************************** Formulario para Modales de QUITAR SOLICITUD  ****************************** -->
+<!-- ******************************************************************************************************* -->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="quitarSolicita-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" >
+            <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_tag(clase_baja_solicita_path, method: :post) do %>
+              <div class="modal-body">
+                  <select class="form-select"  name="clase_alumno_id" id="baja_clase_alumno_id">
+                      <% cl.claseSolicitum.each do |clAlm|%>
+                          <option value="<%=clAlm.id%>"> <%=clAlm.usuario.nombre unless clAlm.usuario.blank? %> </option>
+                      <% end %>
+                  </select>
+                  <input type="hidden" id="baja_fecha_dia" name="fecha"    value="<%=cl.diaHora.to_s%>" >
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Añadir Alumno"> Quitar Alumno </button>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+<%end%>
+<!-- ******************************************************************************************************* -->
+<!-- ***************************** Formulario para Modales de altas PRUEBAS ******************************** -->
+<!-- ******************************************************************************************************* -->
 <% @clasesHoy.each do |cl| %>
     <div class="modal fade" id="altaPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAltaAlumnos" aria-hidden="true">
       <div class="modal-dialog">
@@ -273,7 +398,9 @@
     </div>
 <%end%>
 
-<!-- formularios Modales para quitar Pruebas-->
+<!-- ******************************************************************************************************* -->
+<!-- ***************************** Formulario para Modales de QUITAR PRUEBAS ******************************* -->
+<!-- ******************************************************************************************************* -->
 <% @clasesHoy.each do |cl| %>
     <div class="modal fade" id="quitarPrueba-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalQuitarPrueba" aria-hidden="true">
       <div class="modal-dialog">

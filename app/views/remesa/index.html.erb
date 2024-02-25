@@ -1,0 +1,68 @@
+
+<% content_for :title,  "Listado de remesas" %>
+
+<ul class="list-group">
+<% @rms.order(:created_at).reverse.each do |remesa| %>
+  <li class="list-group-item border-1 rounded-3 card">
+      <div class="d-flex justify-content-between card-header">
+        <div class="">
+          <a class="" data-bs-toggle="collapse" href="#remesa-<%=remesa.id.to_s%>" role="button" aria-expanded="false" aria-controls="collapseExample">
+            <%= "#{remesa.id.to_s + ' ' + remesa.nombre}" %>
+          </a>
+        </div>
+
+        <div class="">
+          <a class="btn btn-primary" data-bs-toggle="collapse" href="#remesa-<%=remesa.id.to_s%>" role="button" aria-expanded="false" aria-controls="collapseExample">
+            <%= "#{'Ver aquí'}" %>
+          </a>
+           <%= link_to('Ver remesa', remesa_show_path(remesa.id), class: "btn btn-primary") %>
+        </div>
+
+      </div>
+
+      <div id="remesa-<%=remesa.id.to_s%>" class=" border p-2 my-4 collapse card-body ">
+          <div class="input-group input-group-lg mb-2">
+            <span class="input-group-text" id="importe-descripcion">Número de remesa: </span>
+            <input class="form-control text-center me-1 bg-light" type="text" name="rms[id]" value="<%=remesa.id%>" aria-describedby="importe-id" readOnly >
+            <span class="input-group-text" id="estado-descripcion">Fecha:  </span>
+            <input class="form-control text-center me-1 bg-light" type="text" name="rms[vencimiento]" value="<%=remesa.created_at.strftime("%d de %B de %Y")%>" aria-describedby="estado-vencimiento" readonly >
+            <span class="input-group-text" id="nombre-descripcion">Descripción: </span>
+            <input class="form-control me-1 bg-light" type="text" name="rms[nombre]" value="<%=remesa.nombre%>" aria-describedby="nombre-descripcion" readonly>
+          </div>
+          <div class="input-group input-group-lg mb-2">
+            <span class="input-group-text" id="importe-descripcion">IBAN: </span>
+            <input class="form-control me-1 text-strat bg-light" type="text" name="rms[iban]" value="<%=remesa.iban%>" aria-describedby="importe-descripcion" readonly >
+            <span class="input-group-text" id="estado-descripcion">BIC:  </span>
+            <input class="form-control text-center me-1 bg-light" type="text" name="rms[bic]" value="<%=remesa.bic%>" aria-describedby="estado-descripcion" readonly >
+          </div>
+          <div class="input-group input-group-lg mb-2">
+            <span class="input-group-text" id="importe-descripcion">Número de recibos: </span>
+            <input class="form-control me-1 text-strat bg-light" type="text" name="rms[recibos]" value="<%=remesa.recibos.count%>" aria-describedby="importe-descripcion" readonly >
+            <span class="input-group-text" id="estado-descripcion">Total remesa:  </span>
+            <input class="form-control text-center me-1 bg-light" type="text" name="rms[total]" value="<%=remesa.recibos.sum(:importe)%>" aria-describedby="estado-descripcion" readonly >
+          </div>
+
+          <div class="input-group input-group-lg mb-2 d-flex justify-content-end">
+              <a class="btn-sm btn-primary" data-bs-toggle="collapse" href="#remesa-recibos-<%=remesa.id.to_s%>" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <%= "#{'Ver los recibos' }" %>
+              </a>
+          </div>
+
+          <ul class="list-group">
+            <div id="remesa-recibos-<%=remesa.id.to_s%>" class=" rounded bg-light collapse ">
+              <% remesa.recibos.each_with_index do |rcb, idx| %>
+              <li class="list-group-item list-group-item<%= idx.even? ? "-light" : "" %> d-flex justify-content-between">
+                <span> <%= rcb.usuario.nombre %> </span>
+                <span> <%= number_to_currency(rcb.importe) %> </span>
+              </li>
+              <%end%>
+
+            </div>
+          </ul>
+
+
+
+      </div>
+  </li>
+<% end %>
+</ul>

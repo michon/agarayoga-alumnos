@@ -22,6 +22,8 @@ class Usuario < ApplicationRecord
   def set_default_rol
     sef_rol ||= :usuario
   end
+
+  
   def ibanImpreso
       ibanImp = ""
       (self.iban.length/4).times do |i|

@@ -1,0 +1,221 @@
+<% content_for :title,  "Tus clases agendadas en AgâraYoga para el mes de JULIO" %>
+<% content_for :description,  "Hola #{@clsDelAlumno.first.usuario.nombre.split(' ')[0]}. Estas son tus clases agendadas en AgâraYoga para el mes de JULIO" %>
+
+
+<% @arrayMeses.each do |dd| %>
+
+  <div class="row d-flex flex-column mb-5">  <!-- Un mes -->
+    <div class="row">  <!-- nombre del mes -->
+      <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
+        <h5><%= I18n.l(dd, format: '%B').upcase  %> <%=dd.year %>-<%= "#{@clsDelAlumno.first.usuario.nombre}" %></h5>
+      </div>
+    </div>
+
+    <div class="row d-flex flex-row">  <!-- Un mes -->
+      <% (1..5).each do |dd| %> <!-- dias de la semana -->
+        <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
+          <%=" #{I18n.t('date.day_names')[dd].capitalize[0..1]}" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- dias del mes -->
+      <% (dd.beginning_of_week..dd.end_of_month.end_of_week).each_with_index do |dm, idx| %>
+
+        <% if dm.monday? %> <div class="row d-flex flex-row"> <% end %>
+
+        <% unless dm.saturday? or dm.sunday? %>
+        <div class="col border rounded d-flex justify-content-center bg-light p-1 <%= (dm.month == dd.month) ? 'text-black' : 'text-muted' %> ">
+                       <!-- Comprobamos si hay clase este día -->
+                      <% clAlm = @clsDelAlumno.where(diaHora: dm.at_beginning_of_day..dm.at_end_of_day) %>
+                      <div class="col p-0 m-0 border d-flex justify-content-center flex-column rounded">
+
+                        <% colorFondoClase = 'sucess' %>
+                        <% colorTextoClase = 'sucess' %>
+                        <% if clAlm.blank? %>
+                          <% colorFondoClase = 'white' %>
+                          <% colorTextoClase = 'black' %>
+                        <% else %>
+                          <% colorFondoClase = clAlm.first.claseAlumnoEstado.color %>
+                          <% colorTextoClase = 'white' %>
+                        <% end %>
+
+                        <% unless dm.month == dd.month %>
+                          <% colorFondoClase = 'white' %>
+                          <% colorTextoClase = 'light' %>
+                        <% end %>
+
+                        <div class="d-flex justify-content-center flex-column rounded bg-<%= colorFondoClase %> text-<%= colorTextoClase %> ">
+                        <p class="text-center"><%= dm.day %> </p>
+                        <p class="p-0 m-0 text-center">
+                            <% unless clAlm.blank? %>
+                              <% clAlm.each do |cc| %>
+                                <%= "#{ cc.diaHora.strftime("%H:%M")}" %>
+                              <% end %>
+                            <% else %>
+                                .
+                            <% end %>
+                        </p>
+                        </div>
+                      </div>
+        </div>
+        <% end %>
+
+        <% if dm.sunday? %> </div> <% end %>
+
+      <% end %>
+  </div>
+
+<% end %>
+
+
+<% if false %>
+                 <h1>Hola <%= @clsDelAlumno.first.usuario.nombre.split(' ')[0] unless @clsDelAlumno.first.blank? %> </h1>
+                 <h2> Este es el listado de CLASES AGENDADAS para JULIO </h2>
+                 <h4> Alumno: <%= @clsDelAlumno.first.usuario.nombre unless @clsDelAlumno.first.blank?%> </h4>
+                 <h4> Número de clases: <%= @clsDelAlumno.count.to_s  unless @clsDelAlumno.first.blank?%></h4>
+                <!-- recorremos la tabla clalseAlumno -->
+
+              <% unless @clsDelAlumno.blank? %>
+              <div class="row d-flex flex-column mb-5">
+                  <% @clsDelAlumno.each do |clAlm| %>
+                          <div class="col bg-light ">
+                      <% unless clAlm.diaHora.blank? then %>
+                            <%=" #{clAlm.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las #{clAlm.diaHora.strftime('%H:%M')}" %>
+                            <span class="bg-white"><%="#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}"  %></span>
+                      <% end %>
+                        </div>
+                  <% end %>
+              </div>
+
+
+              <% mes = 0 %>
+
+                <% (@clsDelAlumno.first.diaHora.beginning_of_week.to_date..@clsDelAlumno.last.diaHora.end_of_week.to_date).each do |dd| %>
+                  <% unless mes == dd.month %>
+                    <!-- Rellenamos los div hasta final de semana -->
+                    <% unless dd.monday? %>
+                      <% (dd.wday..5).each do %>
+                        <div class="col p-0 m-0 border d-flex justify-content-center flex-column rounded">
+                          .
+                          <%=dd.wday%>
+                        </div>
+                      <% end %>
+                      </div> <!-- domingo -->
+                    <% end %>
+
+                    <!-- Ponemos la cabecera con el nombre del mes -->
+                    <div class="row">
+                        <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
+                          <%=" #{I18n.t('date.month_names')[dd.month].capitalize}" %>
+                        </div>
+                    </div>
+
+                    <!-- Ponemos la cabecera con los días de la semana para cada mes -->
+                    <div class="row">
+                      <% (1..5).each do |dd| %>
+                        <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
+                          <%=" #{I18n.t('date.day_names')[dd].capitalize[0..1]}" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+
+                  <% mes = dd.month %>
+
+                  <% if dd.monday? or dd == dd.beginning_of_month %> <div class="row"> V<!-- lunes --> <% end %>
+                    <% unless dd.sunday? or dd.saturday? %>
+                       <!-- Comprobamos si hay clase este día -->
+                      <% clAlm = @clsDelAlumno.where(diaHora: dd.at_beginning_of_day..dd.at_end_of_day) %>
+                      <div class="col p-0 m-0 border d-flex justify-content-center flex-column rounded">
+                        <div class="d-flex justify-content-center flex-column rounded bg-<%= clAlm.blank? ? 'white' : clAlm.first.claseAlumnoEstado.color %> text-<%= clAlm.blank? ? 'black' : 'white'%> ">
+                          <p class="text-center"><%= dd.day %> </p>
+                          <p class="p-0 m-0 text-center">
+                              <% unless clAlm.blank? %>
+                                <% clAlm.each do |cc| %>
+                                  <%= "#{ cc.diaHora.strftime("%H:%M")}" %>
+                                <% end %>
+                              <% else %>
+                                  .
+                              <% end %>
+                          </p>
+                        </div>
+                      </div>
+                    <% end %>
+                  <% if dd.sunday? or dd.end_of_month %> </div> <!-- domingo -->  <% end %>
+                <% end %>
+              <% end %>
+
+  <% end %>
+              <% if false %>
+            <!-- leyenda de colores -->
+            <div class="row d-flex flex-column mt-3 text-center col-6 justify-content-center">
+              <% @estados.each do |est| %>
+                  <div class=" rounded <text-center></text-center> bg-<%= est.color %> text-white m-1 p-2">
+                    <%= est.nombre %>
+                  </div>
+              <% end %>
+            </div>
+
+              <% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<% if false %>
+
+
+              <% unless @clsDelAlumno.blank? %>
+                <ol>
+                <% @clsDelAlumno.each do |clAlm| %>
+                    <% if clAlm.claseAlumnoEstado.id == 1 %>
+                        <li class= "text-<%=clAlm.claseAlumnoEstado.color%>">
+                          <% unless clAlm.diaHora.blank? then %>
+                            <%="#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}  #{clAlm.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las #{clAlm.diaHora.strftime('%H:%M')}" %>
+                          <% end %>
+                        </li>
+                    <%end%>
+                <% end %>
+                </ol>
+
+                <% (@clsDelAlumno.first.diaHora.beginning_of_week.to_date..@clsDelAlumno.last.diaHora.end_of_week.to_date).each do |dd| %>
+                  <% if dd.monday? %> <div class="row"> <% end %>
+                        <% unless dd.sunday? or dd.saturday? %>
+                    <div class="col-5 border p-0">
+                      <div class="card border-0 ">
+                        <div class="card-header">
+                            <span class="card-title d-flex justify-content-between">
+                              <p><%= "#{ dd.strftime('%d ').to_s + I18n.t('date.abbr_month_names')[dd.strftime('%m').to_i].upcase}"%></p>
+                              <p><%=" #{I18n.t('date.day_names')[dd.strftime('%w').to_i].capitalize}" %> </p>
+                           </span>
+                         </div>
+
+                         <!-- Comprobamos si hay clase este día -->
+                        <% clAlm = @clsDelAlumno.where(diaHora: dd.at_beginning_of_day..dd.at_end_of_day) %>
+
+                        <div class="card-body border-0">
+                          <% unless clAlm.first.blank? %>
+                            <div class="d-flex justify-content-center rounded bg-primary text-white ">
+                                <% clAlm.each do |cc| %>
+                                  <span class="p-0 m-0 "><%= "#{ cc.diaHora.strftime("%H:%M")}" %></span>
+                                <% end %>
+                            </div>
+                          <% end %>
+                      </div>
+                    </div>
+                    </div>
+                        <% end %>
+                  <% if dd.sunday? %> </div> <% end %>
+                <% end %>
+              <% end %>
+      <% end %>

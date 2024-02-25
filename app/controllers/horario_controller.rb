@@ -1,8 +1,14 @@
 class HorarioController < ApplicationController
     before_action :configure_permitted_parameters, if: :devise_controller?
 
-  def index
 
+    #nuevo horario para permitir mismo hora dos clases
+  def nuevo
+    
+  end
+
+
+  def index
       @instructores = Instructor.all
 
       # horarioGeneral es un hash que tiene una entrada por cada hora (key) que
@@ -40,6 +46,8 @@ class HorarioController < ApplicationController
         Horario.group(:hora).pluck(:hora).each_with_index do |hr,idx|
           @libres[idx] = Array.new(Horario.where(hora: hr))
         end
+        @Clases = Horario.group(:hora,:minuto, :aula_id)
+        @horario = Horario.all
       else
         render :file => "public/401.html", :status => :unauthorized
       end

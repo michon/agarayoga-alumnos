@@ -9,8 +9,8 @@
           <li class="list-group-item px-3">Alumnos en horario: <span class="text-primary"> <%= @alumnosTotal.count %>                             </span> </li>
           <li class="list-group-item px-3">Importe a facturar: <span class="text-primary"> <%= humanized_money(@importeTotal.to_f)%> €                  </span> </li>
           <li class="list-group-item px-3">Importe medio por alumno: <span class="text-primary"> <%= humanized_money((@importeTotal.to_f/@alumnosTotal.count)) %> € </span> </li>
-          <li class="list-group-item px-3">Pago por Banco: <span class="text-primary"> <%= @usuariosEnHorario.where(serie: 'A').count%> € </span> </li>
-          <li class="list-group-item px-3">Pago por Banco: <span class="text-primary"> <%= @usuariosEnHorario.where(serie: 'B').count%> € </span> </li>
+          <li class="list-group-item px-3">Pago por banco: <span class="text-primary"> <%= @usuariosEnHorario.where(serie: 'A').count%> alumnos </span> </li>
+          <li class="list-group-item px-3">Pago en  mano : <span class="text-primary"> <%= @usuariosEnHorario.where(serie: 'B').count%> alumnos</span> </li>
           <% @alumnosVeces.each do |alm| %>
           <li class="list-group-item px-3"> <%="Alumnos que vienen #{alm[0]} veces : #{alm[1]}"%> </span> </li>
           <% end %>
@@ -106,6 +106,16 @@
   <p><%= @usrAlta.count %> Total usuarios de alta </p>
 
 
+  <!-- #Series de factuación desajustadas -->
+  <%  unless @aFacturar.select{ |web| web[2].codserie == 'A'}.count == @usuariosEnHorario.where(serie: 'A').count %>
+    <h4 class="text-danger"> diferencias de serie de facturación </h4>
+    <% @aFacturar.each_with_index do |web, idx| %>
+      <% unless  web[2].codserie == web[0].serie %>
+        <p> <%= web[0].nombre %>  en cliente:<%= web[2].codserie %> y en usuario: <%=  web[0].serie %>  </p>
+      <% end %>
+    <% end %>
+  <% end %>
+
   <h4> Alumnos sin codigo de facturacion </h4>
   <h6> De la tabla usuario, los que no tienen código de facturación </h6>
   <% if @clientesSinUsuario.count > 0 then %>
@@ -155,6 +165,8 @@
 
 
 
+  <h4>Listado total de facturación</h4>
+  <h6> </h6>
   <table>
       <tr>
           <th> # </th>
@@ -162,6 +174,7 @@
           <th> Cuota </th>
           <th> Grupo </th>
           <th> Importe €</th>
+          <th> Serie </th>
       </tr>
 
       <tbody>
@@ -173,7 +186,48 @@
                   <td> <%= web[1] %> dia </td>
                   <td> <%= web[2].codgrupo unless web[2].blank? %></td>
                   <td> <%= web[3].to_i %></td>
+                  <td> <%= web[2].codserie unless web[2].blank?  %></td>
               </tr>
+          <%end%>
+      </tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><%= @importeTotal%></td>
+  </table>
+
+
+
+
+  <h4> Recibos por banco </h4>
+  <h6> Listado de recibos que se creearán para pasar por el banco </h6>
+  <h6> aFacturar <%= @aFacturar.select{ |web| web[2].codserie == 'A'}.count %>  usuarios  <%= @usuariosEnHorario.where(serie: 'A').count%>  </h6>
+  <h6> <%= @aFacturar.select{ |web| web[2].codserie == 'B'}.count %> </h6>
+  <h6> <%= @aFacturar.count %> </h6>
+  <table>
+      <tr>
+          <th> # </th>
+          <th> Alumno </th>
+          <th> Cuota </th>
+          <th> Grupo </th>
+          <th> Importe €</th>
+          <th> Serie </th>
+      </tr>
+
+      <tbody>
+          <!-- recorremos todos los alumnos que tenemos en el horario y cotejamos -->
+          <% @aFacturar.each_with_index do |web, idx| %>
+            <% if web[2].codserie == 'A' %>
+              <tr>
+                  <td> <%= idx + 1 %> </td>
+                  <td> <%= web[0].nombre %> </td>
+                  <td> <%= web[1] %> dia </td>
+                  <td> <%= web[2].codgrupo unless web[2].blank? %></td>
+                  <td> <%= web[3].to_i %></td>
+                  <td> <%= web[2].codserie unless web[2].blank?  %></td>
+              </tr>
+            <%end%>
           <%end%>
       </tbody>
       <tr>

@@ -35,6 +35,10 @@ class InstructorController < ApplicationController
                 @total  = @total + 20
          end
        end
+
+       if @clases.count < 1 then
+         redirect_to instructor_index_path(), alert: "Este instructor aún no ha dado clases"
+       end
   end
 
   #Presenta las clases del día para el instructor que esté logueado.
