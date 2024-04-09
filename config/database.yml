@@ -15,6 +15,7 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: ytp3dew5_agarayo
   password: RbA(wFJWmF6pv6FbUyPX
+  host: agarayoga.eu
   socket: /tmp/mysql.sock
 
 development:
@@ -22,6 +23,7 @@ development:
   database: ytp3dew5_agarayoga
   username: ytp3dew5_agarayo
   password: RbA(wFJWmF6pv6FbUyPX
+  host: agarayoga.eu
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -60,6 +62,6 @@ external_reporting_table:
   adapter: mysql2
   encoding: utf8
   database: agara_yoga
-  host: 170.253.18.13
+  host: 170.253.29.246
   username: michon
   password: herishef

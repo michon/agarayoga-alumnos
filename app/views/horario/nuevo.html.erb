@@ -1,0 +1,83 @@
+
+<div id='horario' class='max-width'> 
+  <div id='' class='row p-0 mb-1' >
+    <div class="col col-1">
+      .
+    </div>
+    
+    <% @diasDistintos.each do |dia| %>
+      <div class="col d-flex text-align-center justify-content-center bg-primary rounded rounded-2 p-2 m-1 text-white fw-bold fs-4" >
+        <%= "#{I18n.t('date.abbr_day_names')[dia.diaSemana.to_i].upcase}" %> 
+      </div>
+    <% end %>
+  </div>
+  
+  <% @horasDistintas.each do |hr| %>
+    <div id='horarioAula' class='row p-0 mb-1' >
+      <div class='border border-primary col col-1  d-flex justify-content-center align-items-center bg-primary p-0 m-0 rounded rounded-2  '>
+        <span class='align-middle text-center fs-4 text-white fw-bold p-0 m-0' style='ransform-origin: 0 0; transform: rotate(-90deg);' >
+          <%= " #{hr.hora.to_s.rjust(2,'0')}:#{hr.minuto.to_s.ljust(2,'0')}"%> </span>
+      </div>
+      <div class="col col-11">
+      <% (1..2).each do |aula| %>
+        <div id='Aula' class='d-flex flex-row flex-grow justivy-content-between max-width  row'>
+          <% @diasDistintos.each do |dia| %>
+              <% cl = @horario.where(diaSemana: dia.diaSemana, hora: hr.hora, minuto: hr.minuto, aula_id: aula).first %>
+                <% if cl.blank? %>
+                  <button type="button" class="btn btn-primary p-2 m-1 rounded col bg-light border border-1 border-secondary" data-bs-toggle="modal" data-bs-target="vacío">
+                    .
+                  </button>
+                <% else %>
+                  <button type="button" class="btn btn-primary p-2 m-1 rounded col bg-<%=cl.instructor.color%> border border-1 border-secondary" data-bs-toggle="modal" data-bs-target="#clase-<%=cl.id.to_s%>">
+                    <div class="progress" style="height: 20px">
+                      <% if cl.usuario.count > cl.aula.aforo %>
+                        <div class="progress-bar bg-secondary " role="progressbar" style="width: <%=(cl.aula.aforo*100/cl.usuario.count).to_s%>%;" aria-valuenow="<%= cl.aula.aforo%>" aria-valuemin="0" aria-valuemax="<%cl.aula.aforo%>">
+                          <span class="fs-6 fw-bold"> <%= cl.aula.aforo.to_s %></span>
+                        </div>
+
+                        <div class="progress-bar bg-warning " role="progressbar" style="width: <%=(((cl.usuario.count-cl.aula.aforo)*100)/cl.usuario.count).to_s%>%;" aria-valuenow="<%= ((cl.usuario.count*100)/cl.aula.aforo).to_s%>" aria-valuemin="0" aria-valuemax="10">
+                          <span class="fs-6 fw-bold text-black"> <%= (cl.usuario.count - cl.aula.aforo).to_s %></span>
+                        </div>
+                      <% else %>
+                        <div class="progress-bar bg-secondary " role="progressbar" style="width: <%=((cl.usuario.count*100)/cl.aula.aforo).to_s%>%;" aria-valuenow="<%=((cl.usuario.count*100)/cl.aula.aforo).to_s%>" aria-valuemin="0" aria-valuemax="<%=cl.usuario.count%>">
+                          <span class="fs-6 fw-bold"> <%= cl.usuario.count.to_s %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                  </button>
+                <% end %>
+          <% end %>
+        </div> <!-- fin cada aula -->
+      <% end %>
+      </div> 
+    </div> <!-- fin cada horarioAula -->
+  <% end %>
+</div> <!-- fin id horario --> 
+
+<% @horario.each do |cl| %>
+  <div class="modal fade" id='clase-<%=cl.id.to_s%>' tabindex="-1" aria-labelledby="exampleModalLabel<%=cl.id.to_s%>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">  
+                <%= "#{I18n.t('date.abbr_day_names')[cl.diaSemana.to_i].upcase} #{cl.hora}:#{cl.minuto} #{cl.aula.nombre} #{cl.instructor.nombre} #{cl.usuario.count}" %>
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ol>
+          <% cl.usuario.each do |al| %>
+            <li>
+            <%= al.nombre %>
+            </li>
+          <% end %>
+          </ol>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ <% end %>

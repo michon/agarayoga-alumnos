@@ -30,4 +30,7 @@ class Horario < ActiveRecord::Base
         diasemana_enum[self.diaSemana][0]
     end
 
+  def horario_label_method
+     semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+  end
 end

@@ -3,8 +3,7 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  config.hosts << "agarayoga.eu"
-  config.hosts << "www.agarayoga.eu"
+  config.hosts << "app.agarayoga.eu"
 
   # Code is not reloaded between requests.
   config.cache_classes = true

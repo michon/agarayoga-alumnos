@@ -182,16 +182,19 @@ end
   def estado
     accion = 0
     clase = " "
-    params.each do |p|
+    unless params.each.blank? 
+      params.each do |p|
         if p[0].start_with?('accion') then
             accion = p[1]
             clase = p[0]
         end
-     end
+      end
 
-     fijarEstado(params[:alumnos_ids],accion.to_i)
-
-     redirect_to "#{request.referrer}#clase-#{clase.split('#')[1]}"
+      unless params[:alumnos_ids].blank? 
+        fijarEstado(params[:alumnos_ids],accion.to_i)
+      end
+    end
+    redirect_to "#{request.referrer}#clase-#{clase.split('#')[1]}"
   end
 
   protected

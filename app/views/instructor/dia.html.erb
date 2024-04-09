@@ -16,7 +16,7 @@
             <%= form_tag(clase_estado_path, method: :post) do %>
             <% idx = 0 %>
                 <div class="card-body">
-                    <% cl.claseAlumno.order(claseAlumnoEstado_id: :asc).each do |clalm| %>
+                    <% cl.claseAlumno.includes(:usuario).order(claseAlumnoEstado_id: :asc).order('usuarios.nombre').each do |clalm| %>
                       <% unless clalm.usuario.blank? %>
                       <% unless clalm.usuario.grupoAlumno_id == 5 %>
                           <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">

@@ -47,10 +47,12 @@
                   <li class="nav-item dropdown" id="desplegableInstructores">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"> Instructores </a>
                     <ul class="submenu dropdown-menu">
-                      <li><%= link_to 'Raquel mes actual',       instructor_path(:id => 2, :fecha => DateTime.now()), class: "dropdown-item" %></li>
-                      <li><%= link_to 'Raquel mes anterior',     instructor_path(:id => 2, :fecha => DateTime.now()-1.month), class: "dropdown-item" %></li>
-                      <li><%= link_to 'María José mes actual',   instructor_path(:id => 3, :fecha => DateTime.now()), class: "dropdown-item" %></li>
-                      <li><%= link_to 'María José mes anterior', instructor_path(:id => 3, :fecha => DateTime.now()-1.month), class: "dropdown-item" %></li>
+                      <li><%= link_to 'Cortés mes actual',       instructor_path(:id => 4, :fecha => DateTime.now()), class: "dropdown-item" %></li>
+                      <li><%= link_to 'Cortés mes anterior',     instructor_path(:id => 4, :fecha => DateTime.now()-1.month), class: "dropdown-item" %></li>
+                      <li><%= link_to 'Portero mes actual',   instructor_path(:id => 3, :fecha => DateTime.now()), class: "dropdown-item" %></li>
+                      <li><%= link_to 'Portero mes anterior', instructor_path(:id => 3, :fecha => DateTime.now()-1.month), class: "dropdown-item" %></li>
+                      <li><%= link_to 'Katya mes actual',       instructor_path(:id => 5, :fecha => DateTime.now()), class: "dropdown-item" %></li>
+                      <li><%= link_to 'Katya mes anterior',     instructor_path(:id => 5, :fecha => DateTime.now()-1.month), class: "dropdown-item" %></li>
                     </ul>
                   </li>
 

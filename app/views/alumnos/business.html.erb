@@ -22,7 +22,7 @@
               </thead>
 
               <tbody>
-              <% @alumnos.order(:nombre).each do |almn| %>
+              <% @alumnos.order(:id).each do |almn| %>
                   <tr>
                       <td>  <%=almn.id %> </td>
                       <td>  <%=almn.nombre %> </td>

@@ -8,8 +8,7 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
 
   
-  config.hosts << "agarayoga.eu"
-  config.hosts << "www.agarayoga.eu"
+  config.hosts << "app.agarayoga.eu"
 
   config.cache_classes = false
 

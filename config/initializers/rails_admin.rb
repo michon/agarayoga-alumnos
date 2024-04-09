@@ -86,6 +86,11 @@ RailsAdmin.config do |config|
   end
 
   config.model 'Horario' do
+
+      object_label_method do
+          :horario_label_method
+      end
+
       list do
         field :clase_humano
         field :instructor
@@ -93,20 +98,38 @@ RailsAdmin.config do |config|
 
         sort_by 'diaSemana, hora, minuto'
       end
-      object_label_method do
-          :horario_label_method
-      end
 
-      field :diaSemana, :enum do
-        enum_method do
-            :diasemana_enum
+      edit do 
+
+        group :defalut do
+          active false
+          label  do 
+            semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+            h = bindings[:object]
+            unless h.diaSemana.blank? then
+            semana[h.diaSemana].to_s + ' '  + h.hora.to_s + ':' + h.minuto.to_s + ' - - - '  + h.instructor.nombre.to_s + ' (Aula ' + h.aula.nombre + ')'
+            end
+          end
+          
+          field :hora
+          field :minuto
+          field :diaSemana, :enum do
+            enum_method do
+              :diasemana_enum
+            end
+          end
+          field :instructor
+          field :aula
         end
+        
+        group :usuario do 
+          label 'Alumnos' 
+          field :usuario do
+            label 'Alumnos'
+          end
+        end
+        
       end
-      field :hora
-      field :minuto
-      field :instructor
-      field :aula
-      field :usuario
   end
 
   config.model 'HorarioAlumno' do
@@ -180,10 +203,6 @@ RailsAdmin.config do |config|
      self.nombre
   end
 
-  def horario_label_method
-     semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
-     semana[self.diaSemana].to_s + ' '  + self.hora.to_s + ':' + self.minuto.to_s
-  end
 
   def clase_label_method
         self.diaHora.strftime('%a, %e %B %y a las %H:%M')

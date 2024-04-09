@@ -5,6 +5,15 @@ class HorarioController < ApplicationController
     #nuevo horario para permitir mismo hora dos clases
   def nuevo
     
+    if HorarioPolicy.new(current_usuario).verIndex?
+      
+        @horario = Horario.all
+        @diasDistintos = Horario.select(:diaSemana).order(:diaSemana).distinct
+        @horasDistintas = Horario.select(:hora, :minuto).order(:hora).distinct
+        @horasDistintasInstructor = Horario.select(:instructor_id, :hora, :minuto).order(:hora, :minuto, :instructor_id).distinct
+    else
+      render :file => "public/401.html", :status => :unauthorized
+    end
   end
 
 
