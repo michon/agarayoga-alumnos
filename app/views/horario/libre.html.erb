@@ -1,12 +1,12 @@
 <div class="card-group ">
-  <% @horario.group(:hora, :minuto, :aula_id).count.each do |horaAula| %>
+  <% @horario.group(:hora, :minuto).count.each do |horaAula| %>
     <div class="pb-4 m-3 card">
         <div class="card-header">
             <h5 class="d-flex justify-content-between"><%= "#{horaAula[0][0].to_s.rjust(2,'0')}:#{horaAula[0][1].to_s.rjust(2,'0')}"%></h5>
         </div>
         <div class="card-body m-0 p-0">
           <ul class="list-group m-0 p-0 ">
-          <% @horario.where("hora = ? and minuto = ? and aula_id = ?", horaAula[0][0], horaAula[0][1], horaAula[0][2]).each do |cl| %>
+          <% @horario.where("hora = ? and minuto = ?", horaAula[0][0], horaAula[0][1]).order(:diaSemana).each do |cl| %>
               <% plazas = cl.aula.aforo - cl.horarioAlumno.count %>
               <% if plazas > 0 then %>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -25,12 +25,18 @@
 
 
 <h2> Para enviar </h2>
-<% @horario.group(:hora, :minuto, :aula_id).count.each do |horaAula| %>
-    <% @horario.where("hora = ? and minuto = ? and aula_id = ?", horaAula[0][0], horaAula[0][1], horaAula[0][2]).each do |cl| %>
+
+<ul>
+<% @horario.group(:hora, :minuto).count.each do |horaAula| %>
+  <li> <%="*#{horaAula[0][0].to_s.rjust(2,'0')}:#{horaAula[0][1].to_s.ljust(2,'0')}*"%>
+  <ul>
+    <% @horario.where("hora = ? and minuto = ?", horaAula[0][0], horaAula[0][1]).each do |cl| %>
         <% if (cl.aula.aforo - cl.horarioAlumno.count) > 0 %>
           <li>
-            <%= cl.hora_humano%> <%= cl.dia_humano %> con <%= cl.instructor.nombre %>
+            <%= "*#{cl.dia_humano}* con #{cl.instructor.nombre} "%> 
           </li>
         <% end %>
     <% end %>
+  </ul>
 <% end %>
+</ul>

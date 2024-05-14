@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   get  'alumnos/actualizar/:id',         to: 'alumnos#actualizar',      as: 'alumnos/actualizar'
   get  'alumnos/show/:id',               to: 'alumnos#show',            as: 'alumnos'
   get  'alumnos/clases_julio/:id',       to: 'alumnos#clasesJulio',     as: 'alumnos/clases_julio'
+  get  'alumnos/clases_agendadas/:id',   to: 'alumnos#clasesJulio',     as: 'alumnos/clases_agendadas'
   get  'alumnos/regalo/:id',             to: 'alumnos#regalo',          as: 'alumnos_regalo'
   get  'alumnos/navidad/:id',            to: 'alumnos#navidad',         as: 'alumnos_navidad'
   get  'alumnos/ficha/:id',              to: 'alumnos#ficha',           as: 'alumnos_ficha'

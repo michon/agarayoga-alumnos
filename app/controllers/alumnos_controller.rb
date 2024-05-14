@@ -4,12 +4,17 @@ class AlumnosController < ApplicationController
   # requires authentication only for "update" and "destroy"
 
   def index
+
       unless AlumnosPolicy.new(current_usuario).verIndex?
         render :file => "public/401.html", :status => :unauthorized
       end
-      @alumnos = Usuario.where(debaja: [false,  nil]).all
-      @fechaInicio = "01/01/2020".to_date
-      @fechaHoy = Date.today
+#      @alumnos = Usuario.where(debaja: [false,  nil]).all
+
+      @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
+      @alumnos = @q.result(distinct: true)
+
+      @fechaInicio = Date.today.beginning_of_month
+      @fechaHoy = Date.today.next_month
   end
 
   def clientes
@@ -231,7 +236,7 @@ class AlumnosController < ApplicationController
   end
 
   def clasesJulioURL
-      @clsDelAlumno = ClaseAlumno.where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.at_end_of_month).pluck(:usuario_id)
+      @clsDelAlumno = ClaseAlumno.where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month).pluck(:usuario_id)
       @usuariosEnJulio = Usuario.where(id: @clsDelAlumno).order(:nombre)
       @usrSerieA = Usuario.where(serie: 'A')
       @usrSerieB = Usuario.where(serie: 'B')
@@ -239,7 +244,7 @@ class AlumnosController < ApplicationController
 
   def clasesJulio
       @id = params[:id]
-      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.at_end_of_month).order(:diaHora)
+      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
       @estados = ClaseAlumnoEstado.all
   end
 
@@ -315,7 +320,7 @@ class AlumnosController < ApplicationController
   protected
 
   def configure_permitted_parameters
-    params.permit(fechaFin, fechaInicio, id)
+    params.permit(fechaFin, fechaInicio, id, q)
   end
 
   private

@@ -36,6 +36,11 @@ end
 
   def libre
     @horario = Clase.where(diaHora: DateTime.now.beginning_of_week..DateTime.now.end_of_week)
+    #--------------------------------------------------------------------------------------
+   ##para el nuevo formato de clases a la misma hora 
+    #--------------------------------------------------------------------------------------
+     @algo = Clase.select("date_format(diaHora, '%Y-%m-%e %H:%i') as hora").where(diaHora: DateTime.now.beginning_of_week..DateTime.now.end_of_week).distinct.size 
+
   end
 
   def semana()

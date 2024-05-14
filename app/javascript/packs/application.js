@@ -16,13 +16,15 @@
 // const imagePath = (name) => images(name, true)
 
 import "bootstrap"
-import "chartkick/chart.js"
+// ---- import "chartkick/chart.js"
 // app/javascript/packs/application.js
-require("chartkick")
-require("chart.js")
+// ---- require("chartkick")
+// ----- require("chart.js")
 
 //= require Chart.bundle
 //= require chartkick
+//= require clipboard
+//
 var jQuery = require('jquery')
 global.$ = global.jQuery = jQuery;
 window.$ = window.jQuery = jQuery;
@@ -30,3 +32,10 @@ import * as echarts from "echarts";
 import "echarts/theme/dark";
 
 window.echarts = echarts;
+
+$(document).ready(function(){  
+  
+  var clipboard = new Clipboard('.clipboard-btn');
+  console.log(clipboard);
+	
+});
