@@ -2,22 +2,53 @@
 <% content_for :title,  "Listado de remesas" %>
 
 <ul class="list-group">
+      <div class="d-flex justify-content-between list-group-item">
+        <div class="row d-flex justify-row me-2 flex-grow-1">
+          <div class="col col-1 list-group-item list-group-item-warning text-brown me-1 rounded-2">
+            índice
+          </div>
+
+          <div class="col col-8 list-group-item list-group-item-warning text-brown me-1 rounded-2">
+            Descripción
+          </div>
+
+          <div class="col col-2 list-group-item list-group-item-warning text-brown me-1 rounded-2">
+            Fecha
+          </div>
+        </div>
+
+        <div class="col col-3 list-group-item list-group-item-warning text-brown me-1 rounded-2">
+          <div class="">
+            Acciones
+          </div>
+        </div>
+      </div>
+
 <% @rms.order(:created_at).reverse.each do |remesa| %>
-  <li class="list-group-item border-1 rounded-3 card">
-      <div class="d-flex justify-content-between card-header">
-        <div class="">
+      <div class="d-flex justify-content-between list-group-item">
+        <div class="row d-flex justify-row me-2 flex-grow-1">
+          <div class="col col-1 list-group-item list-group-item-warning text-brown me-1 rounded-2">
+            <%= "#{remesa.id}" %>
+          </div>
+
+          <div class="col col-8 list-group-item list-group-item-warning text-brown me-1 rounded-2">
           <a class="" data-bs-toggle="collapse" href="#remesa-<%=remesa.id.to_s%>" role="button" aria-expanded="false" aria-controls="collapseExample">
             <%= "#{remesa.id.to_s + ' ' + remesa.nombre}" %>
           </a>
-        </div>
+          </div>
 
-        <div class="">
+          <div class="col col-2 list-group-item list-group-item-warning text-brown me-1 rounded-2">
+            <%= "#{remesa.created_at.strftime('%d-%m-%Y')}" %>
+          </div>
+        </div>
+        
+
+        <div class="col col-3 list-group-item list-group-item-warning text-brown me-1 rounded-2">
           <a class="btn btn-primary" data-bs-toggle="collapse" href="#remesa-<%=remesa.id.to_s%>" role="button" aria-expanded="false" aria-controls="collapseExample">
             <%= "#{'Ver aquí'}" %>
           </a>
            <%= link_to('Ver remesa', remesa_show_path(remesa.id), class: "btn btn-primary") %>
         </div>
-
       </div>
 
       <div id="remesa-<%=remesa.id.to_s%>" class=" border p-2 my-4 collapse card-body ">
@@ -56,7 +87,6 @@
                 <span> <%= number_to_currency(rcb.importe) %> </span>
               </li>
               <%end%>
-
             </div>
           </ul>
 

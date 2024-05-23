@@ -16,15 +16,36 @@
 // const imagePath = (name) => images(name, true)
 
 import "bootstrap"
-// ---- import "chartkick/chart.js"
-// app/javascript/packs/application.js
-// ---- require("chartkick")
-// ----- require("chart.js")
+//= app/javascript/packs/application.js
+//= require("chartkick")
+//= require("chart.js")
 
 //= require Chart.bundle
 //= require chartkick
+
 //= require clipboard
-//
+
+import Turbolinks from "turbolinks"
+import * as ActiveStorage from "@rails/activestorage"
+import "channels"
+import "bootstrap"
+import "chartkick/chart.js"
+
+require("@rails/ujs").start()
+require("turbolinks").start()
+require("@rails/activestorage").start()
+require("channels")
+require("bootstrap")
+require("chartkick")
+require("chart.js")
+// stylesheets
+require("../stylesheets/main.scss")
+
+Rails.start()
+Turbolinks.start()
+ActiveStorage.start()
+
+global.toastr = require("toastr")
 var jQuery = require('jquery')
 global.$ = global.jQuery = jQuery;
 window.$ = window.jQuery = jQuery;
@@ -33,9 +54,4 @@ import "echarts/theme/dark";
 
 window.echarts = echarts;
 
-$(document).ready(function(){  
-  
-  var clipboard = new Clipboard('.clipboard-btn');
-  console.log(clipboard);
-	
-});
+

@@ -8,8 +8,7 @@
 //= require Chart.bundle
 //= require clipboard
 
-import '../js/bootstrap_js_files.js'
-import Rails from "@rails/ujs"
+
 import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
@@ -31,10 +30,3 @@ Turbolinks.start()
 ActiveStorage.start()
 
 global.toastr = require("toastr")
-
-$(document).ready(function(){  
-  
-  var clipboard = new Clipboard('.clipboard-btn');
-  console.log(clipboard);
-	
-});

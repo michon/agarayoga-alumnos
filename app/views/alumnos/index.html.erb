@@ -1,6 +1,16 @@
 
 <% content_for :title,  "Alm-Listado" %>
 
+<!-- Target -->
+<textarea id="bar">Mussum ipsum cacilds...</textarea>
+
+<!-- Trigger -->
+<button class="clipboard-btn" data-clipboard-action="copy" data-clipboard-target="#bar">
+    Copy to clipboard
+</button>
+
+
+
 <ul class="list-group">
   <li class="list-group-item border-1 rounded-3 mb-2">
     <div class="m-0 p-0 d-flex w-100 justify-content-end" id="filtrosCard">
@@ -19,23 +29,50 @@
         <div class=" d-flex justify-content-end m-0 p-0">
             <div class="me-2"><%= link_to "Ver" , alumnos_path(almn), class: 'btn btn-primary w-100 mb-1' %> </div>
             <div class="me-2"><%= link_to "Ficha" , alumnos_path(almn, format: :pdf), class: 'btn btn-primary w-100 mb-1'%></div>
-            <div class="me-2">
-              <!-- Trigger -->
-              <button class="btn" data-clipboard-text="probando ando">
-                  Copy to clipboard
-              </button>
+
+
+            <div class="me-2 m-0 p-0">
+                <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseLink-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseLink-<%=almn.id.to_s%>">
+                  Link
+              </a>
+              <div class="collapse m-0 p-0" id="collapseLink-<%=almn.id.to_s%>">
+                <ul class="list-group">
+                  <li class="list-group-item m-0 p-0">
+                    <%="#{alumnos_clases_agendadas_url(almn.id)} " %>
+                  </li>
+                </ul>
+              </div>
             </div>
+
             <div class="me-2">
-                          <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
-                            <input id="fechaInicio" name="fechaInicio" class="form-control" type="hidden"   value="<%=@fechaInicio.to_s%>" />
-                            <input id="fechaFin"    name="fechaFin"    class="form-control" type="hidden"   value="<%=@fechaHoy.to_s%>" />
-                            <input id="id"          name="id"          class="form-control" type="hidden" value="<%=almn.id%>" />
-                            <button class="btn btn-primary w-100 mb-3" type="submit"> Agendadas </button>
-                          <% end %>
+              <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
+                <input id="fechaInicio" name="fechaInicio" class="form-control" type="hidden"   value="<%=@fechaInicio.to_s%>" />
+                <input id="fechaFin"    name="fechaFin"    class="form-control" type="hidden"   value="<%=@fechaHoy.to_s%>" />
+                <input id="id"          name="id"          class="form-control" type="hidden" value="<%=almn.id%>" />
+                <button class="btn btn-primary w-100 mb-3" type="submit"> Agendadas </button>
+              <% end %>
             </div>
+
+            <!----- link a cada una de las clases del alumno ------>
+            <div class="me-2 m-0 p-0">
+                <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseClases-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseClases-<%=almn.id.to_s%>">
+                  Link clases
+              </a>
+              <div class="collapse m-0 p-0" id="collapseClases-<%=almn.id.to_s%>">
+                <ul class="list-group">
+                  <% @clases.where(usuario_id: almn.id).each do |cl| %>
+                    <li class="list-group-item m-0 p-0">
+                      <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1"  %>
+                      <%= link_to cl.clase.clase_humano , clase_dia_path(cl.diaHora.strftime('%F'), anchor: 'clase-' + cl.clase_id.to_s), class: color%>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+
             <div class="me-2">
                 <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseExample-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseExample-<%=almn.id.to_s%>">
-              Historial
+                  Historial
               </a>
               <div class="collapse" id="collapseExample-<%=almn.id.to_s%>">
                 <div class="card card-body">
@@ -51,13 +88,13 @@
 
             <div class="me-2 m-0 p-0">
                 <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseHorario-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseHorario-<%=almn.id.to_s%>">
-              Horario
+                  Horario
               </a>
               <div class="collapse m-0 p-0" id="collapseHorario-<%=almn.id.to_s%>">
                 <ul class="list-group">
                     <% almn.horarioAlumno.each do |hr| %>
                       <li class="list-group-item m-0 p-0">
-                        <%= hr.horario.clase_humano %>
+                        <%= link_to hr.horario.clase_humano , horario_nuevo_path, class: 'btn btn-sm btn-success mb-1' %>
                       </li>
                   <% end %>
                 </ul>

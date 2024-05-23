@@ -4,7 +4,7 @@ class ReciboController < ApplicationController
 
   # ---------------------------------------------------------------------------
   # Presenta en pantalla los recibos que no están remesados y permite
-  # seleecionalos para generar una remesa
+  # seleccionalos para generar una remesa
   # ---------------------------------------------------------------------------
   def remesarSeleccionar
     @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
@@ -14,7 +14,7 @@ class ReciboController < ApplicationController
 
   # ---------------------------------------------------------------------------
   # Presenta en pantalla los recibos que no están remesados y permite
-  # seleecionalos para generar una remesa
+  # seleccionalos para generar una remesa
   # ---------------------------------------------------------------------------
   def remesar_seleccionar_todos
     @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
@@ -113,14 +113,20 @@ class ReciboController < ApplicationController
     send_data file_data, filename: ficNombre, type: 'application/ods', diposition: 'inline'
   end
 
+  # ---------------------------------------------------------------------------
   # marcar los recibos de serie A como facturados
+  # Genera una nueva remesa
+  # Añade todos los recibos seleccionados a la nueva remesa
+  # ---------------------------------------------------------------------------
   def remesar()
     fechaInicio = params[:fechaInicio].to_datetime
     fechaFin = params[:fechaFin].to_datetime
 
+    # Seleccionar los recibos de serie A como facturados
     rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id'))
     rcb = rcb.where(vencimiento: fechaInicio..fechaFin)
     rcb = rcb.where(reciboEstado_id: 1)
+
     #Crear una nueva remesa
     rms = Remesa.new
     rms.nombre = "Remesa #{DateTime.now.strftime('%Y%m%d')} "
@@ -138,6 +144,7 @@ class ReciboController < ApplicationController
       rmsRcb.emision = DateTime.now
       rmsRcb.save
     end
+
     # Cambiar en el recibo el campo remesa_id
      rcb.update_all(remesa_id: rms.id)
     # Cambiar los recibos de estado a 2 (pagado)

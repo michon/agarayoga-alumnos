@@ -1,6 +1,6 @@
 class AlumnosController < ApplicationController
   require 'ficha_alumno.rb'
-    before_action :authenticate_usuario!, except: [:clasesJulio]
+    before_action :authenticate_usuario!, except: [:clasesJulio, :clasesAgendadas]
   # requires authentication only for "update" and "destroy"
 
   def index
@@ -12,6 +12,8 @@ class AlumnosController < ApplicationController
 
       @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
       @alumnos = @q.result(distinct: true)
+      @clases = ClaseAlumno.where(diaHora: Date.today.beginning_of_day..)
+      @estados = ClaseAlumnoEstado.all
 
       @fechaInicio = Date.today.beginning_of_month
       @fechaHoy = Date.today.next_month

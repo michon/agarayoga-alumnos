@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get 'remesa/show/:id',                           to: 'remesa#show',                as: 'remesa/show'
   get 'remesa/new'
   get 'remesa/edit'
+  get 'remesa/emitir/:id',                         to: 'remesa#emitir',              as: 'remesa/emitir'
 
   get  'caja/listado'
   get  'caja/modificar'
