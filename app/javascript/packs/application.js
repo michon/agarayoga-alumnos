@@ -28,8 +28,12 @@ import "bootstrap"
 import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
-import "bootstrap"
 import "chartkick/chart.js"
+import "bootstrap"
+import 'bootstrap/dist/js/bootstrap'
+import 'bootstrap/dist/css/bootstrap'
+
+require("stylesheets/application.scss")
 
 require("@rails/ujs").start()
 require("turbolinks").start()
@@ -39,7 +43,7 @@ require("bootstrap")
 require("chartkick")
 require("chart.js")
 // stylesheets
-require("../stylesheets/main.scss")
+//require("../stylesheets/main.scss")
 
 Rails.start()
 Turbolinks.start()

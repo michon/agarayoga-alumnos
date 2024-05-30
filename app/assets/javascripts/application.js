@@ -3,11 +3,12 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
-//= require clipboard
 //= require chartkick
 //= require Chart.bundle
+//
 //= require clipboard
-
+//= require jquery
+//= require jquery_ujs
 
 import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"

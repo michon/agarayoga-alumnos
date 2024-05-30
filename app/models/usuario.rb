@@ -23,7 +23,11 @@ class Usuario < ApplicationRecord
     sef_rol ||= :usuario
   end
 
-  
+
+  def self.ransackable_attributes(auth_object = nil)
+    [ "nombre" ]
+  end  
+
   def ibanImpreso
       ibanImp = ""
       (self.iban.length/4).times do |i|

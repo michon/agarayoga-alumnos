@@ -6,13 +6,19 @@
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
-    "@rails/webpacker": "5.4.0",
+    "@rails/webpacker": "5.4.4",
     "bootstrap": "^5.3.3",
+    "browser-run": "^12.0.0",
+    "caniuse-lite": "^1.0.30001621",
     "chart.js": "^4.3.0",
     "chartkick": "^5.0.1",
+    "css-loader": "^7.1.2",
     "echarts": "^5.4.2",
-    "jquery": "^3.6.0",
+    "jquery": "^3.7.1",
     "popper.js": "^1.16.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "style-loader": "^4.0.0",
     "swr": "^2.1.5",
     "toastr": "^2.1.4",
     "turbolinks": "^5.2.0",
@@ -22,7 +28,10 @@
   },
   "version": "0.1.0",
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-private-methods": "^7.14.5",
-    "webpack-dev-server": "^4.15.0"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-property-in-object": "^7.24.6",
+    "webpack-dev-server": "^3"
   }
 }
