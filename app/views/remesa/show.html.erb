@@ -1,14 +1,45 @@
-
 <!-- Título de la página -->
-<% content_for :title,  "Remesa " <%=@remesa.id.to_s %> %>
+<% content_for :title,  "Rms: #{@remesa.id.to_s}" %>
 
-<div class="">
+<p> <%= @rcbsId.to_s %> </p>
+<p> <%= @rmsId.to_s %> </p>
+<!-- formulario para añadir recibos a la remesa -->
+<div class="modal border " id="frmAnhadirRcbs" tabindex="-1" aria-labelledby="ModalAnhadirRcbs" aria-hidden="true">
+  <div class="modal-dialog" id="frmAnhadirRcbs" tabindex="-1" aria-labelledby="ModalAnhadirRcbs" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Añadir recibos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(remesa_anhadirRcbARemesa_path, method: :post) do |f| %>
+          <div class="form-group">
+            <% @rcb.each do |rcb| %>
+              <p>
+              <input id="<%=rcb.id%>" name="rcbs_ids[]" type="checkbox" class="form-check-input" value="<%=rcb.id%>" >
+              <label class="form-check-label"  for="<%=rcb.id%>" > <%= rcb.usuario.nombre %> </label>
+              </p>
+            <% end %>
+            <input type="hidden" id="rms_id"    name="rms_id"       value="<%=@remesa.id%>" >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" name="commit" value="Añadir recibos"> Añadir Recibos </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- fin form -->
 
-<div class="row d-flex justify-content-center">
+<div class="row d-flex justify-content-center border border-primary rounded ">
   <%= form_tag(recibo_modificar_path, method: :post) do %>
     <div class="form-outline mb-6">
       <h2 class="text-end"> Remesa número <%= @remesa.id %> </h2>
       <h6 class="text-end"> fecha de creación: <%= @remesa.created_at.strftime("%d de %B de %Y") %> </h6>
+      <h6 class="text-end"> Importe total: <%= @remesa.recibos.sum(:importe)%> </h6>
+      <h6 class="text-end"> Número de  recibos: <%= @remesa.recibos.count%> </h6>
       <input class="form-control " type="hidden" name="rms[id]" value="<%=@remesa.id%>" aria-describedby="nombre-descripcion" readonly>
 
       <div class="input-group input-group-lg mb-4">
@@ -28,32 +59,36 @@
         <input class="form-control" type="text" name="rms[empresa]" value="<%=@remesa.empresa%>" aria-describedby="concepto-descripcion" >
       </div>
 
-      <div class="d-flex justify-content-between me-6">
-        <button class="form-control btn btn-primary me-3 " type="submit"> Modificar </button>
-        <button class="form-control btn btn-primary me-3 " type="submit"> Añadir recibo </button>
-        <button class="form-control btn btn-primary me-3 " type="submit"> Emitir remesa  </button>
-        <%= link_to 'Emitir remesa', remesa_emitir_path(@remesa), class: ' btn btn-primary me-3' %>
+      <div class="d-flex justify-content-end my-4">
+        <button class="form-control btn btn-primary" type="submit"> Modificar </button>
       </div>
-      
+
+      <div class="d-flex justify-content-end my-4">
+            <%= link_to 'Imprimir', remesa_show_path(@remesa, format: :pdf), class: ' btn btn-success me-3' %>
+            <%= link_to 'Emitir remesa', remesa_emitir_path(@remesa, :format => :xml), class: ' btn btn-success me-3'%>
+            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#frmAnhadirRcbs" aria-expanded="false" aria-controls="frmAnhadirRcbs"> Añadir Recibos </button>
+      </div>
     </div>
   <% end %>
 </div>
 
-<ul class="list-group">
-  <% @remesa.recibos.each do |rcb| %>
+
+
+<ul class="list-group border-primary border mx-0 my-4">
+  <% @remesa.recibos.order(:importe).each do |rcb| %>
     <li class="list-group-item border-1 rounded-3 mb-1">
       <div class="d-flex justify-content-between flex-fill">
 
-        <div class="d-flex justify-content-between">
-           <%= "(#{rcb.id.to_s}) #{rcb.usuario.nombre} #{rcb.vencimiento}" %>
+        <div class="row justify-content-start w-100">
+          <div class="col col-1"> <%= "#{rcb.id}"%>  </div>
+          <div class="col col-4"> <%= "#{rcb.usuario.nombre}"%> </div>
+          <div class="col col-2"> <%="#{rcb.importe.to_s} €"%> </div>
         </div>
 
         <div class="d-flex justify-content-between">
 
           <a class="me-2 btn btn-primary" href="#" role="button">Imprimir</a>
-          <%= button_to  recibo_path(rcb), method: :delete, class: "me-2 btn btn-warning",  :onclick => "return confirm('Ojito que borras el recibo')" do %>
-            Quitar
-          <% end %>
+          <%= link_to "Quitar", remesa_quitarRecibo_path(:rcb_id => rcb.id, :rms_id=>@remesa.id ), class: 'btn btn-warning me-2 text-white' %>
 
           <button class="me-2 btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
             ver

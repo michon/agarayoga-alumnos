@@ -24,7 +24,7 @@
     <% end %>
   </div>
 
-  <% (@clsDelAlumno.order(:diaHora).first.diaHora.beginning_of_week.to_date..@clsDelAlumno.last.diaHora.end_of_week.to_date).each do |dd| %>
+  <% (@clsDelAlumno.order(:diaHora).first.diaHora.beginning_of_week.to_date..@clsDelAlumno.order(:diaHora).last.diaHora.end_of_week.to_date).each do |dd| %>
     <% if dd.monday? %> <div class="row"> <% end %>
       <% unless dd.sunday? or dd.saturday? %>
 

@@ -1,7 +1,6 @@
 class ReciboController < ApplicationController
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-
   # ---------------------------------------------------------------------------
   # Presenta en pantalla los recibos que no están remesados y permite
   # seleccionalos para generar una remesa
@@ -264,7 +263,7 @@ class ReciboController < ApplicationController
     rcb.sepaSecuencia = "RCUR"
     rcb.batchBooking = true
     rcb.serie = usr.serie
-    rcb.remesa = ""
+    #rcb.remesa = ""
     rcb.pago = ""
     rcb.vencimiento = fecha
     rcb.factura = ""

@@ -1,15 +1,6 @@
 
 <% content_for :title,  "Alm-Listado" %>
 
-<button class="btn btn-primary" data-controller="clipboard" data-clipboard-text="Hello from Jumpstart Pro!">Copy to Clipboard</button>
-<!-- Target -->
-<textarea id="bar">Mussum ipsum cacilds...</textarea>
-
-<!-- Trigger -->
-<button class="clipboard-btn" data-clipboard-action="copy" data-clipboard-target="#bar">
-    Copy to clipboard
-</button>
-
 <ul class="list-group">
   <li class="list-group-item border-1 rounded-3 mb-2">
     <div class="m-0 p-0 d-flex w-100 justify-content-end" id="filtrosCard">
@@ -59,7 +50,7 @@
               </a>
               <div class="collapse m-0 p-0" id="collapseClases-<%=almn.id.to_s%>">
                 <ul class="list-group">
-                  <% @clases.where(usuario_id: almn.id).each do |cl| %>
+                  <% @clases.where(usuario_id: almn.id).order(:diaHora).each do |cl| %>
                     <li class="list-group-item m-0 p-0">
                       <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1"  %>
                       <%= link_to cl.clase.clase_humano , clase_dia_path(cl.diaHora.strftime('%F'), anchor: 'clase-' + cl.clase_id.to_s), class: color%>

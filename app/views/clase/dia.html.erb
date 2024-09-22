@@ -430,23 +430,3 @@
     </div>
   </div>
 <%end%>
-
-
-
-<script>
-// jQuery función para ocultar los alumnos según su estado en la vista dia del controlador clase
-$(document).ready(function() {
-  //set initial state.
-  $('#colorCheck-126-1').val($(this).is(':checked'));
-
-  $('#colorCheck-126-1').change(function() {
-    $('#textbox1').val($(this).is(':checked'));
-  });
-
-  $('#colorCheck-126-1#').click(function() {
-    if (!$(this).is(':checked')) {
-      return confirm("Are you sure?");
-    }
-  });
-});
-</script>

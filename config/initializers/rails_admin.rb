@@ -199,6 +199,14 @@ RailsAdmin.config do |config|
      self.usuario.nombre unless self.usuario.blank?
   end
 
+  def horario_label_method
+    diasemana_enum =  [['domingo','0'], ['lunes','1'], ['martes','2'], ['miércoles','3'], ['jueves','4'], ['viernes','5'], ['sábado','6']]
+    semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+     unless self.diaSemana.blank?
+       diasemana_enum[self.diaSemana][0].capitalize + ' ' + self.hora.to_s.rjust(2,'0') + ':' + self.minuto.to_s.rjust(2,'0') + ' (' + self.instructor.nombre + ')'
+     end
+  end
+
   def usuario_label_method
      self.nombre
   end

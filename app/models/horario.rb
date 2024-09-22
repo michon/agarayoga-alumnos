@@ -2,6 +2,7 @@ class Horario < ActiveRecord::Base
 
     belongs_to :instructor
     belongs_to :aula
+
     has_many :horarioAlumno, dependent: :destroy
     has_many :usuario, through: :horarioAlumno
 
@@ -32,5 +33,9 @@ class Horario < ActiveRecord::Base
 
   def horario_label_method
      semana = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado']
+     unless self.diaSemana.blank?
+       diasemana_enum[self.diaSemana][0].capitalize + ' ' + self.hora.to_s.rjust(2,'0') + ':' + self.minuto.to_s.rjust(2,'0') + ' (' + self.instructor.nombre + ')'
+     end
+     
   end
 end

@@ -238,7 +238,8 @@ class AlumnosController < ApplicationController
   end
 
   def clasesJulioURL
-      @clsDelAlumno = ClaseAlumno.where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month).pluck(:usuario_id)
+      #@clsDelAlumno = ClaseAlumno.where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month).pluck(:usuario_id)
+    @clsDelAlumno = ClaseAlumno.where(diaHora: '01-07-2024'.to_datetime.at_beginning_of_month..DateTime.now.next_year.at_end_of_month).pluck(:usuario_id)
       @usuariosEnJulio = Usuario.where(id: @clsDelAlumno).order(:nombre)
       @usrSerieA = Usuario.where(serie: 'A')
       @usrSerieB = Usuario.where(serie: 'B')
@@ -246,7 +247,8 @@ class AlumnosController < ApplicationController
 
   def clasesJulio
       @id = params[:id]
-      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
+      #@clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
+      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: '01-07-2024'.to_date.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
       @estados = ClaseAlumnoEstado.all
   end
 

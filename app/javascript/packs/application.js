@@ -49,10 +49,10 @@ Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
 
-global.toastr = require("toastr")
-var jQuery = require('jquery')
-global.$ = global.jQuery = jQuery;
-window.$ = window.jQuery = jQuery;
+// global.toastr = require("toastr")
+//var jQuery = require('jquery')
+//global.$ = global.jQuery = jQuery;
+//window.$ = window.jQuery = jQuery;
 import * as echarts from "echarts";
 import "echarts/theme/dark";
 

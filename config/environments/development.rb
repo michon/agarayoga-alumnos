@@ -42,7 +42,14 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.default_url_options = { host: 'shx12.guebs.net', port: 25 }
+  config.action_mailer.default_url_options = 
+  { 
+  host: 'mail.agarayoga.eu', 
+  port: 143,   
+  user_name:            'contacto@agarayoga.eu',
+  password:             'AYeeh25-B',
+  authentication:       'plain',
+  enable_starttls_auto: true }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

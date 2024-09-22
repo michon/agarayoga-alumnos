@@ -1,10 +1,17 @@
 Rails.application.routes.draw do
 
+  get  'julio/index'
+  get  'julio/links'
+  get  'julio/facturar'
+  post 'julio/editar',                     to: 'julio#editar',       as: "julio/editar"
+
   get 'remesa/index'
   get 'remesa/show/:id',                           to: 'remesa#show',                as: 'remesa/show'
   get 'remesa/new'
+  get 'remesa/quitarRecibo/:rcb_id,:rms_id',       to: 'remesa#quitarRecibo',        as: 'remesa/quitarRecibo'
   get 'remesa/edit'
   get 'remesa/emitir/:id',                         to: 'remesa#emitir',              as: 'remesa/emitir'
+  post 'remesa/anhadirRcbARemesa',                 to: 'remesa#anhadirRcbARemesa',   as: "remesa/anhadirRcbARemesa"
 
   get  'caja/listado'
   get  'caja/modificar'

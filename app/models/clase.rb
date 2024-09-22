@@ -20,7 +20,7 @@ class Clase < ApplicationRecord
   end
 
   def clase_humano
-    "#{diasemana_enum[self.diaHora.wday]} #{self.diaHora.strftime('%d')} #{meses_enum[self.diaHora.month]}#{self.diaHora.strftime(' - %H:%M')}"
+    "#{diasemana_enum[self.diaHora.wday]} #{self.diaHora.strftime('%d')} #{meses_enum[self.diaHora.month-1]}#{self.diaHora.strftime(' - %H:%M')}"
   end
 
 end

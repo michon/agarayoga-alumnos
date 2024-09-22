@@ -1,0 +1,80 @@
+<h1> horario para julio </h1>
+    <div class="m-0 p-0 d-flex w-100 justify-content-end" id="filtrosCard">
+        <%= search_form_for(@q, url: "/julio/index", method: :get) do |f| %>
+          <%= f.search_field :nombre_cont, class: "form-control" %>
+          <%= f.submit 'Filtrar', class: "btn btn-success" %>
+        <% end %>
+    </div>
+
+    <ul class="list-group list-group-horizontal ">
+      <li class="list-group-item col col-3 text-center active">
+        <%= sort_link(@q, :nombre, "Alumno", class: "text-white") %>
+      </li>
+      <li class="list-group-item col-1 text-center active">
+          SEM 1
+      </li>
+      <li class="list-group-item col-1 text-center active">
+          SEM 2
+      </li>
+      <li class="list-group-item col-1 text-center active">
+          SEM 3 
+      </li>
+      <li class="list-group-item col-1 text-center active">
+          SEM 4 
+      </li>
+      <li class="list-group-item col-1 text-center active">
+          SEM 5 
+      </li>
+      <li class="list-group-item col-2 text-center active">
+          No vendrá
+      </li>
+    </ul>
+    
+  <% @alumnos.each do | alm | %>
+   <%= form_with model: alm, url: julio_editar_path(), method: :post do |form| %>
+     <div id="frm-<%=alm.id%>" class="form-outline mb-6">
+        <ul class="list-group list-group-horizontal">
+          <li class="list-group-item col col-3 m-0 p-0">
+              <%= form.hidden_field :id %>
+              <%= form.text_field :nombre, readonly: true, class: 'form-control border-0' %>
+          </li>
+          <li class="list-group-item col-1 text-center">
+            <div class="form-check form-switch d-flex justify-content-center">
+              <%= form.check_box :sem1, class: 'form-check-input' %>
+            </div>
+          </li>
+          <li class="list-group-item col-1 text-center ">
+            <div class="form-check form-switch d-flex justify-content-center">
+                <%= form.check_box :sem2, class: 'form-check-input' %>
+            </div>
+          </li>
+          <li class="list-group-item col-1 text-center">
+            <div class="form-check form-switch d-flex justify-content-center">
+              <%= form.check_box :sem3, class: 'form-check-input' %>
+            </div>
+          </li>
+          <li class="list-group-item col-1 text-center">
+            <div class="form-check form-switch d-flex justify-content-center">
+              <%= form.check_box :sem4, class: 'form-check-input' %>
+            </div>
+          </li>
+          <li class="list-group-item col-1 text-center">
+            <div class="form-check form-switch d-flex justify-content-center">
+              <%= form.check_box :sem5, class: 'form-check-input' %>
+            </div>
+          </li>
+          <li class="list-group-item col-2 text-center">
+            <div class="form-check form-switch d-flex justify-content-center">
+              <%= form.check_box :noviene, class: 'form-check-input' %>
+            </div>
+          </li>
+          <li class="list-group-item col-1 text-center">
+            <%= form.button class: "btn btn-primary" do %>
+                <i class="bi bi-floppy-fill"></i> 
+            <% end %>
+          </li>
+        </ul>
+      </div>
+   <% end %>
+  <% end %>
+

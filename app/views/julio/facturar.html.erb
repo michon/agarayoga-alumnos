@@ -1,0 +1,24 @@
+<% @claseAlumno.where(diahora: '01-07-2024'.to_date.at_beginning_of_day..'31-07-2024'.to_date.at_end_of_day).joins(:usuario).order(:serie, :nombre).group(:usuario_id).each_with_index do | almId, idx | %>
+<ul class="list-group list-group-horizontal">
+  
+  <li class="list-group-item col col-1 m-0 p-0 text-<%= almId.usuario.serie == 'A' ? 'primary' : 'info' %> bg-white text-center">
+    <%= almId.usuario.codigofacturacion %> 
+  </li>
+  <li class="list-group-item col col-3 m-0 p-0 text-<%= almId.usuario.serie == 'A' ? 'primary' : 'info' %> bg-white text-start">
+    <%= almId.usuario.nombre %> 
+  </li>
+  <li class="list-group-item col col-2 m-0 p-0 text-<%= almId.usuario.serie == 'A' ? 'primary' : 'info' %> bg-white text-center">
+    <%= almId.usuario.iban %> 
+  </li>
+  <li class="list-group-item col col-1 m-0 p-0 text-<%= almId.usuario.serie == 'A' ? 'primary' : 'info' %> bg-white text-center">
+    <%= almId.usuario.serie %> 
+  </li>
+    <% @semanal.each do |sem| %>
+  <li class="list-group-item col col-1 m-0 p-0 text-<%= almId.usuario.serie == 'A' ? 'primary' : 'info' %> bg-white text-center">
+      <div id="semana-<%=sem%>" > 
+        <%= @clases.where(diaHora: sem.split('..')[0].to_date.. sem.split('..')[1].to_date, usuario_id: almId.usuario_id).count  %>
+      </div>
+  </li>
+    <% end %>
+</ul>
+<% end %>

@@ -1,0 +1,19 @@
+
+<% content_for :title,  "Julio-links" %>
+
+<ul class="list-group">
+  <% @cl.each do |cl| %>
+    <li class="list-group-item border-1 rounded-3 mb-2">
+      <div class="m-0 p-0 d-flex w-100 justify-content-between">
+        <div class=" m-0 p-0">
+          <h5> <%= cl.usuario.nombre%> </h5>
+        </div>
+        <div class=" m-0 p-0">
+          <h5> <%= cl.usuario.telefono%> </h5>
+        </div>
+        <div class=" m-0 p-0">
+          <h5> <%="#{alumnos_clases_agendadas_url(cl.usuario_id)} " %> </h5>
+        </div>
+      </div>
+    </li>
+  <% end %>
