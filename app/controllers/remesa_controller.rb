@@ -36,13 +36,25 @@ class RemesaController < ApplicationController
   def quitarRecibo
     rcbId =  params[:rcb_id]
     rmsId =  params[:rms_id]
+    # Borrar el recibod e la tabla RemesaREcibo
     RemesaRecibo.where(recibo_id: rcbId, remesa_id: rmsId)
     rcb= Recibo.find(rcbId)
     rcb.remesa_id = nil
+    # cambiar el estado del recibo a pendiente
     rcb.reciboEstado_id= 1
+    # cambiar en el recibo el campo remesa_id a null
+    rcb.remesa_id = ''
     rcb.save
 
     redirect_to remesa_show_path(rmsId)
+  end
+
+  #----------------------------------------------------------------------------
+  # Añade los recibos del array rcbsId a la remesa rmsIdº
+  #----------------------------------------------------------------------------
+  def eliminarRcbDeRemesa
+
+    rcbId = params[:id]
   end
 
   #----------------------------------------------------------------------------
@@ -54,12 +66,6 @@ class RemesaController < ApplicationController
     @rcbsId = rcbsId
     @rmsId =  params[:rms_id]
 
-    Rails.logger.debug "-----------------------------------------------------------"
-    Rails.logger.debug "-----------------------------------------------------------"
-    Rails.logger.debug "#{@rcbsId.to_s} #{rcbsId}"
-    Rails.logger.debug "#{rmsId}   #{@rmsId}"
-    Rails.logger.debug "-----------------------------------------------------------"
-    Rails.logger.debug "-----------------------------------------------------------"
 
       #seleccionar todos los recibos de las ids del array que nos ha llegado
       @rcbs_seleccionados =  Recibo.where(Id: rcbsId)

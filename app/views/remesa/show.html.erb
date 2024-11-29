@@ -93,7 +93,7 @@
           <button class="me-2 btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
             ver
           </button>
-          <a class="me-2 btn btn-danger" href="#" role="button">Factura</a>
+          <%= link_to "Factura" , recibo_facturaPdf_path(rcb, format: :pdf), class: 'btn btn-danger'%>
         </div>
       </div>
 

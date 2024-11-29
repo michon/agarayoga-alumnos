@@ -248,7 +248,7 @@ class AlumnosController < ApplicationController
   def clasesJulio
       @id = params[:id]
       #@clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
-      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: '01-07-2024'.to_date.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
+      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.current.to_date.at_beginning_of_month..DateTime.now.next_year.at_end_of_month)
       @estados = ClaseAlumnoEstado.all
   end
 
@@ -268,27 +268,27 @@ class AlumnosController < ApplicationController
           clase["fechaClase"] =  cl.clase.diaHora unless cl.clase.blank?
           clase["clase"] = cl.clase
           clase["claseAlumno"] = cl
-          @clases << [ cl.clase.diaHora, clase]
+        @clases << [ cl.clase.diaHora, clase]
+      end
+    end
+
+    @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.next_month.at_beginning_of_month..DateTime.now.next_month. at_end_of_month).order(:diaHora)
+
+    respond_to do |format|
+        format.html
+
+        format.pdf do
+          ficha = FichaAlumno.new(@almn)
+          ficNombre = "ficha_" + @almn.nombre.sub(" ", "-")
+          send_data ficha.render, filename: ficNombre, type: 'application/pdf', diposition: 'inline'
         end
-      end
+    end
+end
 
-      @clsDelAlumno = ClaseAlumno.where(usuario_id: @id).where(diaHora: DateTime.now.next_month.at_beginning_of_month..DateTime.now.next_month. at_end_of_month).order(:diaHora)
-
-      respond_to do |format|
-          format.html
-
-          format.pdf do
-            ficha = FichaAlumno.new(@almn)
-            ficNombre = "ficha_" + @almn.nombre.sub(" ", "-")
-            send_data ficha.render, filename: ficNombre, type: 'application/pdf', diposition: 'inline'
-          end
-      end
-  end
-
-  def ficha
-      unless AlumnosPolicy.new(current_usuario).verFicha?
-        render :file => "public/401.html", :status => :unauthorized
-      end
+def ficha
+    unless AlumnosPolicy.new(current_usuario).verFicha?
+      render :file => "public/401.html", :status => :unauthorized
+    end
       @id = params[:id]
       @almn = Usuario.find(params[:id])
   end

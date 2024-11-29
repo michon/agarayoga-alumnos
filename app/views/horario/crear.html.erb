@@ -1,0 +1,8 @@
+
+                    <%= form_tag('/horario/crear_horario_semanal', method: :post) do %>
+                        <label class="text-center" for="fecha"> Selecciona una semana </label>
+                        <input id="fecha" name="fecha" class="form-control" type="date" />
+                        <div class="card-footer p-2">
+                              <button  class="form-control btn-primary" type="submit"> Crear Clases </button>
+                        </div>
+                    <% end %>

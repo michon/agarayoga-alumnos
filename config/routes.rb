@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get    'recibo/facturar',                        to: 'recibo#facturar',                        as: 'recibo/facturar'
   get    'recibo/facturacion',                     to: 'recibo#facturacion',                     as: 'recibo/facturacion'
   get    'recibo/pagar/:id',                       to: 'recibo#pagar',                           as: 'recibo/pagar'
+  get    'recibo/facturaPdf/:id',                  to: 'recibo#facturaPdf',                      as: 'recibo/facturaPdf'
   get    'recibo/generar/:fecha',                  to: 'recibo#generar',                         as: 'recibo/generar'
   get    'recibo/remesar_seleccionar/',            to: 'recibo#remesarSeleccionar',              as: 'recibo/remesarSeleccionar'
   get    'recibo/remesar_seleccionar_todos/',      to: 'recibo#remesar_seleccionar_todos',       as: 'recibo/remesar_seleccionar_todos'
@@ -55,9 +56,11 @@ Rails.application.routes.draw do
   resources :clase, only: [:destroy]
 
 
+
   get    'horario/index'
   get    'horario/libre'
   get    'horario/nuevo'
+  get    'horario/crear'
   post   'horario/crear_horario_semanal', to: 'horario#crearClases'
 
   get    'instructor/index'
@@ -86,7 +89,7 @@ Rails.application.routes.draw do
   post 'alumnos/procesos/',              to: 'alumnos#procesos',        as: 'alumnos/procesos'
   get  'alumnos/procesos/:proceso',      to: 'alumnos#procesos',        as: 'alumnos/procesos_get'
   post 'alumnos/procesosAlta/',          to: 'alumnos#procesosAlta' ,   as: 'alumnos/procesos_alta'
-  post 'alumnos/clasesAgendadas',        to: 'alumnos#clasesAgendadas', as: "alumno/clasesAgendadas"
+  post 'alumnos/clasesAgendadas',        to: 'alumnos#lasesAgendadas', as: "alumno/clasesAgendadas"
   get  'alumnos/procesosAlta/:proceso',  to: 'alumnos#procesosAlta',    as: 'alumnos/procesos_alta_get'
   get  'alumnos/pdfAlumnos',             to: 'alumnos#pdfAlumnos',      as: "alumnos/pdfAlumnos"
 

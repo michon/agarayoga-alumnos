@@ -7,6 +7,10 @@ class Clase < ApplicationRecord
   has_many :usuario, through: :claseAlumno
 
 
+  def alumnos_en_clase
+      self.claseAlumno
+  end
+
   def asistentes
       self.claseAlumno.where("claseAlumnoEstado_id < 3").count + self.pruebas.all.count - self.usuario.where(grupoAlumno_id: 5).count
   end

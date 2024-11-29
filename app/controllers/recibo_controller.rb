@@ -1,4 +1,5 @@
 class ReciboController < ApplicationController
+  require 'factura_recibo.rb'
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   # ---------------------------------------------------------------------------
@@ -387,6 +388,22 @@ class ReciboController < ApplicationController
     redirect_to recibo_pagos_path()
   end
 
+
+  #--------------------------------------------------------------
+  # Imprime una factura a partir de un recibo en formato PDF
+  #--------------------------------------------------------------
+  def facturaPdf
+    @rcb = Recibo.find(params[:id])
+    respond_to do |format|
+        format.html
+
+        format.pdf do
+          ficha = FacturaRecibo.new(@rcb)
+          ficNombre = "factura_" + @rcb.usuario.nombre.sub(" ", "-")
+          send_data ficha.render, filename: ficNombre, type: 'application/pdf', diposition: 'inline'
+        end
+    end
+  end
 
   protected
 

@@ -129,7 +129,9 @@ end
   # Método POST
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaAlumnos
-      clAlmId = ClaseAlumno.find(params[:clase_alumno_id]).clase_id
+      cl = ClaseAlumno.find(params[:clase_alumno_id])
+      clAlmId = cl.clase_id
+
       ClaseAlumno.find(params[:clase_alumno_id]).destroy
       redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
   end

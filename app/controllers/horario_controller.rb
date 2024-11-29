@@ -16,6 +16,9 @@ class HorarioController < ApplicationController
     end
   end
 
+  def Crear
+
+  end
 
   def index
       @instructores = Instructor.all
