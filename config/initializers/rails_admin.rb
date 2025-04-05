@@ -180,7 +180,7 @@ RailsAdmin.config do |config|
   end
 
   def recibo_label_method
-      "(#{self.id.to_s}) #{self.nombre} (#{self.id.to_s})"
+      self.nombre
   end
 
   def reciboEstado_label_method

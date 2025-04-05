@@ -28,9 +28,9 @@ class InstructorController < ApplicationController
          if cl.claseAlumno.count == 0
                  @total = @total
              elsif cl.claseAlumno.count < 7
-                 @total = @total + 12
+                 @total = @total + 20
              elsif cl.claseAlumno.count < 9
-                 @total = @total + 18
+                 @total = @total + 20
              else
                 @total  = @total + 20
          end

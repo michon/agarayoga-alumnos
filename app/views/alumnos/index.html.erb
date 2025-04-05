@@ -41,7 +41,6 @@
               </div>
             </div>
 
-
             <!-- Clases agendadas entre las fechas expecificadas-->
             <div class="me-2">
               <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
@@ -76,7 +75,7 @@
                         </li>
                         <li class="list-group-item m-0 p-0">
                           <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1"  %>
-                          <%= link_to cl.clase.clase_humano , clase_dia_path(cl.diaHora.strftime('%F'), anchor: 'clase-' + cl.clase_id.to_s), class: color%>
+                          <%= link_to "Borrar", clase_alumno_path(cl.id), method: :delete %>
                         </li>
                       </ul>
                     <% end %>
@@ -112,7 +111,7 @@
                 <ul class="list-group">
                     <% almn.horarioAlumno.each do |hr| %>
                       <li class="list-group-item m-0 p-0">
-                        <%= link_to hr.horario.clase_humano , horario_nuevo_path, class: 'btn btn-sm btn-success mb-1' %>
+                        <%= link_to hr.horario.clase_humano , horario_nuevo_path, class: "btn btn-sm btn-#{hr.horario.instructor.color} mb-1" %>
                       </li>
                   <% end %>
                 </ul>

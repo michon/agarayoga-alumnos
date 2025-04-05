@@ -3,6 +3,7 @@ class Usuario < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   belongs_to :grupoAlumno
   has_many :horarioAlumno
+  has_many :claseAlumno
   has_many :recibos
   has_many :cajas
   has_one :instructor

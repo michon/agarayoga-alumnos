@@ -26,6 +26,7 @@
                   <tr>
                       <td>  <%=almn.id %> </td>
                       <td>  <%=almn.nombre %> </td>
+                      <td> <%= I18n.l(almn.created_at, format: '%A, %d de %B de %Y') %></td>
                       <td> <%= link_to "Ver" , alumnos_path(almn) %> </td>
                       <td> <%= link_to "Ficha" , alumnos_path(almn, format: :pdf) %> </td>
                       <% if almn.regalo then %>

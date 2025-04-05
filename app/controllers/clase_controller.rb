@@ -95,6 +95,10 @@ end
     fecha = params[:fecha].to_datetime
     @fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
+    @clasesAgendadas = ClaseAlumno.where(:diaHora => fecha.beginning_of_week.beginning_of_day..DateTime.current.end_of_day).order(:diaHora)
+
+    @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
+    @alumnos = @q.result(distinct: true)
     if @clasesHoy.blank?
       clase_vacia
     end
@@ -135,6 +139,24 @@ end
       ClaseAlumno.find(params[:clase_alumno_id]).destroy
       redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
   end
+
+  # Método POST
+  # Recibe un nombre, movil y id de la clase y cursa un alta
+  def anularClase
+    # controlar que el parámetro :d_id exista
+    clDid = params[:d_id]
+    clAid = params[:a_id]
+    fecha = params[:fecha_id]
+    clAlm = params[:alm_ids]
+
+    # seleccionar la clase d y recorrer todos los alumnos
+    ClaseAlumno.where(id: clAlm).update_all(clase_id: clAid)
+
+    redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAid}")
+
+  end
+
+
 
   # Método POST
   # Recibe una Modelo ClaseAlumno y lo da de alta en la tabla
@@ -217,12 +239,13 @@ end
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:fecha, accion, alumnos_ids:[])
+    devise_parameter_sanitizer.permit(:fecha, accion, alumnos_ids:[], alm_ids:[])
   end
 
   private
   def clase_vacia
     redirect_to michon_path(), alert: "Ese día no hay clase"
   end
+
 
 end

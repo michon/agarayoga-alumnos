@@ -37,6 +37,8 @@ Rails.application.routes.draw do
   post   'recibo/descargarFacturacion',            to: 'recibo#descargarFacturacion',            as: "recibo/descargarFacturacion"
   resources :recibo, only: [:destroy]
 
+  resources :clase_alumno
+
   get    'clase/semana/:fecha',                    to: "clase#semana",       as: "clase/semana"
   get    'clase/dia/:fecha',                       to: 'clase#dia',          as: "clase/dia"
   get    'clase/actual'
@@ -48,6 +50,7 @@ Rails.application.routes.draw do
   post   'clase/dia',                     to: 'clase#seleccionDia',       as: "clase/seleccion_dia"
   post   'clase/altaAlumno',              to: 'clase#altaAlumno',         as: "clase/alta_alumno"
   post   'clase/bajaAlumnos',             to: 'clase#bajaAlumnos',        as: "clase/baja_alumnos"
+  post   'clase/anularClase',             to: 'clase#anularClase',        as: "clase/anular_clase"
   post   'clase/altaPrueba',              to: 'clase#altaPrueba',         as: "clase/alta_prueba"
   post   'clase/bajaPrueba',              to: 'clase#bajaPrueba',         as: "clase/baja_prueba"
   post   'clase/estado',                  to: 'clase#estado',             as: "clase/estado"
@@ -89,7 +92,7 @@ Rails.application.routes.draw do
   post 'alumnos/procesos/',              to: 'alumnos#procesos',        as: 'alumnos/procesos'
   get  'alumnos/procesos/:proceso',      to: 'alumnos#procesos',        as: 'alumnos/procesos_get'
   post 'alumnos/procesosAlta/',          to: 'alumnos#procesosAlta' ,   as: 'alumnos/procesos_alta'
-  post 'alumnos/clasesAgendadas',        to: 'alumnos#lasesAgendadas', as: "alumno/clasesAgendadas"
+  post 'alumnos/clasesAgendadas',        to: 'alumnos#clasesAgendadas', as: "alumno/clasesAgendadas"
   get  'alumnos/procesosAlta/:proceso',  to: 'alumnos#procesosAlta',    as: 'alumnos/procesos_alta_get'
   get  'alumnos/pdfAlumnos',             to: 'alumnos#pdfAlumnos',      as: "alumnos/pdfAlumnos"
 

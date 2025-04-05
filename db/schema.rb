@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_18_153928) do
+ActiveRecord::Schema.define(version: 2025_04_04_105239) do
 
   create_table "active_storage_attachments", charset: "latin1", collation: "latin1_swedish_ci", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name", null: false
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 2024_06_18_153928) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "almcsv", id: false, charset: "utf8", collation: "utf8_general_ci", options: "ENGINE=MyISAM", force: :cascade do |t|
+  create_table "almcsv", id: false, charset: "utf8mb3", collation: "utf8mb3_general_ci", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "codigofacturacion", limit: 17
     t.string "COL 2", limit: 6
     t.string "COL 3", limit: 79
@@ -232,7 +232,7 @@ ActiveRecord::Schema.define(version: 2024_06_18_153928) do
     t.string "sepaSecuencia"
     t.boolean "batchBooking"
     t.string "serie"
-    t.boolean "remesa"
+    t.boolean "remesado"
     t.datetime "pago"
     t.datetime "vencimiento"
     t.string "factura"

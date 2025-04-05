@@ -23,6 +23,10 @@ class Clase < ApplicationRecord
         ['ENE','FEB','MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
   end
 
+  def clase_humano_instructor
+    "#{diasemana_enum[self.diaHora.wday]} #{self.diaHora.strftime('%d')} #{meses_enum[self.diaHora.month-1]}#{self.diaHora.strftime(' - %H:%M')}#{self.instructor.nombre}"
+  end
+
   def clase_humano
     "#{diasemana_enum[self.diaHora.wday]} #{self.diaHora.strftime('%d')} #{meses_enum[self.diaHora.month-1]}#{self.diaHora.strftime(' - %H:%M')}"
   end

@@ -46,6 +46,11 @@
                           <i class="bi bi-calendar-x-fill"></i>
                         <% end %>
                       <% end %>
+                      <% if current_usuario.rol == 'michon' %>
+                        <button type="button" class="text-center dropdown-item text-info bg-light-info ps-2" data-bs-toggle="modal" data-bs-target="#ModalAnularClase-<%=cl.id%>">
+                          <i class="bi bi-translate"></i>
+                        </button>
+                      <% end %>
                   </div>
 
                 </div>
@@ -58,10 +63,17 @@
                     <% cl.claseAlumno.includes(:usuario).order(claseAlumnoEstado_id: :asc).order('usuarios.nombre').each do |clalm| %>
                       <% unless clalm.usuario.blank? %>
                       <% unless clalm.usuario.grupoAlumno_id == 5 %>
-                          <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+                        <div class="row">
+                          <div class="col-9 form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
                             <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
                             <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
                           </div>
+                          <div class="col-3 text-end d-flex d-inline-flex justify-content-end">
+                            <%= link_to alumnos_index_path(q: {nombre_cont: clalm.usuario.nombre}), target: '_blank' do %>
+                                <i class="bi bi-person-lines-fill"></i>
+                            <% end %>
+                          </div>
+                        </div>
                       <%end %>
                       <%end %>
                     <%end %>
@@ -256,6 +268,54 @@
     <% end %>
 </div>
 
+<!-- ******************************************************************************************************* -->
+<!-- ********************* Formulario para Modales para cambiar alumnos entre clases *********************** -->
+<!-- ******************************************************************************************************* -->
+<% @clasesHoy.each do |cl| %>
+    <div class="modal fade" id="ModalAnularClase-<%=cl.id%>" tabindex="-1" aria-labelledby="ModalAnularClase" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="MaltaAlumno-<%=cl.id%>">
+                Mover alumnos entre clases
+              </h5>
+              <h5 class="modal-title" id="MaltaAlumno-<%=cl.id%>">
+              Desde la clase del 
+                <%= " #{I18n.t('date.day_names')[cl.diaHora.strftime('%w').to_i].upcase}  #{cl.diaHora.strftime('%d')} #{I18n.t('date.abbr_month_names')[cl.diaHora.strftime('%m').to_i].upcase} #{cl.diaHora.strftime('%H:%M')}" %> </h5>
+              </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <%= form_with url: clase_anular_clase_path, method: :post do |f|  %>
+              <div class="modal-body">
+                <h5> Mover los alumnos a la clase </h5>
+                <%= f.collection_select :a_id, Clase.where(diaHora: cl.diaHora.beginning_of_day..cl.diaHora.end_of_day).where.not(id: cl.id).order(:diaHora), :id, :clase_humano_instructor, prompt: true, autofocus: true, class: 'form-select' %> </br>
+                <%= f.hidden_field :d_id, value: cl.id %>
+                <input type="hidden" id="fecha_dia" name="fecha" class= 'form-label' value="<%=cl.diaHora.to_s%>" >
+
+                <div class=" mt-4">
+                <h5> Alumnos que se van a mover </h5>
+                <% cl.claseAlumno.includes(:usuario).order(claseAlumnoEstado_id: :asc).order('usuarios.nombre').each do |clalm| %>
+                  <% unless clalm.usuario.blank? %>
+                  <% unless clalm.usuario.grupoAlumno_id == 5 %>
+                      <div class="form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+                        <input id="mover-<%=clalm.id%>" name="alm_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
+                        <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="mover-<%=clalm.id%>" > <%= clalm.usuario.nombre %> </label>
+                      </div>
+                  <%end %>
+                  <%end %>
+                <%end %>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="commit" value="Mover Alumnos"> Mover Alumnos </button>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+<%end%>
 
 <!-- ******************************************************************************************************* -->
 <!-- ******************************* Formulario para Modales de alta alumno ******************************** -->
@@ -285,6 +345,7 @@
       </div>
     </div>
 <%end%>
+
 
 <!-- ******************************************************************************************************* -->
 <!-- ***************************** Formulario para Modales de quitar alumno ******************************** -->

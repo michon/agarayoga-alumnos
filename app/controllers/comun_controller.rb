@@ -86,11 +86,11 @@ class ComunController < ApplicationController
         # número de veces que aparece el alumno en el horario
         case alm[1].to_i
           when 1
-            importe = 40
+            importe = 45
           when 2
-            importe = 55
+            importe = 60
           when 3
-            importe = 65
+            importe = 70
         end
 
         @aFacturar[idx] << importe

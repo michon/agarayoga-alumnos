@@ -10,8 +10,8 @@
               </tr>
               <tr>
                   <th> <%= "Alumnos en horario:  (#{@alumnos.count}) "%>  </th>
-                  <th> <%= "Té entregado (#{@alumnos.where(navidad: true).count})" %> </th>
-                  <th> <%= "Té pendiente (#{@alumnos.where(navidad: false).count})" %> </th>
+                  <th> <%= "Velas entregadas (#{@alumnos.where(navidad: true).count})" %> </th>
+                  <th> <%= "Velas pendientes (#{@alumnos.where(navidad: false).count})" %> </th>
                   <th> </th>
               </tr>
             </thead>

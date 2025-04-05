@@ -88,7 +88,7 @@ class RemesaController < ApplicationController
     sdd = SEPA::DirectDebit.new(
       # Name of the initiating party and creditor, in German: "Auftraggeber"
       # String, max. 70 char
-      name: "Miguel Rodriguez Lopez (AgaraYoga)",
+      name: "Miguel Rodríguez López (AgâraYoga)",
 
       # OPTIONAL: Business Identifier Code (SWIFT-Code) of the creditor
       # String, 8 or 11 char
@@ -131,7 +131,10 @@ class RemesaController < ApplicationController
   private
     
     def transicion(sdd, recibo)
-    
+      logger.debug recibo.usuario.nombre
+      logger.debug sdd.last.to_json
+      logger.debug recibo.bic
+      logger.debug recibo.iban
       sdd.add_transaction(
         # Name of the debtor, in German: "Zahlungspflichtiger"
         # String, max. 70 char
@@ -191,8 +194,8 @@ class RemesaController < ApplicationController
         # Date
         #
 
-        #requested_date: recibo.vencimiento
-
+        requested_date: Date.today + 1.day
+ 
         # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
         # True or False
         #batch_booking: true

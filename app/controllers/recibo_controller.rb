@@ -149,6 +149,8 @@ class ReciboController < ApplicationController
      rcb.update_all(remesa_id: rms.id)
     # Cambiar los recibos de estado a 2 (pagado)
      rcb.update_all(reciboEstado_id: '2')
+    # Marcamos la bandera de remesado a cierto
+     rcb.update_all(remesado: true)
 
     redirect_to michon_path(), alert: "Recibos remesados entre  #{I18n.l(fechaInicio, format: '%A, %d de %B de %Y')} y #{I18n.l(fechaFin, format: '%A, %d de %B de %Y')}, en total #{rcb.count}, sin incidecias "
   end
@@ -247,14 +249,14 @@ class ReciboController < ApplicationController
     rcb.concepto = "Cuota mensual de AgâraYoga " + I18n.translate(:"date.month_names", :locale => :es)[fecha.mon] + " " + fecha.year.to_s
     case alm[1].to_i
       when 1
-        rcb.importe = 40
+        rcb.importe = 45
       when 2
-        rcb.importe = 55
+        rcb.importe = 60
       when 3
-        rcb.importe = 65
+        rcb.importe = 70
     end
     rcb.nombre = usr.nombre
-    rcb.bic =   usr.bic
+    rcb.bic =  usr.bic
     rcb.iban = usr.iban
     rcb.moneda = "EUR"
     rcb.referencia = ""

@@ -1,7 +1,31 @@
-<% content_for :title,  "Tus clases agendadas en AgâraYoga para el mes de JULIO" %>
+<% content_for :title,  "Historial de clases" %>
 <% content_for :description,  "Hola #{@clsDelAlumno.first.usuario.nombre.split(' ')[0]}. Estas son tus clases agendadas en AgâraYoga para el mes de JULIO" %>
 
+<!-- ----------------------------------------------------------------------------
+# instructores a los que asiste
+----------------------------------------------------------------------------- -->
+    <% total = @clsDelAlumno.where(claseAlumnoEstado_id: 2).count %>
 
+    <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
+      <h5> Asistencia del alumno a cada instructor </h5>
+    </div>
+    <div class="p-5 mb-3 border border-2 bg-light border-light rounded-2">
+      <div class="mb-3">
+      <% @clsDelAlumno.where(claseAlumnoEstado_id: 2).group(:instructor_id).each do |clsAlm| %>
+        <button type="button" class="btn btn-<%= clsAlm.instructor.color %>"> <%= clsAlm.instructor.nombre %> </button>
+      <% end %>
+      </div>
+
+      <div class="progress" style="height: 30px;">
+        <% @clsDelAlumno.where(claseAlumnoEstado_id: 2).group_by(&:instructor_id).each do |almIns| %>
+          <div class="progress-bar bg-<%=almIns[1].first.clase.instructor.color%> fs-6 fw-b" role="progressbar" style="width: <%=almIns[1].count.to_f*100/total%>%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"> 
+            <%= "#{number_to_percentage(almIns[1].count.to_f*100/total, precision: 2)} (#{almIns[1].count})" %> </div>
+        <% end %>
+      </div>
+    </div>
+<!-- ----------------------------------------------------------------------------
+# Presentación mensual de las clases a las que ha asistido el alumno
+----------------------------------------------------------------------------- -->
 <% @arrayMeses.each do |dd| %>
 
   <div class="row d-flex flex-column mb-5">  <!-- Un mes -->
@@ -25,7 +49,7 @@
         <% if dm.monday? %> <div class="row d-flex flex-row"> <% end %>
 
         <% unless dm.saturday? or dm.sunday? %>
-        <div class="col border rounded d-flex justify-content-center bg-light p-1 <%= (dm.month == dd.month) ? 'text-black' : 'text-muted' %> ">
+      <div class="col border rounded d-flex justify-content-center bg-light p-1 <%= (dm.month == dd.month) ? 'text-black' : 'text-muted' %> ">
                        <!-- Comprobamos si hay clase este día -->
                       <% clAlm = @clsDelAlumno.where(diaHora: dm.at_beginning_of_day..dm.at_end_of_day) %>
                       <div class="col p-0 m-0 border d-flex justify-content-center flex-column rounded">
@@ -69,15 +93,21 @@
 <% end %>
 
 
+
 # Texto para mandar por WhatsApp
 <div class="row d-flex flex-column mb-5 pt-5">
 <h4> Para enviar por WhatsApp </h4>
     <% @clsDelAlumno.each do |clAlm| %>
-            <div class="col bg-light ">
-        <% unless clAlm.diaHora.blank? then %>
-          <%=" *#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}, #{clAlm.diaHora.strftime('%d')}* #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las *#{clAlm.diaHora.strftime('%H:%M')}* en el aula *#{clAlm.clase.aula.nombre}* con *#{clAlm.clase.instructor.nombre}*" %>
-        <% end %>
-          </div>
+        <div class="col bg-light ">
+          <%= link_to clase_dia_path(fecha: clAlm.clase.diaHora.to_s, target: '_blank', anchor: 'clase-'+clAlm.clase.id.to_s) do %>
+            ir a la clase
+          <% end %>
+        </div>
+        <div class="col bg-light ">
+          <% unless clAlm.diaHora.blank? then %>
+            <%=" *#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}, #{clAlm.diaHora.strftime('%d')}* #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las *#{clAlm.diaHora.strftime('%H:%M')}* en el aula *#{clAlm.clase.aula.nombre}* con *#{clAlm.clase.instructor.nombre}*" %>
+          <% end %>
+        </div>
     <% end %>
 </div>
 
