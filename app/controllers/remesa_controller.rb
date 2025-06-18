@@ -82,35 +82,52 @@ class RemesaController < ApplicationController
     redirect_to remesa_show_path(rmsId)
   end
 
-  def emitir
+  def emitirAntes
     @remesa = Remesa.find(params[:id])
-    # First: Create the main object
-    sdd = SEPA::DirectDebit.new(
-      # Name of the initiating party and creditor, in German: "Auftraggeber"
-      # String, max. 70 char
-      name: "Miguel Rodríguez López (AgâraYoga)",
 
-      # OPTIONAL: Business Identifier Code (SWIFT-Code) of the creditor
-      # String, 8 or 11 char
-      bic: 'BCOEESMM070',
-
-      # International Bank Account Number of the creditor
-      # String, max. 34 chars
-      iban: 'ES9630700030186209805420',
-
-      # Creditor Identifier, in German: Gläubiger-Identifikationsnummer
-      # String, max. 35 chars
-      creditor_identifier: 'ES6100133322144C'
-    )
-
-    # Second: Add transactions
-    @remesa.recibos.each do |rms|
-      transicion(sdd, rms)
+    ddLista = []
+    @remesa.recibos.each do |rcb|
+      addRcbToDdLista(ddLista, rcb)
     end
 
-    # Last: create XML string
-    xml_string = sdd.to_xml                    # Use schema pain.008.001.02
-    #xml_string = sdd.to_xml('pain.008.002.02') # Use schema pain.008.002.02
+    creditor = Sepa::DirectDebitOrder::Party.new("Miguel Rodríguez López (AgâraYoga)",
+                                                 "Carril Hortas 25 Bajo",
+                                                 nil,
+                                                 "27002",
+                                                 "LUGO",
+                                                 "ES",
+                                                 "Miguel",
+                                                 "677524729",
+                                                 "contacto@agarayoga.eu")
+
+    creditor_account = Sepa::DirectDebitOrder::BankAccount.new('ES9630700030186209805420',
+                                                               'BCOEESMM070')
+
+    sepa_identifier = Sepa::DirectDebitOrder::PrivateSepaIdentifier.new 'ES6100133322144C'
+
+    payment = Sepa::DirectDebitOrder::CreditorPayment.new(creditor,
+                                                        creditor_account,
+                                                        "Remesa:" + @remesa.id.to_s ,
+                                                        Date.today.to_s,
+                                                        sepa_identifier,
+                                                        ddLista)
+    
+     initiator = Sepa::DirectDebitOrder::Party.new("Miguel Rodríguez López (AgâraYoga)",
+                                                 "Carril Hortas 25 Bajo",
+                                                 nil,
+                                                 "27002",
+                                                 "LUGO",
+                                                 "ES",
+                                                 "Miguel",
+                                                 "677524729",
+                                                 "contacto@agarayoga.eu")
+
+     order = Sepa::DirectDebitOrder::Order.new("Remesa:" + @remesa.id.to_s,
+                                                initiator,
+                                                [payment])
+
+    #fi = order.to_xml  pain_008_001_version: "04"
+    fi = order.to_xml  pain_008_002_version: "04"
 
       respond_to do |format|
           format.html do
@@ -119,10 +136,48 @@ class RemesaController < ApplicationController
 
           format.xml do
             ficNombre = "Remesa_#{@remesa.id.to_s}.xml"
-            send_data sdd.to_xml, filename: ficNombre, type: 'application/xml', diposition: 'inline'
+            send_data order.to_xml  pain_008_001_version: "04", filename: ficNombre, type: 'application/xml', diposition: 'inline'
           end
       end
   end
+
+  def addRcbToDdLista(ddLista, rcb)
+    bank_account = Sepa::DirectDebitOrder::BankAccount.new rcb.iban, rcb.bic
+    debtor = Sepa::DirectDebitOrder::Party.new(rcb.nombre, rcb.usuario.direccion, nil, rcb.usuario.cp, rcb.usuario.localidad, rcb.usuario.pais, rcb.usuario.nombre, rcb.usuario.movil, rcb.usuario.email)
+    mandate = Sepa::DirectDebitOrder::MandateInformation.new('Recibo: ' + rcb.id.to_s, Date.today + 1.day, 'RCUR')
+
+    ddLista << Sepa::DirectDebitOrder::DirectDebit.new(debtor, bank_account, 'Fra: ' + rcb.id.to_s, rcb.importe, "EUR", mandate)
+  end
+
+
+  def emitir
+    @remesa = Remesa.find(params[:id])
+    
+    # Configurar con encoding seguro
+    sdd = SEPA::DirectDebit.new(
+      name: sanitize_for_sepa("Miguel Rodríguez López (AgâraYoga)"),
+      bic: 'BCOEESMM070',
+      iban: 'ES9630700030186209805420',
+      creditor_identifier: 'ES6100133322144C'
+    )
+
+    @remesa.recibos.each do |rms|
+      safe_transaction(sdd, rms)
+    end
+
+    respond_to do |format|
+      format.html { redirect_to remesa_show_path(@remesa) }
+      
+      format.xml do
+        xml_content = generate_valid_xml(sdd)
+        send_data xml_content,
+                  filename: "Remesa_#{@remesa.id}.xml",
+                  type: 'application/xml; charset=utf-8',
+                  disposition: 'inline'
+      end
+    end
+  end
+
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:rms_id, rcbs_ids:[])
@@ -130,78 +185,108 @@ class RemesaController < ApplicationController
 
   private
     
+    # CREO QUE YA NO ES NECESARIO CUANDO FUNCIONE, QUITAR Y PROBAR.
     def transicion(sdd, recibo)
-      logger.debug recibo.usuario.nombre
-      logger.debug sdd.last.to_json
-      logger.debug recibo.bic
-      logger.debug recibo.iban
       sdd.add_transaction(
-        # Name of the debtor, in German: "Zahlungspflichtiger"
-        # String, max. 70 char
-        name: recibo.usuario.nombre,
-
-        # OPTIONAL: Business Identifier Code (SWIFT-Code) of the debtor's account
-        # String, 8 or 11 char
+        name: recibo.usuario.nombre.unicode_normalize(:nfc),
         bic: recibo.bic, 
-
-        # International Bank Account Number of the debtor's account
-        # String, max. 34 chars
         iban: recibo.iban,
-
-        # Amount
-        # Number with two decimal digit
         amount: recibo.importe.to_s,
-
-        # OPTIONAL: Currency, EUR by default (ISO 4217 standard)
-        # String, 3 char
         currency: 'EUR',
-
-        # OPTIONAL: Instruction Identification, will not be submitted to the debtor
-        # String, max. 35 char
-        # instruction: '12345',
-
-        # OPTIONAL: End-To-End-Identification, will be submitted to the debtor
-        # String, max. 35 char
-        reference: 'Fra: ' + recibo.id.to_s,
-
-        # OPTIONAL: Unstructured remittance information, in German "Verwendungszweck"
-        # String, max. 140 char
-        remittance_information: recibo.concepto, 
-
-        # Mandate identifikation, in German "Mandatsreferenz"
-        # String, max. 35 char
+        reference: 'recibo: ' + recibo.id.to_s,
+        remittance_information: recibo.concepto&.unicode_normalize(:nfc) || 'Cuota AgaraYoga',
         mandate_id: 'Recibo: ' + recibo.id.to_s,
-
-        # Mandate Date of signature, in German "Datum, zu dem das Mandat unterschrieben wurde"
-        # Date
         mandate_date_of_signature: recibo.usuario.created_at.to_date,
-
-        # Local instrument, in German "Lastschriftart"
-        # One of these strings:
-        #   'CORE' ("Basis-Lastschrift")
-        #   'COR1' ("Basis-Lastschrift mit verkürzter Vorlagefrist")
-        #   'B2B' ("Firmen-Lastschrift")
         local_instrument: 'CORE',
-
-        # Sequence type
-        # One of these strings:
-        #   'FRST' ("Erst-Lastschrift")
-        #   'RCUR' ("Folge-Lastschrift")
-        #   'OOFF' ("Einmalige Lastschrift")
-        #   'FNAL' ("Letztmalige Lastschrift")
         sequence_type: 'RCUR',
-        # OPTIONAL: Requested collection date, in German "Fälligkeitsdatum der Lastschrift"
-        # Date
-        #
-
         requested_date: Date.today + 1.day
- 
-        # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
-        # True or False
-        #batch_booking: true
-
       )
     end
 
+    def sanitize_for_sepa(text)
+      text.to_s
+        .encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
+        .unicode_normalize(:nfc)
+        .gsub(/[^\p{L}\p{N}\p{Sc} \.\,\-\/\(\)]/u, '') # Filtra caracteres no SEPA
+    end
+
+  def safe_transaction(sdd, recibo)
+    # Validar y corregir BIC usando también el IBAN como referencia
+    bic = validate_and_fix_bic(recibo.bic.to_s, recibo.iban.to_s)
+    
+    # Validar IBAN
+    iban = recibo.iban.to_s.gsub(/\s+/, '').upcase
+    
+    sdd.add_transaction(
+      name: sanitize_for_sepa(recibo.usuario.nombre),
+      bic: bic,
+      iban: iban,
+      amount: recibo.importe.to_s,
+      currency: 'EUR',
+      reference: "Fra: #{recibo.id}",
+      remittance_information: sanitize_for_sepa(recibo.concepto),
+      mandate_id: "Recibo: #{recibo.id}",
+      mandate_date_of_signature: recibo.usuario.created_at.to_date,
+      local_instrument: 'CORE',
+      sequence_type: 'RCUR',
+      requested_date: Date.today + 1.day
+    )
+  rescue SEPA::Error => e
+    Rails.logger.error "Error al añadir transacción para recibo #{recibo.id}: #{e.message}"
+    nil
+  end
+
+    def validate_and_fix_bic(bic, iban = nil)
+      # Limpiar y estandarizar el BIC
+      bic = bic.to_s.gsub(/\s+/, '').upcase
+      
+      # Patrón de validación para BIC (8 u 11 caracteres alfanuméricos)
+      unless bic.match?(/^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/)
+        # Si no es válido y tenemos IBAN, intentar obtener BIC del banco
+        if iban.present?
+          country_code = iban.to_s[0..1].upcase
+          bank_code = iban.to_s[4..7]
+          bic = guess_bic_from_bank_code(country_code, bank_code) || bic
+        end
+        
+        # Si sigue siendo inválido, lanzar error
+        unless bic.match?(/^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/)
+          raise SEPA::Error, "BIC inválido: #{bic}"
+        end
+      end
+      
+      bic
+    end
+
+
+    def guess_bic_from_bank_code(country_code, bank_code)
+      # Mapeo de códigos de bancos españoles comunes
+      spanish_banks = {
+        '0049' => 'BSCHESMM',   # Santander
+        '0182' => 'BBVAESMM',   # BBVA
+        '0238' => 'PSTRESMM',   # Bankia
+        '2080' => 'CAGLESMM',   # Abanca
+        '2038' => 'CAHMESMM',   # Bankinter
+        '2100' => 'CAIXESBB',   # CaixaBank
+        '0073' => 'OPENESMM',   # Openbank
+        '2095' => 'POPUESMM',   # Banco Sabadell
+        '0081' => 'BSABESBB',   # Banco Santander (antiguo)
+        '0061' => 'ESPBESMM'    # Banco Español de Crédito
+      }
+      
+      if country_code == 'ES' && spanish_banks.key?(bank_code)
+        spanish_banks[bank_code]
+      end
+    end
+    def generate_valid_xml(sdd)
+      xml = sdd.to_xml('pain.008.001.02')
+      
+      # Asegurar encoding válido
+      xml = xml.force_encoding('UTF-8')
+               .encode('UTF-8', invalid: :replace, undef: :replace)
+      
+      # Corregir declaración XML
+      xml.sub(/<\?xml version="1\.0"\?>/, '<?xml version="1.0" encoding="UTF-8"?>')
+    end
 
 end

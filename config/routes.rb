@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   get  'julio/facturar'
   post 'julio/editar',                     to: 'julio#editar',       as: "julio/editar"
 
+  resources :julio, only: [:show, :update] do
+    get 'asistencia', on: :member, as: 'asistencia'
+  end
+
+
   get 'remesa/index'
   get 'remesa/show/:id',                           to: 'remesa#show',                as: 'remesa/show'
   get 'remesa/new'
@@ -30,11 +35,14 @@ Rails.application.routes.draw do
   get    'recibo/remesar_seleccionar_anterior/',   to: 'recibo#remesar_seleccionar_anterior',    as: 'recibo/remesar_seleccionar_anterior'
   post   'recibo/remesar_seleccionar_post',        to: 'recibo#remesarSeleccionarPost',          as: "recibo/remesarSeleccionarPost"
   get    'recibo/estado/:id/:estado' ,             to: 'recibo#estado',                          as: 'recibo/estado'
+  get    'recibo/numerar',                         to: 'recibo#numerar',                         as: 'recibo/numerar'
+  post   'recibo/yacob',                           to: 'recibo#yacob',                           as: 'recibo/yacob'
   post   'recibo/generarPost',                     to: 'recibo#generarPost',                     as: 'recibo/generarPost'
   post   'recibo/busqueda',                        to: 'recibo#busqueda',                        as: "recibo/busqueda"
   post   'recibo/remesar',                         to: 'recibo#remesar',                         as: "recibo/remesar"
   post   'recibo/modificar',                       to: 'recibo#modificar',                       as: "recibo/modificar"
   post   'recibo/descargarFacturacion',            to: 'recibo#descargarFacturacion',            as: "recibo/descargarFacturacion"
+  post   'recibo/numerarPost',                     to: 'recibo#numerarPost',                     as: 'recibo/numerarPost'
   resources :recibo, only: [:destroy]
 
   resources :clase_alumno

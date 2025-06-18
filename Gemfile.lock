@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/conanite/sepa.git
+  revision: f09fd24fed39e8cbb1c483e1fc9fe1ad86f3c97a
+  specs:
+    sepa (0.0.21)
+      aduki
+      builder
+      countries (~> 0.9.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -66,6 +75,7 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
+    aduki (0.2.7)
     autoprefixer-rails (10.4.16.0)
       execjs (~> 2)
     bcrypt (3.1.20)
@@ -93,8 +103,11 @@ GEM
       nokogiri (~> 1.10, >= 1.10.4)
       rubyzip (>= 1.3.0, < 3)
     clipboard-rails (1.7.1)
-    concurrent-ruby (1.3.5)
+    concurrent-ruby (1.3.4)
+    countries (0.9.3)
+      currencies (~> 0.4.2)
     crass (1.0.6)
+    currencies (0.4.2)
     date (3.3.4)
     devise (4.9.4)
       bcrypt (~> 3.0)
@@ -334,6 +347,7 @@ DEPENDENCIES
   byebug
   capybara (>= 3.26)
   clipboard-rails
+  concurrent-ruby (= 1.3.4)
   devise
   devise-bootstrap-views (~> 1.0)
   jbuilder (~> 2.7)
@@ -350,6 +364,7 @@ DEPENDENCIES
   ransack
   sass-rails (>= 6)
   selenium-webdriver
+  sepa!
   sepa_king
   spreadsheet_architect
   spring

@@ -1,19 +1,13 @@
-
 <% content_for :title,  "Julio-links" %>
 
-<ul class="list-group">
-  <% @cl.each do |cl| %>
-    <li class="list-group-item border-1 rounded-3 mb-2">
-      <div class="m-0 p-0 d-flex w-100 justify-content-between">
-        <div class=" m-0 p-0">
-          <h5> <%= cl.usuario.nombre%> </h5>
-        </div>
-        <div class=" m-0 p-0">
-          <h5> <%= cl.usuario.telefono%> </h5>
-        </div>
-        <div class=" m-0 p-0">
-          <h5> <%="#{alumnos_clases_agendadas_url(cl.usuario_id)} " %> </h5>
-        </div>
-      </div>
-    </li>
-  <% end %>
+<% Julio.all.each do |jl| %>
+  <% url = asistencia_julio_url(jl.usuario_id) %>
+  <% mensaje = "Hola #{jl.usuario.alias} 👋\n\nPor favor, confirma tu asistencia para julio en el siguiente enlace:\n🔗 #{url}\n\n¡Gracias por tu ayuda!" %>
+
+  <div class="whatsapp-message mb-4 p-3 bg-light rounded">
+    <% mensaje.split("\n").each do |line| %>
+      <p class="mb-1"><%= line %></p>
+    <% end %>
+    <small class="text-muted">Enviar a: <%= jl.usuario.nombre %></small>
+  </div>
+<% end %>

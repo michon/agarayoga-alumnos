@@ -65,7 +65,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'rails_admin', '~> 2.0'
 gem 'prawn'
-gem 'sepa_king'
 gem 'money-rails'
 gem 'spreadsheet_architect'
 
@@ -73,3 +72,6 @@ gem 'spreadsheet_architect'
 gem 'ransack'
 gem 'clipboard-rails'
 gem 'jquery-rails'
+gem 'concurrent-ruby', '1.3.4'
+gem 'sepa_king'
+gem 'sepa', github: 'conanite/sepa'

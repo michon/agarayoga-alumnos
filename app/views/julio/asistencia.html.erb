@@ -1,0 +1,46 @@
+<div class="container border border-primary rounded  py-2">
+  <h1>Confirmación de asistencia</h1>
+  <h1 class="text-center">JULIO</h1>
+  <p>¡Hola <span class="fw-bolder"><%= @usuario.alias %></span>!</p> 
+  <p> Por favor, marca las semanas que asistirás en julio. Si no vas a venir en julio, marca la última opción:</p>
+
+  <%= form_with(model: @julio, url: julio_path(@julio.usuario_id), method: :put) do |f| %>
+    <% if @julio.noviene %>
+      <div class="alert alert-info">
+        Has indicado que no vendrás en julio. Si quieres cambiar, desmarca esta opción:
+      </div>
+    <% end %>
+    
+    <div class="form-check">
+      <%= f.check_box :sem1, class: 'form-check-input', disabled: @julio.noviene %>
+      <%= f.label :sem1, "Semana 1: Lun 1 - Dom 6 de julio", class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sem2, class: 'form-check-input', disabled: @julio.noviene %>
+      <%= f.label :sem2, "Semana 2: Lun 7 - Dom 13 de julio", class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sem3, class: 'form-check-input', disabled: @julio.noviene %>
+      <%= f.label :sem3, "Semana 3: Lun 14 - Dom 20 de julio", class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sem4, class: 'form-check-input', disabled: @julio.noviene %>
+      <%= f.label :sem4, "Semana 4: Lun 21 - Dom 27 de julio", class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check">
+      <%= f.check_box :sem5, class: 'form-check-input', disabled: @julio.noviene %>
+      <%= f.label :sem5, "Semana 5: Lun 28 - Dom 31 de julio", class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check mb-4">
+      <%= f.check_box :noviene, class: 'form-check-input' %>
+      <%= f.label :noviene, "No vendré en julio", class: 'form-check-label' %>
+    </div>
+
+    <%= f.submit "Confirmar asistencia", class: 'btn btn-primary mt-3' %>
+  <% end %>
+</div>

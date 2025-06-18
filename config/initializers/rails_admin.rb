@@ -66,6 +66,7 @@ RailsAdmin.config do |config|
         scopes [:activo]
     end
     field :nombre
+    field :alias
     field :dni
     field :telefono
     field :movil

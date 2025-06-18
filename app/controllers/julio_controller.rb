@@ -1,4 +1,6 @@
 class JulioController < ApplicationController
+  layout 'julioLayout'
+  skip_before_action :authenticate_usuario! # Esto salta la autenticación de Devise
 
   def index
       @q = Julio.ransack(params[:q])
@@ -6,23 +8,47 @@ class JulioController < ApplicationController
       @alumnos = @q.result(distinct: true)
   end
 
-
-  def editar
-    dd = Julio.find(params[:julio][:id])
-    dd.sem1 = params[:julio][:sem1]
-    dd.sem2 = params[:julio][:sem2]
-    dd.sem3 = params[:julio][:sem3]
-    dd.sem4 = params[:julio][:sem4]
-    dd.sem5 = params[:julio][:sem5]
-    dd.noviene = params[:julio][:noviene]
-    dd.save
-
-    redirect_to julio_index_path(anchor: "frm-#{params[:julio][:id]}")
+  def asistencia
+    @julio = Julio.find_by(usuario_id: params[:id])
+    @usuario = @julio.usuario if @julio
   end
-  
+
+  def update
+    @julio = Julio.find_by(usuario_id: params[:id])
+    @usuario = @julio.usuario if @julio
+
+    # Limpiar semanas si marcó "no viene"
+    if params[:julio][:noviene] == '1'
+      params[:julio][:sem1] = '0'
+      params[:julio][:sem2] = '0'
+      params[:julio][:sem3] = '0'
+      params[:julio][:sem4] = '0'
+      params[:julio][:sem5] = '0'
+    end
+
+    if @julio.update(julio_params)
+      redirect_to asistencia_julio_path(@julio.usuario_id), notice: '¡Gracias por confirmar tu asistencia!'
+    else
+      render :asistencia
+    end
+  end
 
   def links
      @cl = ClaseAlumno.where(diaHora: '01-07-2024'.to_date.beginning_of_month.. '01-07-2024'.to_date.at_end_of_month).group(:usuario_id)
+     @whatsapp_message = []
+     Julio.all.each do |jl|
+      url = asistencia_julio_url(jl.usuario_id)
+      mensaje = <<~MSG
+        Hola #{jl.usuario.alias} 👋
+
+        Por favor, confirma tu asistencia para julio en el siguiente enlace:
+        🔗 #{url}
+
+        ¡Gracias por tu ayuda!
+      MSG
+
+      @whatsapp_message << [mensaje, jl.usuario]
+    end
   end
 
   def facturar
@@ -36,7 +62,15 @@ class JulioController < ApplicationController
     @claseAlumno = ClaseAlumno.all
   end
 
+
+  private
+
+  def julio_params
+    params.require(:julio).permit(:sem1, :sem2, :sem3, :sem4, :sem5, :noviene)
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:julio)
   end
+
 end

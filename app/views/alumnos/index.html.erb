@@ -81,6 +81,16 @@
                     <% end %>
                   </li>
                 </ul>
+                <p class="mt-2"> Hola <%= almn.alias %> 😊, <br/> las clases que tenemos programadas por ahora son:  </p>
+                <% @clases.where(usuario_id: almn.id).order(:diaHora).each do |cl| %>
+                  <% if cl.claseAlumnoEstado_id == 1 %>
+                    <p class=" mb-1 p-2" >
+                      <div class="mb-0">🗓 <%= I18n.l(cl.diaHora, format: '%A %d de %B') %> </div>
+                      <div class="mb-0">⏰ <%= cl.diaHora.strftime('%H:%M horas') %> </div>
+                      <div class="mb-0">🧘 Profesor: <%= cl.clase.instructor.nombre %></div>
+                    </p>
+                  <% end %>
+                <% end %>
               </div>
             </div>
 

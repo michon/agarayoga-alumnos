@@ -2,12 +2,12 @@
     <div class="card-group">
 
         <!-- clase card -->
-        <div class="m-3 card ">
+        <div class="card ms-1 border">
           <div class="card-header">
             <h5>Clases</h5>
           </div>
 
-          <div class="car-body py-3 m-3 text-center">
+          <div class="card-body text-center">
 
             <%= link_to 'Calendario Agendado', clase_calendario_path(fecha: Date.today),   class: 'btn btn-primary w-100 mb-3', role: "button" %>
 
@@ -42,13 +42,15 @@
 
 
         <!-- Alumnos card -->
-        <div class="m-3 card">
+        <div class="card ms-1 border">
           <div class="card-header">
             <h5>Alumnos</h5>
           </div>
 
-          <div class="car-body m-3 py-3 text-center">
-            <%= link_to 'Listado alumnos', alumnos_index_path,   class: 'btn btn-primary w-100 mb-3', role: "button" %>
+          <div class="card-body text-center">
+            <%= link_to 'Listado alumnos', alumnos_index_path,          class: 'btn btn-primary w-100 mb-3', role: "button" %>
+            <%= link_to 'ODS alumnos ',    alumnos_pdfAlumnos_path,     class: 'btn btn-primary w-100 mb-3', role: "button" %>
+
             <%= form_tag(alumnos_business_path, method: :post) do %> <!-- Vista horario dia -->
                     <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Altas en </button>
@@ -60,8 +62,6 @@
 
                     <button class="btn btn-primary w-100 mb-3" type="submit"> Clases Agendadas </button>
               <% end %>
-
-
           </div>
 
         </div>
@@ -69,14 +69,14 @@
 
 
         <!-- H O R A R I O    card -->
-        <div class="m-3 card">
+        <div class="card ms-1 border">
           <div class="card-header">
               <h5 class="d-flex justify-content-between">
                   <span>Horario</span>
                   <span><%= @alumnosTotal.count %> </span>
             </h5>
           </div>
-          <div class="car-body m-3 py-3 text-center">
+          <div class="card-body py-3 text-center">
               <%= link_to 'Plantilla general', horario_nuevo_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
               <%= link_to 'Horas libres', horario_libre_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
               <%= link_to 'Crear horario', horario_crear_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
@@ -85,7 +85,7 @@
         <!-- fin horario card -->
 
         <!-- F A C T U R A C I Ó N  card -->
-        <div class="m-3 card">
+        <div class="card ms-1 border">
           <div class="card-header">
               <h5 class="d-flex justify-content-between">
                   <span>Facturación</span>
@@ -93,50 +93,75 @@
             </h5>
           </div>
 
-          <div class="car-body m-3 py-3 text-center">
-              <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-
-              <%= form_tag(recibo_generarPost_path, method: :post) do %>
-                <input class="form-control"   name="fecha"  type="date" value="<%=Date.current%>"  id="checkMes-<%=Date.current%>">
-                <button class="btn btn-primary w-100 mb-3" type="submit"> Generar Recibos </button>
-              <% end %>
-
-              <%= form_tag(recibo_busqueda_path, method: :post) do %>
-                    <input name="busquedaEstado[]"  type="hidden" value="1"  id="checkEstado-1">
-                    <input name="busquedaMes"  type="hidden" value="<%=Date.current.month%>"  id="checkMes-<%=Date.current.month%>">
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Pagos de Recibos </button>
-              <% end %>
-
-              <%= link_to 'Apuntes en caja', caja_listado_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-
-              <!-- Remesar  -->
-              <%= form_tag(recibo_remesar_path, method: :post) do %> 
+          <div class="card-body py-3 text-center">
+              <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-1', role: "button" %>
+              <!-- Gererar trimestre -->
+              <%= form_tag(recibo_yacob_path, method: :post) do %> 
+                <div class="alert alert-danger m-1">
                     <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
                     <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Remesar </button>
+                    <button class="btn btn-primary w-100 my-1" type="submit"> Facturas ODS</button>
+                </div>
               <% end %>
 
-              <%= form_tag(recibo_descargarFacturacion_path, method: :post) do %> <!-- Remesar  -->
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Descargar ODS </button>
-              <% end %>
-
-              <%= link_to 'Generar Remesa', recibo_remesarSeleccionar_path(), class: 'btn btn-primary w-100 mb-3', role: "button" %>
           </div>
         </div>
         <!-- fin FACTURACIÓN card -->
 
         <!-- R E C I B O S  card -->
-        <div class="m-3 card">
+        <div class="card ms-1 border">
           <div class="card-header">
             <h5 class="d-flex justify-content-between">
               <span> Remesas </span>
             </h5>
           </div>
-          <div class="car-body m-3 py-3 text-center">
-                <%= link_to 'Listado Remesas', remesa_index_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-                <%= link_to 'Seleccionar Recibos', recibo_remesarSeleccionar_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+          <div class="card-body py-3 text-center">
+                <%= link_to 'Listado Remesas', remesa_index_path, class: 'btn btn-primary w-100 mb-1', role: "button" %>
+                <%= link_to 'Seleccionar Recibos', recibo_remesarSeleccionar_path, class: 'btn btn-primary w-100 mb-1', role: "button" %>
+
+              <%= form_tag(recibo_generarPost_path, method: :post) do %>
+                <div class="alert alert-primary mb-0">
+                  <input class="form-control"   name="fecha"  type="date" value="<%=Date.current%>"  id="checkMes-<%=Date.current%>">
+                  <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Generar Recibos </button>
+                </div>
+              <% end %>
+
+              <%= form_tag(recibo_busqueda_path, method: :post) do %>
+                    <input name="busquedaEstado[]"  type="hidden" value="1"  id="checkEstado-1">
+                    <input name="busquedaMes"  type="hidden" value="<%=Date.current.month%>"  id="checkMes-<%=Date.current.month%>">
+                    <button class="btn btn-primary w-100 my-1" type="submit"> Pagos de Recibos </button>
+              <% end %>
+
+              <!-- Numerar  -->
+              <%= form_tag(recibo_numerarPost_path, method: :post) do %> 
+                <div class="alert alert-success mb-0">
+                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Numerar </button>
+                </div>
+              <% end %>
+
+
+              <%= link_to 'Apuntes en caja', caja_listado_path, class: 'btn btn-primary w-100 my-1', role: "button" %>
+
+              <!-- Remesar  -->
+              <%= form_tag(recibo_remesar_path, method: :post) do %> 
+                <div class="alert alert-warning mb-1">
+                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Remesar </button>
+                </div>
+              <% end %>
+
+              <%= form_tag(recibo_descargarFacturacion_path, method: :post) do %> <!-- Remesar  -->
+                <div class="alert alert-danger mb-1">
+                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
+                    <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Descargar ODS </button>
+                </div>
+              <% end %>
+
+              <%= link_to 'Generar Remesa', recibo_remesarSeleccionar_path(), class: 'btn btn-primary w-100 mb-1', role: "button" %>
           </div>
         </div>
         <!-- fin R E C I B O S  card -->

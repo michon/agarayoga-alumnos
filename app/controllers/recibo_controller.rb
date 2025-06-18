@@ -183,6 +183,73 @@ class ReciboController < ApplicationController
     File.open("public/remesa.xml", "w") { |file| file.write @xml_string.join("\n") }
   end
 
+  def numerar
+
+  end
+
+  def numerarPost
+
+    # Recorrer los recibos por orden cronológico y asignar el numero de factura.
+    # Grabar el conjunto de recibos.
+
+    # 1.- Seleccionar todos los recibos entre las fechas seleccionadas cuya serie sea A y que se encuentren en estado emitido.
+    fechaInicio = params[:fechaInicio].to_datetime
+    fechaFin = params[:fechaFin].to_datetime
+
+    # Seleccionar los recibos de serie A como facturados
+    rcb = Recibo.where(vencimiento: fechaInicio..fechaFin)
+    rcb = rcb.where(serie: 'A')
+    
+    # 2.- Comprobar que entre los recibos seleccionados no tengamos ninguno que ya tenga número de factura.
+    if rcb.where('ISNULL(factura)').count == 0
+
+      # 3.- Buscacar el último numero de factura ????
+      numFra = 297
+      rcb.order(:id).each do |r|
+        r.factura = '20250A' + (numFra += 1).to_s.rjust(6,'0')
+        r.save
+      end
+    end
+  end
+ 
+  def yacob
+      unless ComunPolicy.new(current_usuario).verFacturacion?
+        render file: "public/401.html", status: :unauthorized
+        return
+      end
+
+      fechaInicio = params[:fechaInicio].to_datetime
+      fechaFin = params[:fechaFin].to_datetime
+
+      rcb = Recibo.where(vencimiento: fechaInicio..fechaFin, serie: 'A').order(:factura)
+
+      headers = ['Factura', 'Fecha', 'NIF', 'Nombre', 'Base', 'IVA', 'Domicilio', 'Provincia', 'Total']
+      datos = []
+
+      rcb.each_with_index do |rec, idx|
+        row_num = idx + 2 # +1 for header, +1 because idx starts at 0
+        datos << [
+          rec.factura,
+          (rec.vencimiento.blank? ? I18n.l(rec.created_at, format: "%d-%m-%Y").to_s : I18n.l(rec.vencimiento, format: "%d-%m-%Y").to_s),
+          rec.usuario.dni,
+          rec.usuario.nombre,
+          "=I#{row_num}*100/121",  # Fórmula como string con =
+          "=E#{row_num}*21/100",   # Fórmula como string con =º
+          rec.usuario.direccion,
+          rec.usuario.provincia,
+          rec.importe
+        ]
+      end
+
+      file_data = SpreadsheetArchitect.to_xlsx(
+        headers: headers,
+        data: datos,
+        escape_formulas: false
+      )
+
+      ficNombre = "facturas_clientes_#{I18n.l(fechaInicio, format: "%Y%m%d")}-#{I18n.l(fechaFin, format: "%Y%m%d")}.xlsx"
+      send_data file_data, filename: ficNombre, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', disposition: 'inline'
+  end
   # listado de recibos que hay que hacer factura
   def facturar
     @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all

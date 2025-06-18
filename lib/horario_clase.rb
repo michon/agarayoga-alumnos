@@ -12,9 +12,6 @@ class HorarioClase
             fechaClase = fecha - (fecha.wday - h.diaSemana).days
             fechaClase = fechaClase.change(hour: h.hora, min: h.minuto)
             # Controlamos que no exista la misma clase.
-            Rails.logger.debug "----------------------------------------------------------------------------------"
-            Rails.logger.debug "fecha: #{fechaClase} - instructor: #{h.instructor_id} - aula: #{h.aula_id}"
-            Rails.logger.debug "----------------------------------------------------------------------------------"
             if Clase.find_by( diaHora: fechaClase, instructor_id: h.instructor.id, aula_id: h.aula.id).nil?
               cl = Clase.new(diaHora: fechaClase, instructor: h.instructor, aula: h.aula)
               h.horarioAlumno.each do |ha|
@@ -22,8 +19,6 @@ class HorarioClase
               end
               cl.save
             else
-              Rails.logger.debug "------ no crea la clase -------"
-              Rails.logger.debug "------ Clase.find_by( diaHora: #{fechaClase}, instructor_id: #{h.instructor.id}, aula_id: #{h.aula.id}).nil?"
             end
         end
     end

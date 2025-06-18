@@ -43,13 +43,14 @@ class AlumnosController < ApplicationController
     #alumnos = Usuario.where(debaja: [false,  nil]).all
 
     alumnos = Usuario.where(id: HorarioAlumno.select(:usuario_id).distinct.pluck(:usuario_id))
-    headers=['Nombre', 'Teléfono']
+    headers=['Nombre', 'movil', 'Correo']
     datos = []
 
     alumnos.each do |alm|
       linea = []
       linea << alm.nombre
       linea << alm.telefono
+      linea << alm.email
       datos << linea
     end
 
