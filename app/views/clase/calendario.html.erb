@@ -1,11 +1,14 @@
+<!-- Resto del código de la vista que no se ejecutará si la condición es true -->
 <div class="container ">
 
   <div class=" d-flex justify-content-between">
     <div>
+      <% unless @cl.blank? %> 
       <h1 class="d-flex justify-content-center">
         calendario del <%="#{@cl.first.diaHora.at_beginning_of_week.day} #{I18n.t('date.abbr_month_names')[@cl.first.diaHora.at_beginning_of_week.strftime('%m').to_i].upcase}"%>
            al      <%="#{@cl.last.diaHora.at_end_of_week.day} #{I18n.t('date.abbr_month_names')[@cl.last.diaHora.at_end_of_week.strftime('%m').to_i].upcase}"%>
        </h1>
+     <% end %>
      </div>
 
     <div>

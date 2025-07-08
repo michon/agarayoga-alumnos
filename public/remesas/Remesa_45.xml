@@ -1,0 +1,1884 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 pain.008.001.02.xsd">
+  <CstmrDrctDbtInitn>
+    <GrpHdr>
+      <MsgId>SEPA-KING/caddb296e572f82d3de3bc</MsgId>
+      <CreDtTm>2025-07-07T13:42:45+02:00</CreDtTm>
+      <NbOfTxs>65</NbOfTxs>
+      <CtrlSum>3503.00</CtrlSum>
+      <InitgPty>
+        <Nm>Miguel Rodriguez Lopez (AgaraYoga)</Nm>
+        <Id>
+          <OrgId>
+            <Othr>
+              <Id>ES6100133322144C</Id>
+            </Othr>
+          </OrgId>
+        </Id>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>SEPA-KING/caddb296e572f82d3de3bc/1</PmtInfId>
+      <PmtMtd>DD</PmtMtd>
+      <BtchBookg>true</BtchBookg>
+      <NbOfTxs>65</NbOfTxs>
+      <CtrlSum>3503.00</CtrlSum>
+      <PmtTpInf>
+        <SvcLvl>
+          <Cd>SEPA</Cd>
+        </SvcLvl>
+        <LclInstrm>
+          <Cd>CORE</Cd>
+        </LclInstrm>
+        <SeqTp>RCUR</SeqTp>
+      </PmtTpInf>
+      <ReqdColltnDt>2025-07-08</ReqdColltnDt>
+      <Cdtr>
+        <Nm>Miguel Rodriguez Lopez (AgaraYoga)</Nm>
+      </Cdtr>
+      <CdtrAcct>
+        <Id>
+          <IBAN>ES9630700030186209805420</IBAN>
+        </Id>
+      </CdtrAcct>
+      <CdtrAgt>
+        <FinInstnId>
+          <BIC>BCOEESMM070</BIC>
+        </FinInstnId>
+      </CdtrAgt>
+      <ChrgBr>SLEV</ChrgBr>
+      <CdtrSchmeId>
+        <Id>
+          <PrvtId>
+            <Othr>
+              <Id>ES6100133322144C</Id>
+              <SchmeNm>
+                <Prtry>SEPA</Prtry>
+              </SchmeNm>
+            </Othr>
+          </PrvtId>
+        </Id>
+      </CdtrSchmeId>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3588</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3588</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Giovanna Bonilla Lopez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES4601823636510201589315</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3589</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">70.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3589</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Alejandra Malheiro Gutierrez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5620800162353000030565</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3590</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3590</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Lourdes Alvarez Abuin</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES4801827256210208505202</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3591</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3591</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Alejandra Fouce Taboelle</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5220800152653000214743</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3592</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3592</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Teresa Gomez Senra</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5420800185103000007978</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3593</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3593</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSABESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Rocio Fouce Taboelle</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2600810497790001123117</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3595</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3595</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Pilar Sanchez Monje</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES9420800101513000644120</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3596</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3596</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Lucia Lopez Castro</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES8221005780990200158272</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3597</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3597</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSCHESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Blanco Perez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES4700490592302812735468</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3598</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3598</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Belen Castelao Rodriguez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES4301822725550201541894</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3600</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">96.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3600</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Begona Varela-Portas Marino</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6021005424261300367819</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3603</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3603</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Silvia Cereijo Villares</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6721002183510100421432</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3606</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3606</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Herminia Arrojo Rio</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7320805368713000004390</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3607</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3607</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Carmen Fernandez Gonzalez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6120800185123000012604</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3608</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">30.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3608</MndtId>
+            <DtOfSgntr>2021-11-26</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Marta Rodriguez Alvarez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6820805168143040036272</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3609</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">70.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3609</MndtId>
+            <DtOfSgntr>2022-01-10</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Guadalupe Gonzalez Varela</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES8820800002663000214853</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3610</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3610</MndtId>
+            <DtOfSgntr>2022-02-02</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSABESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Adriana Santos Fernandez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES3700815223140001457351</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3612</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3612</MndtId>
+            <DtOfSgntr>2022-03-07</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Marcos Obregon Lopez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5421000865170200248300</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3615</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3615</MndtId>
+            <DtOfSgntr>2022-06-07</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Lorena Mouriz Fernandez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES8520800133613040002755</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3617</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">36.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3617</MndtId>
+            <DtOfSgntr>2022-09-06</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Rut Bagaria Rodriguez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1220800185103040021719</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3620</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3620</MndtId>
+            <DtOfSgntr>2022-09-09</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Pilar Bellon Candal</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6120800158363000018307</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3621</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3621</MndtId>
+            <DtOfSgntr>2022-09-23</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSCHESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Laura Reigosa Menendez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2900497897112010017155</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3622</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">105.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3622</MndtId>
+            <DtOfSgntr>2022-10-04</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Ana Martinez Bestilleiro</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2201825323700201562278</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3623</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3623</MndtId>
+            <DtOfSgntr>2022-10-27</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Elvira Carballo Armesto</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5620800101553000495325</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3626</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3626</MndtId>
+            <DtOfSgntr>2023-01-03</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSCHESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Luis Castanon Llamas</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2500490091022915418647</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3627</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3627</MndtId>
+            <DtOfSgntr>2023-01-17</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BCOEESMM070</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Vanessa Lopez Valcarce</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES0630700001236266599320</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3628</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">27.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3628</MndtId>
+            <DtOfSgntr>2023-01-17</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Tania Garcia Fernandez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES9521005780910100007967</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3630</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3630</MndtId>
+            <DtOfSgntr>2023-02-02</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Sandra Pareja Lopez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES9720805204163000027075</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3633</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3633</MndtId>
+            <DtOfSgntr>2023-03-30</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Sheila Gomez Rozas</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7620805200313040003431</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3634</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">70.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3634</MndtId>
+            <DtOfSgntr>2023-03-30</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSABESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Manuel Lopez-Leiton Bastante</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7200815223100001700775</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3635</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3635</MndtId>
+            <DtOfSgntr>2023-04-05</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>INGDESMM</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Monica Rojas Losada</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES9614650100961736695854</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3636</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3636</MndtId>
+            <DtOfSgntr>2023-04-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Roberto Rodriguez Paramo</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5820800156443000051146</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3638</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3638</MndtId>
+            <DtOfSgntr>2023-08-29</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria luz lurigados veiga</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES8920800105363000052657</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3639</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3639</MndtId>
+            <DtOfSgntr>2023-09-03</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Miguel Macineiras Cela</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES4601820625800201718365</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3640</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3640</MndtId>
+            <DtOfSgntr>2023-09-03</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Luisa Lopez Cela</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1020800151123000078757</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3641</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3641</MndtId>
+            <DtOfSgntr>2023-09-03</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Cristian Sanchez Perez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7501821980110201539402</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3643</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3643</MndtId>
+            <DtOfSgntr>2023-09-07</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Andrea Rego Iglesias</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6521002183560100194922</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3644</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3644</MndtId>
+            <DtOfSgntr>2023-09-29</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BKBKESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Eva Gonzalez Araujo</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6401280120180100060115</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3645</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3645</MndtId>
+            <DtOfSgntr>2023-10-02</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSCHESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Divina Seren Pena</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES3000490091042714533884</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3646</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3646</MndtId>
+            <DtOfSgntr>2023-10-13</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Esther Fernandez Nogueira</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6920800101543000556250</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3647</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3647</MndtId>
+            <DtOfSgntr>2023-10-13</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Jose Rodriguez Varela</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5220805368763000001031</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3648</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">24.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3648</MndtId>
+            <DtOfSgntr>2023-12-01</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Cristina Losada Mourenza</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5920800163883040088573</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3650</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3650</MndtId>
+            <DtOfSgntr>2024-01-24</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Begona Abel Hernandez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7621002335510100456641</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3651</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3651</MndtId>
+            <DtOfSgntr>2024-01-31</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Eva Lopez Villares</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES4120800185193040014160</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3652</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">48.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3652</MndtId>
+            <DtOfSgntr>2024-03-06</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>PSTRESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Jorge Jose Pereira Rodriguez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES6402388153800700133703</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3655</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3655</MndtId>
+            <DtOfSgntr>2024-06-09</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Angeles Ferreiro Martinez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2121002335530100265473</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3656</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3656</MndtId>
+            <DtOfSgntr>2024-09-03</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Paula Losada Real</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7220803107853000010557</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3657</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3657</MndtId>
+            <DtOfSgntr>2024-09-05</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Jose Manuel Martin Vicente</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES0920800188513040022136</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3658</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3658</MndtId>
+            <DtOfSgntr>2024-09-17</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Emerio Ares Senra</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5220800165763000028575</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3661</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3661</MndtId>
+            <DtOfSgntr>2024-10-19</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Vanesa Garrido Blanco</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES0201820625890201667209</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3662</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3662</MndtId>
+            <DtOfSgntr>2024-12-02</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSABESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Andrea quiroga Miron</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES5600817610730006189424</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3664</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3664</MndtId>
+            <DtOfSgntr>2025-01-16</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Penin Garcia</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES8520800127763040013669</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3665</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3665</MndtId>
+            <DtOfSgntr>2025-01-16</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Carmen Roman Perez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1020800102143000095659</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3668</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3668</MndtId>
+            <DtOfSgntr>2025-02-27</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Fraga Sanchez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2101824383940201793875</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3669</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3669</MndtId>
+            <DtOfSgntr>2025-03-12</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSCHESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Anton Salvador Rios</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1300496716152510024579</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3671</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3671</MndtId>
+            <DtOfSgntr>2025-04-16</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMM</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Mercedes Nogueira Lopez</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1120800136153040012496</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3672</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3672</MndtId>
+            <DtOfSgntr>2025-04-21</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BSCHESMM</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria D. Arias Blanco</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES8700495554242595023709</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3673</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3673</MndtId>
+            <DtOfSgntr>2025-05-10</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BBVAESMMXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Paula Rodriguez Lodeiro</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES7001820625810201777054</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3675</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3675</MndtId>
+            <DtOfSgntr>2025-05-20</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>OPENESMM</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Sheila Henares Vilaboa</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1900730100580491137402</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3676</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">22.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3676</MndtId>
+            <DtOfSgntr>2025-06-09</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMM</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Yolanda Darriba Grandio</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2120800806333040725028</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3678</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3678</MndtId>
+            <DtOfSgntr>2025-06-30</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAGLESMM</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Ana grana teijeiro</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES1220805533153000003862</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3679</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">160.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3679</MndtId>
+            <DtOfSgntr>2025-05-15</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BASKES2BXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Concepcion Villada Trabadelo</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES2320955490651072548414</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cinco clases individual en AgraYoga</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3680</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3680</MndtId>
+            <DtOfSgntr>2021-09-18</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>BCOEESMM070</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Antonio Jose Dial Otero</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES3230700031461561689116</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga junio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3681</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">45.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3681</MndtId>
+            <DtOfSgntr>2023-03-30</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Pablo Martin Seijo</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES3521004640492100058628</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga junio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>Fra: 3682</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">60.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>Recibo: 3682</MndtId>
+            <DtOfSgntr>2025-06-24</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BIC>CAIXESBBXXX</BIC>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Sheila Maria Castro Agrelo</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>ES3121002183560200371605</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Cuota mensual de AgraYoga julio 2025</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+    </PmtInf>
+  </CstmrDrctDbtInitn>
+</Document>

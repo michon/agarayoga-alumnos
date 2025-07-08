@@ -150,12 +150,12 @@ class RemesaController < ApplicationController
   end
 
 
-  def emitir
+  def emitir 
     @remesa = Remesa.find(params[:id])
     
     # Configurar con encoding seguro
     sdd = SEPA::DirectDebit.new(
-      name: sanitize_for_sepa("Miguel Rodríguez López (AgâraYoga)"),
+      name: SepaCharacterConverter.to_sepa_format("Miguel Rodríguez López (AgâraYoga)"),
       bic: 'BCOEESMM070',
       iban: 'ES9630700030186209805420',
       creditor_identifier: 'ES6100133322144C'
@@ -167,13 +167,15 @@ class RemesaController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to remesa_show_path(@remesa) }
-      
+
       format.xml do
         xml_content = generate_valid_xml(sdd)
-        send_data xml_content,
-                  filename: "Remesa_#{@remesa.id}.xml",
-                  type: 'application/xml; charset=utf-8',
-                  disposition: 'inline'
+
+        ficNombre = + "remesa-#{@remesa.id}-#{@remesa.created_at.strftime("%Y%m%d")} .xml"
+        send_data xml_content, filename: ficNombre, type: 'application/xml', diposition: 'inline'
+
+
+        # Redirigir o mostrar mensaje de éxito
       end
     end
   end
@@ -188,7 +190,7 @@ class RemesaController < ApplicationController
     # CREO QUE YA NO ES NECESARIO CUANDO FUNCIONE, QUITAR Y PROBAR.
     def transicion(sdd, recibo)
       sdd.add_transaction(
-        name: recibo.usuario.nombre.unicode_normalize(:nfc),
+        name: SepaCharacterConverter.to_sepa_format(recibo.usuario.nombre),
         bic: recibo.bic, 
         iban: recibo.iban,
         amount: recibo.importe.to_s,
@@ -218,7 +220,7 @@ class RemesaController < ApplicationController
     iban = recibo.iban.to_s.gsub(/\s+/, '').upcase
     
     sdd.add_transaction(
-      name: sanitize_for_sepa(recibo.usuario.nombre),
+      name: SepaCharacterConverter.to_sepa_format(recibo.usuario.nombre),
       bic: bic,
       iban: iban,
       amount: recibo.importe.to_s,

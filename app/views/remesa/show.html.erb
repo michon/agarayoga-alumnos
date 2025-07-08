@@ -75,11 +75,11 @@
 
 
 <ul class="list-group border-primary border mx-0 my-4">
-  <% @remesa.recibos.order(:importe).each do |rcb| %>
+  <% @remesa.recibos.order(:nombre).each do |rcb| %>
     <li class="list-group-item border-1 rounded-3 mb-1">
       <div class="d-flex justify-content-between flex-fill">
 
-        <div class="row justify-content-start w-100">
+        <div class="row justify-content-start w-100 text-<%=rcb.iban.blank? ? 'warning' : 'black' %> ">
           <div class="col col-1"> <%= "#{rcb.id}"%>  </div>
           <div class="col col-4"> <%= "#{rcb.usuario.nombre}"%> </div>
           <div class="col col-2"> <%="#{rcb.importe.to_s} €"%> </div>

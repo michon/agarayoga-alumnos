@@ -80,6 +80,15 @@
               <%= link_to 'Plantilla general', horario_nuevo_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
               <%= link_to 'Horas libres', horario_libre_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
               <%= link_to 'Crear horario', horario_crear_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
+
+                    <%= form_tag('/horario/crear_horario_julio', method: :post) do %>
+                        <label class="text-center" for="fecha"> Selecciona una semana de JULIO</label>
+                        <input id="fecha" name="fecha" class="form-control" type="date" />
+                        <div class="card-footer p-2">
+                              <button  class="form-control btn-primary" type="submit"> Crear JULIO </button>
+                        </div>
+                    <% end %>
+              <%= link_to 'Asistencia Julio', julio_generate_pdf_path(format: :pdf), class: 'btn btn-primary' %>
           </div>
         </div>
         <!-- fin horario card -->

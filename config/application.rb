@@ -13,6 +13,9 @@ module AgarayogaAlumnos
     
     config.i18n.available_locales = [:es, :en]
     config.i18n.default_locale = :es
+    config.autoload_paths += %W(#{config.root}/lib)
+    config.eager_load_paths += %W(#{config.root}/lib)
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

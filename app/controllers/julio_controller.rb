@@ -53,15 +53,33 @@ class JulioController < ApplicationController
 
   def facturar
      # generamos un array on las semanas del mes
-     @semanal = ['01-07-2024..07-07-2024', '08-07-2024..14-07-2024','15-07-2024..21-07-2024', '22-07-2024..28-07-2024', '29-07-2024..31-07-2024']
+     @semanal = ['01-07-2025..06-07-2025', '07-07-2025..13-07-2025','14-07-2025..20-07-2025', '21-07-2025..27-07-2025', '28-07-2025..30-07-2025']
 
-     @clases = ClaseAlumno.where(diahora: '01-07-2024'.to_date.at_beginning_of_day..'31-07-2024'.to_date.at_end_of_day).joins(:usuario).order(:nombre)
+     @clases = ClaseAlumno.where(diahora: '01-07-2025'.to_date.at_beginning_of_day..'31-07-2025'.to_date.at_end_of_day).joins(:usuario).order(:nombre)
      # Seleccionamos y recorremos todos los alumnos que vienen a clase en julio
     ClaseAlumno.where(diahora: '01-07-2024'.to_date.at_beginning_of_day..'07-07-2024'.to_date.at_end_of_day).group(:usuario_id).pluck(:usuario_id).each do | almId |
     end
     @claseAlumno = ClaseAlumno.all
   end
 
+#--------------------------------------------------------------------------------------
+# listado de asistencia en julio
+#--------------------------------------------------------------------------------------
+def generate_pdf
+  @alumnos = Julio.order(:nombre)
+  
+  respond_to do |format|
+    format.pdf do
+      pdf_generator = PdfGenerators::AsistenciaJulioPdf.new(@alumnos)
+      pdf = pdf_generator.generate
+      
+      send_data pdf.render, 
+                filename: "asistencia_julio_2025.pdf",
+                type: "application/pdf",
+                disposition: "inline"
+    end
+  end
+end
 
   private
 

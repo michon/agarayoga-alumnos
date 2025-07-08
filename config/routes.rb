@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get  'julio/links'
   get  'julio/facturar'
   post 'julio/editar',                     to: 'julio#editar',       as: "julio/editar"
+  get  'julio/generate_pdf',               to: 'julio#generate_pdf', as: 'julio_generate_pdf'
 
   resources :julio, only: [:show, :update] do
     get 'asistencia', on: :member, as: 'asistencia'
@@ -72,9 +73,16 @@ Rails.application.routes.draw do
   get    'horario/libre'
   get    'horario/nuevo'
   get    'horario/crear'
+  get    'horario/delete/:id',            to: 'horario#delete',                as: 'horario/delete'
   post   'horario/crear_horario_semanal', to: 'horario#crearClases'
+  post   'horario/crear_horario_julio',   to: 'horario#crearJulio'
+
+  resources :horario_alumnos, only: [:destroy], controller: 'horario_alumno', path: 'horario_alumno'
+
+
 
   get    'instructor/index'
+  get    'instructor/agenda'
   get    'instructor/show/:id/:fecha',to: 'instructor#show', as: 'instructor'
   get    'instructor/dia/:fecha',     to: 'instructor#dia',  as: "instructor/dia"
   post   'instructor/dia',            to: 'instructor#seleccionDia', as: "instructor/seleccion_dia"

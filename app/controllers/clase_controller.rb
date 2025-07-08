@@ -4,8 +4,7 @@ class ClaseController < ApplicationController
   def calendario
 
       #@fecha = params[:fecha].to_datetime
-
-      @fechaFin = Clase.all.last.diaHora
+      @fechaFin = Clase.order(:diaHora).last.diaHora
 
       if params[:fecha].blank?
         @fechaInicio = DateTime.now.beginning_of_week
@@ -13,17 +12,19 @@ class ClaseController < ApplicationController
         @fechaInicio = params[:fecha].to_datetime
       end
 
-
       if current_usuario.michon? then
         @cl = Clase.all
       else
         @cl = Clase.where(instructor_id: current_usuario.instructor_id)
       end
-      @cl = @cl.where(diaHora: @fechaInicio..@fechaFin.end_of_week)
 
-      @instructores = Instructor.all
+      @cl = @cl.where(diaHora: @fechaInicio.beginning_of_week..@fechaFin.end_of_week).order(:diaHora)
 
+      @instructores = Instructor.where(id: @cl.distinct.pluck(:instructor_id))
 
+      if @cl.last.blank? 
+        redirect_to root_path
+      end
   end
 
   def clasesDesde
@@ -134,10 +135,11 @@ end
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaAlumnos
       cl = ClaseAlumno.find(params[:clase_alumno_id])
+      fecha = cl.diaHora
       clAlmId = cl.clase_id
 
       ClaseAlumno.find(params[:clase_alumno_id]).destroy
-      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
+      redirect_to clase_dia_url(fecha, anchor: "clase-#{clAlmId}")
   end
 
   # Método POST

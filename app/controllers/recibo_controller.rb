@@ -132,7 +132,7 @@ class ReciboController < ApplicationController
     rms.nombre = "Remesa #{DateTime.now.strftime('%Y%m%d')} "
     rms.bic = 'BCOEESMM070'
     rms.iban = 'ES9630700030186209805420'
-    rms.empresa = 'Miguel Rodríguez López (AgâraYoga)'
+    rms.empresa = SepaCharacterConverter.to_sepa_format('Miguel Rodríguez López (AgâraYoga)')
     rms.save
 
     # Añadir los recibos a la nueva remesa
@@ -159,7 +159,7 @@ class ReciboController < ApplicationController
   # POR HACER ----
   def remesarGenerarFichero(remesa)
     sdd = SEPA::DirectDebit.new(
-        name: "Miguel Rodríguez López (AgâraYoga)",
+        name: SepaCharacterConverter.to_sepa_format("Miguel Rodríguez López (AgâraYoga)"),
         bic: "BCOEESMM070",
         creditor_identifier: "ES6100133322144C"
     )
@@ -167,7 +167,7 @@ class ReciboController < ApplicationController
     rcb.all.each do |rm|      cta =  Cuentabcocli.where(codcliente: rm.usuario.codigofacturacion)
       unless cta.first.blank?
         sdd.add_transaction(
-          name: rm.usuario.nombre,
+          name: SepaCharacterConverter.to_sepa_format(rm.usuario.nombre),
           bic: cta.first.bic,
           iban: rm.usuario.iban,
           amount: rm.importe,
@@ -204,7 +204,7 @@ class ReciboController < ApplicationController
     if rcb.where('ISNULL(factura)').count == 0
 
       # 3.- Buscacar el último numero de factura ????
-      numFra = 297
+      numFra = Recibo.order(:factura).last.factura[6..].to_i
       rcb.order(:id).each do |r|
         r.factura = '20250A' + (numFra += 1).to_s.rjust(6,'0')
         r.save
@@ -436,7 +436,7 @@ class ReciboController < ApplicationController
       rcb.pago = params[:rcb][:pago].to_datetime  unless params[:rcb][:pago].blank?
       rcb.save
     end
-    redirect_to michon_path()
+    redirect_to remesa_show_path(rcb.remesa_id)
   end
 
   def estado

@@ -58,27 +58,26 @@
               </a>
               <div class="collapse m-0 p-0" id="collapseClases-<%=almn.id.to_s%>">
                 <ul class="list-group">
-                  <li class="list-group-item m-0 p-0">
-                    <% @clases.where(usuario_id: almn.id).order(:diaHora).each do |cl| %>
-                      <ul class="list-group list-group-horizontal">
-                        <li class="list-group-item m-0 p-0">
-                        <%= form_tag(clase_baja_alumnos_path, method: :post) do %> <!-- Remesar  -->
-                          <input id="clase_alumno_id"          name="clase_alumno_id"          class="form-control" type="hidden" value="<%=cl.id%>" />
-                          <button class="btn btn-danger btn-sm w-100 mb-1" type="submit"> 
-                              <i class="bi bi-person-x-fill"></i>
-                          </button>
-                        <% end %>
-                        </li>
-                        <li class="list-group-item m-0 p-0">
-                          <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1"  %>
-                          <%= link_to cl.clase.clase_humano , clase_dia_path(cl.diaHora.strftime('%F'), anchor: 'clase-' + cl.clase_id.to_s), class: color%>
-                        </li>
-                        <li class="list-group-item m-0 p-0">
-                          <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1"  %>
-                          <%= link_to "Borrar", clase_alumno_path(cl.id), method: :delete %>
-                        </li>
-                      </ul>
-                    <% end %>
+                  <li class="list-group-item m-0 p-0 d-flex justify-content-between align-items-center">
+                    <ul class="list-group">
+                      <% @clases.where(usuario_id: almn.id).order(:diaHora).each do |cl| %>
+                          <li class="list-group-item m-0 p-0 d-flex justify-content-start align-items-center">
+                            <%= form_tag(clase_baja_alumnos_path, method: :post) do %> <!-- Remesar  -->
+                              <input id="clase_alumno_id"          name="clase_alumno_id"          class="form-control" type="hidden" value="<%=cl.id%>" />
+                              <button class="btn btn-danger btn-sm w-100 mb-1" type="submit"> 
+                                  <i class="bi bi-person-x-fill"></i>
+                              </button>
+                            <% end %>
+                            <% if cl.clase.present? %>
+                              <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1" %>
+                              <%= link_to cl.clase.clase_humano, clase_dia_path(cl.diaHora.strftime('%F'), anchor: 'clase-' + cl.clase_id.to_s), class: color %>
+                            <% else %>
+                              <!-- Opcional: Mostrar algo cuando no haya clase asociada -->
+                              <span class="text-danger">Clase no encontrada</span>
+                            <% end %>
+                          </li>
+                      <% end %>
+                    </ul>
                   </li>
                 </ul>
                 <p class="mt-2"> Hola <%= almn.alias %> 😊, <br/> las clases que tenemos programadas por ahora son:  </p>
@@ -87,7 +86,10 @@
                     <p class=" mb-1 p-2" >
                       <div class="mb-0">🗓 <%= I18n.l(cl.diaHora, format: '%A %d de %B') %> </div>
                       <div class="mb-0">⏰ <%= cl.diaHora.strftime('%H:%M horas') %> </div>
+
+                      <% if cl.clase.present? %>
                       <div class="mb-0">🧘 Profesor: <%= cl.clase.instructor.nombre %></div>
+                      <%end%>
                     </p>
                   <% end %>
                 <% end %>
@@ -102,10 +104,10 @@
               <div class="collapse" id="collapseExample-<%=almn.id.to_s%>">
                 <div class="card card-body">
                     <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date"   value="<%=@fechaInicio.to_s%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date"   value="<%=@fechaHoy.to_s%>" />
-                    <input id="id"          name="id"          class="form-control" type="number" value="<%=almn.id%>" />
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> ver historial </button>
+                      <input id="fechaInicio" name="fechaInicio" class="form-control" type="date"   value="<%=@fechaInicio.to_s%>" />
+                      <input id="fechaFin"    name="fechaFin"    class="form-control" type="date"   value="<%=@fechaHoy.to_s%>" />
+                      <input id="id"          name="id"          class="form-control" type="number" value="<%=almn.id%>" />
+                      <button class="btn btn-primary w-100 mb-3" type="submit"> ver historial </button>
                     <% end %>
                 </div>
               </div>
@@ -120,8 +122,27 @@
               <div class="collapse m-0 p-0" id="collapseHorario-<%=almn.id.to_s%>">
                 <ul class="list-group">
                     <% almn.horarioAlumno.each do |hr| %>
-                      <li class="list-group-item m-0 p-0">
-                        <%= link_to hr.horario.clase_humano , horario_nuevo_path, class: "btn btn-sm btn-#{hr.horario.instructor.color} mb-1" %>
+                      <li class="list-group-item m-0 p-0 d-flex justify-content-start align-items-center">
+                      <%
+                        # Crea un hash con los parámetros permitidos
+                        button_params = {
+                          q: params.fetch(:q, {}).permit!.to_h.merge(nombre_cont: hr.usuario.nombre),
+                          fechainicio: params[:fechainicio],
+                          fechahoy: params[:fechahoy]
+                        }.compact
+                      %>
+
+                        <%= button_to '×',
+                        horario_alumno_path(hr, button_params),
+                        method: :delete,
+                        class: "btn btn-sm btn-outline-danger mb-1",
+                        form: {
+                          data: {
+                            turbo_confirm: '¿Quitar esta clase del horario?'
+                          }
+                        } %>
+
+                        <%= link_to hr.horario.clase_humano, horario_nuevo_path, class: "btn btn-sm btn-#{hr.horario.instructor.color} mb-1" %>
                       </li>
                   <% end %>
                 </ul>

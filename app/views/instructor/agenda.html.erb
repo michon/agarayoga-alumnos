@@ -1,0 +1,63 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-4">Mi Agenda de Clases</h1>
+      
+      <% if @clases.any? %>
+        <%# Agrupamos las clases por mes %>
+        <% clases_por_mes = @clases.group_by { |clase| clase.diaHora.beginning_of_month } %>
+        
+        <% clases_por_mes.each do |mes, clases_del_mes| %>
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h2 class="h5 mb-0">
+                <%= l(mes, format: "%B %Y").capitalize %>
+              </h2>
+            </div>
+            
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Fecha y Hora</th>
+                      <th>Aula</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% clases_del_mes.sort_by(&:diaHora).each do |clase| %>
+                      <tr>
+                        <td>
+                          <%= l(clase.diaHora, format: :long) %>
+                        </td>
+                        <td>
+                          <%= clase.aula.nombre %>
+                        </td>
+                        <td>
+                          <% if clase.activa %>
+                            <span class="badge bg-success">Activa</span>
+                          <% else %>
+                            <span class="badge bg-secondary">Inactiva</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <div class="card-footer text-muted">
+              Total de clases este mes: <%= clases_del_mes.count %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="alert alert-info">
+          No tienes clases asignadas actualmente.
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

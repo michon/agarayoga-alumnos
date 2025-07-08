@@ -58,6 +58,17 @@ class InstructorController < ApplicationController
   end
 
 
+  # app/controllers/clases_controller.rb
+  def agenda
+    if InstructorPolicy.new(current_usuario).verDia?
+      @clases = Clase.where(instructor_id: current_usuario.instructor_id)
+                     .where(diaHora: DateTime.now..)
+                     .order(:diaHora)
+    else
+      redirect_to root_path, alert: "No tienes permiso para ver esta agenda"
+    end
+  end
+
   # Método POST
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaPrueba
