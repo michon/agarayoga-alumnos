@@ -1,0 +1,32 @@
+// app/javascript/packs/application.js
+
+// Importaciones básicas (¡sin jQuery!)
+import 'jquery'
+import '@rails/ujs'
+import * as bootstrap from 'bootstrap'  // Importación explícita
+import '@popperjs/core'                // Necesario para dropdowns/tooltips
+import * as echarts from 'echarts'
+import 'echarts/theme/dark'
+
+// Configuración global
+window.echarts = echarts
+window.bootstrap = bootstrap  // Exporta bootstrap al ámbito global
+
+// Inicialización con Turbo (Rails 6+/7)
+document.addEventListener('turbo:load', () => {
+  // Dropdowns
+  document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(el => {
+    new bootstrap.Dropdown(el)
+  })
+  
+  // Tooltips (opcional)
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+    new bootstrap.Tooltip(el)
+  })
+})
+
+// Importa estilos
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import '@fortawesome/fontawesome-free/js/all'
+import '@fortawesome/fontawesome-free/css/all.css'
+import 'stylesheets/application.scss'

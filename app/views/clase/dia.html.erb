@@ -19,7 +19,7 @@
                   <% arIconos = ['bi-person-vcard-fill','bi-person-check-fill','bi-person-fill-down','bi-person-x-fill']  %>
                       <% @estados.each_with_index do |est,idx| %> 
                       <span class="text-right text-<%= est.color %>"><%= cl.alumnos_en_clase.where(claseAlumnoEstado: est.id).count%></span>
-                      <i class="me-1 bi <%=arIconos[idx]%> text-<%= est.color %> data-toggle="tooltip" data-placement="top" title="alumnos que vendrán""> </i>
+                      <i class="me-1 bi <%=arIconos[idx]%> text-<%= est.color %>" data-bs-toggle="tooltip" data-bs-placement="top" title="alumnos que vendrán"> </i>
                       <% end %>
 
                       <span class="text-right"><%= cl.asistentes %></span>

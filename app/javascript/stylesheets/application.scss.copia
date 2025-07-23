@@ -1,0 +1,17 @@
+// Font Awesome - Versión CSS directa
+$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+
+// Bootstrap (debe ir después de Font Awesome)
+@import '~bootstrap/scss/bootstrap';
+
+// Toastr
+@import 'toastr';
+
+// Tus estilos
+h1 {
+  text-decoration: underline;
+  color: red;
+}

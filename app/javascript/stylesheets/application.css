@@ -1,0 +1,13 @@
+// Añade esto al principio del archivo:
+$enable-deprecation-messages: false; // Desactiva advertencias de Bootstrap
+
+// Nueva sintaxis
+@use "~bootstrap/scss/bootstrap" with (
+  $enable-deprecation-messages: false
+);
+// Si usas variables personalizadas, añádelas antes
+// @use "variables" as *; 
+@import url('https://fonts.googleapis.com/css?family=Merriweather:400,700');
+
+
+

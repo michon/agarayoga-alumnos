@@ -1,5 +1,17 @@
-@import "~bootstrap/scss/bootstrap";
-@import url('https://fonts.googleapis.com/css?family=Merriweather:400,700');
+// Configura Font Awesome (usa @import temporalmente)
+$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
 
+// Bootstrap (usa @import por ahora)
+@import '~bootstrap/scss/bootstrap';
+//@import '~bootstrap-icons/font/bootstrap-icons';
+// Toastr
+@import 'toastr';
 
-
+// Tus estilos (versión corregida)
+h1 {
+  text-decoration: underline; /* Usa la propiedad CSS directamente */
+  color: red;
+}

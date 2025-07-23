@@ -1,0 +1,19 @@
+// Importaciones básicas
+import '@rails/ujs'
+import '@popperjs/core'
+import 'bootstrap'
+
+// Inicialización con Turbolinks
+document.addEventListener('turbolinks:load', () => {
+  // Inicializar dropdowns
+  document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(el => {
+    new bootstrap.Dropdown(el)
+  })
+})
+
+// Otras importaciones
+import * as echarts from 'echarts'
+import 'echarts/theme/dark'
+window.echarts = echarts
+
+import '../stylesheets/application.scss'

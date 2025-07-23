@@ -1,0 +1,16 @@
+const { environment } = require('@rails/webpacker')
+
+// Añade esto junto a tu configuración existente
+environment.loaders.append('file', {
+  test: /\.(woff|woff2|eot|ttf|svg)$/,
+  use: [{
+    loader: 'file-loader',
+    options: {
+      name: '[path][name].[ext]',
+      outputPath: 'fonts/',
+      publicPath: '../fonts/'
+    }
+  }]
+});
+
+module.exports = environment

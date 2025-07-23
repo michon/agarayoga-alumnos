@@ -3,7 +3,7 @@ module SepaCharacterConverter
   # Mapeo de caracteres especiales a sus equivalentes SEPA
   CHAR_REPLACEMENTS = {
     # Letras con acentos y diacríticos
-    'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a', 'â' => 'a', 'Á' => 'A', 'À' => 'A', 'Ä' => 'A', 'Â' => 'A',
+    'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a', 'Á' => 'A', 'À' => 'A', 'Ä' => 'A', 'Â' => 'A',
     'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e', 'É' => 'E', 'È' => 'E', 'Ë' => 'E', 'Ê' => 'E',
     'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i', 'Í' => 'I', 'Ì' => 'I', 'Ï' => 'I', 'Î' => 'I',
     'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o', 'Ó' => 'O', 'Ò' => 'O', 'Ö' => 'O', 'Ô' => 'O',

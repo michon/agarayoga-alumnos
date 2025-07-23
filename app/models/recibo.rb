@@ -7,6 +7,8 @@ class Recibo < ApplicationRecord
   private
 
   def cargar_datos_bancarios_desde_usuario
+
+    usuario = usuario.find(self.usuario_id)
     if usuario.present?
       self.iban ||= usuario.iban
       self.bic ||= usuario.bic

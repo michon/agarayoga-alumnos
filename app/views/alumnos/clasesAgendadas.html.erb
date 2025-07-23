@@ -97,18 +97,18 @@
 # Texto para mandar por WhatsApp
 <div class="row d-flex flex-column mb-5 pt-5">
 <h4> Para enviar por WhatsApp </h4>
+<ul>
     <% @clsDelAlumno.each do |clAlm| %>
-        <div class="col bg-light ">
+        <li class="col bg-light ">
           <%= link_to clase_dia_path(fecha: clAlm.clase.diaHora.to_s, target: '_blank', anchor: 'clase-'+clAlm.clase.id.to_s) do %>
-            ir a la clase
+            <i class="bi bi-box-arrow-up-right"></i>
           <% end %>
-        </div>
-        <div class="col bg-light ">
           <% unless clAlm.diaHora.blank? then %>
             <%=" *#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}, #{clAlm.diaHora.strftime('%d')}* #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las *#{clAlm.diaHora.strftime('%H:%M')}* en el aula *#{clAlm.clase.aula.nombre}* con *#{clAlm.clase.instructor.nombre}*" %>
           <% end %>
-        </div>
+        </li>
     <% end %>
+</ul>
 </div>
 
 # Enlace a clases Agendadas method get
