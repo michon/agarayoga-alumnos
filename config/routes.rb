@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  get 'stats/monthly_comparison'
   get  'julio/index'
   get  'julio/links'
   get  'julio/facturar'
@@ -10,6 +11,8 @@ Rails.application.routes.draw do
     get 'asistencia', on: :member, as: 'asistencia'
   end
 
+  get 'stats/monthly_comparison', to: 'stats#monthly_comparison'
+  get 'stats/evolucion_ingresos', to: 'stats#evolucion_ingresos'
 
   get 'remesa/index'
   get 'remesa/show/:id',                           to: 'remesa#show',                as: 'remesa/show'

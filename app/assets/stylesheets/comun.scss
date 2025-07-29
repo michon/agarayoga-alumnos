@@ -1,3 +1,26 @@
 // Place all the styles related to the comun controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+
+/* Clases personalizadas para el color púrpura */
+.btn-outline-purple {
+  color: #6f42c1;          /* Color púrpura para texto/borde */
+  border-color: #6f42c1;   /* Borde púrpura */
+}
+
+.btn-outline-purple:hover {
+  color: white;            /* Texto blanco al pasar el mouse */
+  background-color: #6f42c1; /* Fondo púrpura al pasar el mouse */
+}
+
+.bg-purple {
+  background-color: #6f42c1 !important; /* Fondo púrpura */
+}
+
+.border-purple {
+  border-color: #6f42c1 !important;     /* Borde púrpura */
+}
+
+.text-purple {
+  color: #6f42c1 !important;            /* Texto púrpura */
+}

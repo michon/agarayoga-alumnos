@@ -117,10 +117,15 @@ class ComunController < ApplicationController
 
 
   def inicio
-      @chart_data = {
-        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-        values: [65, 59, 80, 81, 56],
-        background_colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-      }
+    combined_data = IncomeCombiner.combined_data
+    @paraver = combined_data
+
+
+    @chart_data = {
+      labels: combined_data.map { |d| I18n.l(d[:date], format: "%b %Y") },
+      values: combined_data.map { |d| d[:amount] },
+      # Para diferenciar históricos vs actuales en el gráfico
+      is_historical: combined_data.map { |d| d[:date] < Date.new(2025, 5, 1) }
+    }
   end
 end

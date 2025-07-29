@@ -1,179 +1,369 @@
-  <section class="container">
-    <div class="card-group">
-
-        <!-- clase card -->
-        <div class="card ms-1 border">
-          <div class="card-header">
-            <h5>Clases</h5>
-          </div>
-
-          <div class="card-body text-center">
-
-            <%= link_to 'Calendario Agendado', clase_calendario_path(fecha: Date.today),   class: 'btn btn-primary w-100 mb-3', role: "button" %>
-
-            <!-- Vista clases del dia -->
-            <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
-                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Ver clases </button>
-            <% end %>
-
-            <!-- Vista clases semanal -->
-            <%= form_tag(clase_seleccion_path, method: :post) do %>
-                    <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Ver semana </button>
-            <% end %>
-
-            <!-- Vista horas libres semanal -->
-            <%= form_tag(clase_seleccion_path, method: :post) do %>
-                    <input id="fecha" name="fecha" class="form-control" type="date"  value="<%=@fechaHoy%>"/>
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> libre esta semana </button>
-            <% end %>
-
-            <!-- Vista horas libres dia -->
-            <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
-                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> libre este dia </button>
-            <% end %>
-
-          </div>
-
+<section class="container mt-4">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    
+    <!-- TARJETA DE CLASES -->
+    <div class="col">
+      <div class="card h-100 border-primary">
+        <div class="card-header bg-primary text-white">
+          <h5><i class="bi bi-book me-2"></i>Clases</h5>
         </div>
-        <!-- fin clase card -->
-
-
-        <!-- Alumnos card -->
-        <div class="card ms-1 border">
-          <div class="card-header">
-            <h5>Alumnos</h5>
-          </div>
-
-          <div class="card-body text-center">
-            <%= link_to 'Listado alumnos', alumnos_index_path,          class: 'btn btn-primary w-100 mb-3', role: "button" %>
-            <%= link_to 'ODS alumnos ',    alumnos_pdfAlumnos_path,     class: 'btn btn-primary w-100 mb-3', role: "button" %>
-
-            <%= form_tag(alumnos_business_path, method: :post) do %> <!-- Vista horario dia -->
-                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Altas en </button>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%= link_to clase_calendario_path(fecha: Date.today), class: 'btn btn-outline-primary text-start' do %>
+              <i class="bi bi-calendar-week me-2"></i>Calendario Agendado
             <% end %>
 
-              <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-
-                    <button class="btn btn-primary w-100 mb-3" type="submit"> Clases Agendadas </button>
-              <% end %>
-          </div>
-
-        </div>
-        <!-- fin alumno card -->
-
-
-        <!-- H O R A R I O    card -->
-        <div class="card ms-1 border">
-          <div class="card-header">
-              <h5 class="d-flex justify-content-between">
-                  <span>Horario</span>
-                  <span><%= @alumnosTotal.count %> </span>
-            </h5>
-          </div>
-          <div class="card-body py-3 text-center">
-              <%= link_to 'Plantilla general', horario_nuevo_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-              <%= link_to 'Horas libres', horario_libre_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-              <%= link_to 'Crear horario', horario_crear_path, class: 'btn btn-primary w-100 mb-3', role: "button" %>
-
-                    <%= form_tag('/horario/crear_horario_julio', method: :post) do %>
-                        <label class="text-center" for="fecha"> Selecciona una semana de JULIO</label>
-                        <input id="fecha" name="fecha" class="form-control" type="date" />
-                        <div class="card-footer p-2">
-                              <button  class="form-control btn-primary" type="submit"> Crear JULIO </button>
-                        </div>
+            <div class="accordion" id="clasesAccordion">
+              <!-- Ver Clases Día -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClasesDia">
+                    <i class="bi bi-calendar-day me-2"></i>Ver clases día
+                  </button>
+                </h2>
+                <div id="collapseClasesDia" class="accordion-collapse collapse" data-bs-parent="#clasesAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
+                      <input name="fecha" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-primary w-100" type="submit">Ver</button>
                     <% end %>
-              <%= link_to 'Asistencia Julio', julio_generate_pdf_path(format: :pdf), class: 'btn btn-primary' %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ver Semana -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClasesSemana">
+                    <i class="bi bi-calendar-range me-2"></i>Ver semana
+                  </button>
+                </h2>
+                <div id="collapseClasesSemana" class="accordion-collapse collapse" data-bs-parent="#clasesAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(clase_seleccion_path, method: :post) do %>
+                      <input name="fecha" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-primary w-100" type="submit">Ver</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Horas Libres -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHorasLibres">
+                    <i class="bi bi-clock-history me-2"></i>Horas libres
+                  </button>
+                </h2>
+                <div id="collapseHorasLibres" class="accordion-collapse collapse" data-bs-parent="#clasesAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(clase_seleccion_dia_path, method: :post) do %>
+                      <input name="fecha" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-primary w-100" type="submit">Libre este día</button>
+                    <% end %>
+                    <%= form_tag(clase_seleccion_path, method: :post, class: 'mt-2') do %>
+                      <input name="fecha" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-primary w-100" type="submit">Libre esta semana</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- fin horario card -->
+      </div>
+    </div>
 
-        <!-- F A C T U R A C I Ó N  card -->
-        <div class="card ms-1 border">
-          <div class="card-header">
-              <h5 class="d-flex justify-content-between">
-                  <span>Facturación</span>
-                  <span><%= @alumnosTotal.count %> </span>
-            </h5>
-          </div>
+    <!-- TARJETA DE ALUMNOS -->
+    <div class="col">
+      <div class="card h-100 border-success">
+        <div class="card-header bg-success text-white">
+          <h5><i class="bi bi-people-fill me-2"></i>Alumnos</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%= link_to alumnos_index_path, class: 'btn btn-outline-success text-start' do %>
+              <i class="bi bi-list-ul me-2"></i>Listado alumnos
+            <% end %>
 
-          <div class="card-body py-3 text-center">
-              <%= link_to 'Listado factuación', facturacion_path, class: 'btn btn-primary w-100 mb-1', role: "button" %>
-              <!-- Gererar trimestre -->
-              <%= form_tag(recibo_yacob_path, method: :post) do %> 
-                <div class="alert alert-danger m-1">
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="btn btn-primary w-100 my-1" type="submit"> Facturas ODS</button>
+            <%= link_to alumnos_pdfAlumnos_path, class: 'btn btn-outline-success text-start' do %>
+              <i class="bi bi-file-earmark-excel me-2"></i>ODS alumnos
+            <% end %>
+
+            <div class="accordion" id="alumnosAccordion">
+              <!-- Altas -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAltas">
+                    <i class="bi bi-person-plus me-2"></i>Altas
+                  </button>
+                </h2>
+                <div id="collapseAltas" class="accordion-collapse collapse" data-bs-parent="#alumnosAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(alumnos_business_path, method: :post) do %>
+                      <input name="fecha" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-success w-100" type="submit">Altas en fecha</button>
+                    <% end %>
+                  </div>
                 </div>
-              <% end %>
+              </div>
 
+              <!-- Clases Agendadas -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClasesAlumnos">
+                    <i class="bi bi-calendar-check me-2"></i>Clases Agendadas
+                  </button>
+                </h2>
+                <div id="collapseClasesAlumnos" class="accordion-collapse collapse" data-bs-parent="#alumnosAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %>
+                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-success w-100" type="submit">Buscar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- fin FACTURACIÓN card -->
+      </div>
+    </div>
 
-        <!-- R E C I B O S  card -->
-        <div class="card ms-1 border">
-          <div class="card-header">
-            <h5 class="d-flex justify-content-between">
-              <span> Remesas </span>
-            </h5>
-          </div>
-          <div class="card-body py-3 text-center">
-                <%= link_to 'Listado Remesas', remesa_index_path, class: 'btn btn-primary w-100 mb-1', role: "button" %>
-                <%= link_to 'Seleccionar Recibos', recibo_remesarSeleccionar_path, class: 'btn btn-primary w-100 mb-1', role: "button" %>
+    <!-- TARJETA DE HORARIO -->
+    <div class="col">
+      <div class="card h-100 border-info">
+        <div class="card-header bg-info text-white d-flex justify-content-between">
+          <h5><i class="bi bi-calendar-event me-2"></i>Horario</h5>
+          <span class="badge bg-light text-dark"><%= @alumnosTotal.count unless @alumnosTotal.blank? %></span>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%= link_to horario_nuevo_path, class: 'btn btn-outline-info text-start' do %>
+              <i class="bi bi-file-earmark-text me-2"></i>Plantilla general
+            <% end %>
 
-              <%= form_tag(recibo_generarPost_path, method: :post) do %>
-                <div class="alert alert-primary mb-0">
-                  <input class="form-control"   name="fecha"  type="date" value="<%=Date.current%>"  id="checkMes-<%=Date.current%>">
-                  <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Generar Recibos </button>
+            <%= link_to horario_libre_path, class: 'btn btn-outline-info text-start' do %>
+              <i class="bi bi-clock me-2"></i>Horas libres
+            <% end %>
+
+            <%= link_to horario_crear_path, class: 'btn btn-outline-info text-start' do %>
+              <i class="bi bi-plus-circle me-2"></i>Crear horario
+            <% end %>
+
+            <div class="accordion" id="horarioAccordion">
+              <!-- Crear Julio -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJulio">
+                    <i class="bi bi-calendar-month me-2"></i>Crear Julio
+                  </button>
+                </h2>
+                <div id="collapseJulio" class="accordion-collapse collapse" data-bs-parent="#horarioAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag('/horario/crear_horario_julio', method: :post) do %>
+                      <label class="form-label small">Selecciona semana:</label>
+                      <input name="fecha" class="form-control mb-2" type="date">
+                      <button class="btn btn-sm btn-info w-100" type="submit">Generar</button>
+                    <% end %>
+                  </div>
                 </div>
-              <% end %>
+              </div>
+            </div>
 
-              <%= form_tag(recibo_busqueda_path, method: :post) do %>
-                    <input name="busquedaEstado[]"  type="hidden" value="1"  id="checkEstado-1">
-                    <input name="busquedaMes"  type="hidden" value="<%=Date.current.month%>"  id="checkMes-<%=Date.current.month%>">
-                    <button class="btn btn-primary w-100 my-1" type="submit"> Pagos de Recibos </button>
-              <% end %>
-
-              <!-- Numerar  -->
-              <%= form_tag(recibo_numerarPost_path, method: :post) do %> 
-                <div class="alert alert-success mb-0">
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Numerar </button>
-                </div>
-              <% end %>
-
-
-              <%= link_to 'Apuntes en caja', caja_listado_path, class: 'btn btn-primary w-100 my-1', role: "button" %>
-
-              <!-- Remesar  -->
-              <%= form_tag(recibo_remesar_path, method: :post) do %> 
-                <div class="alert alert-warning mb-1">
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Remesar </button>
-                </div>
-              <% end %>
-
-              <%= form_tag(recibo_descargarFacturacion_path, method: :post) do %> <!-- Remesar  -->
-                <div class="alert alert-danger mb-1">
-                    <input id="fechaInicio" name="fechaInicio" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <input id="fechaFin"    name="fechaFin"    class="form-control" type="date" value="<%=@fechaHoy%>" />
-                    <button class="form_control btn btn-primary w-100 mt-1" type="submit"> Descargar ODS </button>
-                </div>
-              <% end %>
-
-              <%= link_to 'Generar Remesa', recibo_remesarSeleccionar_path(), class: 'btn btn-primary w-100 mb-1', role: "button" %>
+            <%= link_to julio_generate_pdf_path(format: :pdf), class: 'btn btn-outline-info text-start mt-2' do %>
+              <i class="bi bi-file-pdf me-2"></i>Asistencia Julio
+            <% end %>
           </div>
         </div>
-        <!-- fin R E C I B O S  card -->
+      </div>
+    </div>
 
-  </div> <!-- fin de fila -->
+    <!-- TARJETA DE FACTURACIÓN -->
+    <div class="col">
+      <div class="card h-100 border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5><i class="bi bi-receipt me-2"></i>Facturación</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%= link_to facturacion_path, class: 'btn btn-outline-warning text-start' do %>
+              <i class="bi bi-list-check me-2"></i>Listado facturación
+            <% end %>
+
+            <div class="accordion" id="facturacionAccordion">
+              <!-- Facturas ODS -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturasODS">
+                    <i class="bi bi-file-excel me-2"></i>Facturas ODS
+                  </button>
+                </h2>
+                <div id="collapseFacturasODS" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(recibo_yacob_path, method: :post) do %>
+                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-warning w-100" type="submit">Generar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA DE REMESAS -->
+    <div class="col">
+      <div class="card h-100 border-danger">
+        <div class="card-header bg-danger text-white">
+          <h5><i class="bi bi-cash-stack me-2"></i>Remesas</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%= link_to remesa_index_path, class: 'btn btn-outline-danger text-start' do %>
+              <i class="bi bi-list-ul me-2"></i>Listado Remesas
+            <% end %>
+
+            <%= link_to recibo_remesarSeleccionar_path, class: 'btn btn-outline-danger text-start' do %>
+              <i class="bi bi-check2-square me-2"></i>Seleccionar Recibos
+            <% end %>
+
+            <div class="accordion" id="remesasAccordion">
+              <!-- Generar Recibos -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGenerarRecibos">
+                    <i class="bi bi-file-earmark-plus me-2"></i>Generar Recibos
+                  </button>
+                </h2>
+                <div id="collapseGenerarRecibos" class="accordion-collapse collapse" data-bs-parent="#remesasAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(recibo_generarPost_path, method: :post) do %>
+                      <input name="fecha" class="form-control mb-2" type="date" value="<%= Date.current %>">
+                      <button class="btn btn-sm btn-danger w-100" type="submit">Generar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pagos de Recibos -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePagosRecibos">
+                    <i class="bi bi-credit-card me-2"></i>Pagos de Recibos
+                  </button>
+                </h2>
+                <div id="collapsePagosRecibos" class="accordion-collapse collapse" data-bs-parent="#remesasAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(recibo_busqueda_path, method: :post) do %>
+                      <input type="hidden" name="busquedaEstado[]" value="1">
+                      <input type="hidden" name="busquedaMes" value="<%= Date.current.month %>">
+                      <button class="btn btn-sm btn-danger w-100" type="submit">Buscar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Numerar -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNumerar">
+                    <i class="bi bi-123 me-2"></i>Numerar
+                  </button>
+                </h2>
+                <div id="collapseNumerar" class="accordion-collapse collapse" data-bs-parent="#remesasAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(recibo_numerarPost_path, method: :post) do %>
+                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-danger w-100" type="submit">Numerar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Remesar -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRemesar">
+                    <i class="bi bi-send me-2"></i>Remesar
+                  </button>
+                </h2>
+                <div id="collapseRemesar" class="accordion-collapse collapse" data-bs-parent="#remesasAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(recibo_remesar_path, method: :post) do %>
+                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-danger w-100" type="submit">Remesar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Descargar ODS -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescargarODS">
+                    <i class="bi bi-download me-2"></i>Descargar ODS
+                  </button>
+                </h2>
+                <div id="collapseDescargarODS" class="accordion-collapse collapse" data-bs-parent="#remesasAccordion">
+                  <div class="accordion-body p-2">
+                    <%= form_tag(recibo_descargarFacturacion_path, method: :post) do %>
+                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-danger w-100" type="submit">Descargar</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <%= link_to caja_listado_path, class: 'btn btn-outline-danger text-start mt-2' do %>
+              <i class="bi bi-cash-coin me-2"></i>Apuntes en caja
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- TARJETA DE ESTADÍSTICAS -->
+    <div class="col">
+      <div class="card h-100 border-purple" style="border-color: #6f42c1;">
+        <div class="card-header text-white" style="background-color: #6f42c1;">
+          <h5><i class="bi bi-graph-up me-2"></i>Estadísticas</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%= link_to stats_monthly_comparison_path, class: 'btn btn-outline-purple text-start' do %>
+              <i class="bi bi-calendar-month me-2"></i>Comparación Mensual
+            <% end %>
+
+            <%= link_to stats_evolucion_ingresos_path, class: 'btn btn-outline-purple text-start' do %>
+              <i class="bi bi-currency-euro me-2"></i>Evolución de Ingresos
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
 </section>
+
+<%= content_for :js do %>
+  <script>
+    // Activar tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    });
+  </script>
+<% end %>

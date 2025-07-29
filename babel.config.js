@@ -1,12 +1,18 @@
 module.exports = function(api) {
   api.cache(true);
-  
-  return {
-    presets: [
-      ['@babel/preset-env', { targets: { node: 'current' } }]
-    ],
-    plugins: [
-      '@babel/plugin-proposal-private-methods'
+
+  const presets = [
+    [
+      "@babel/preset-env",
+      {
+        targets: {
+          ie: "11"
+        },
+        useBuiltIns: "usage",
+        corejs: 3
+      }
     ]
-  };
+  ];
+
+  return { presets };
 };

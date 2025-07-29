@@ -1,38 +1,62 @@
-
-
 <section class="container">
-    <div class="card-group">
-        <div class="m-3 card ">
-          <div class="card-header">
-            <h5>Clases</h5>
-          </div>
-            <%= form_tag(instructor_seleccion_dia_path, method: :post) do %> <!-- Vista clases del dia -->
-              <div class="row mb-3">
-                <div class="col col6">
-                    <input id="fecha" name="fecha" class="form-control" type="date" value="<%=@fechaHoy%>" />
-                </div>
-                <div class="col col6">
-                    <button class="btn btn-primary w-100" type="submit"> Ver clases </button>
-                </div>
-              </div>
-            <% end %>
-          </div>
-
-        <div class="m-3 card ">
-          <div class="card-header">
-            <h5>Alumnos</h5>
-          </div>
-           <%= link_to "Procesos", alumnos_procesos_get_path(Proceso.last.id), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card bg-light">
+        <div class="card-body">
+          <h2 class="card-title">Bienvenido, <%= current_usuario.instructor.nombre %></h2>
+          <p class="card-text">
+            Hoy tienes <%= @clases_hoy_count %> clases programadas con un total de <%= @alumnos_hoy_count %> alumnos.
+          </p>
+          <%= link_to "Ver clases de hoy", instructor_dia_path(Date.today), class: "btn btn-primary" %>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="m-3 card ">
-          <div class="card-header">
-            <h5>Clases dadas</h5>
+  <div class="card-group">
+    <div class="m-3 card">
+      <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-calendar-day"></i> Clases Diarias</h5>
+      </div>
+      <div class="card-body">
+        <%= form_tag(instructor_seleccion_dia_path, method: :post) do %>
+          <div class="row mb-3">
+            <div class="col-8">
+              <input id="fecha" name="fecha" class="form-control" type="date" value="<%= @fechaHoy %>" />
+            </div>
+            <div class="col-4">
+              <button class="btn btn-primary w-100" type="submit">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
           </div>
-             <%= current_usuario.instructor.id %>
-            <%= link_to 'Mes actual',       instructor_path(:id => current_usuario.instructor.id, :fecha => DateTime.now()), class: 'btn btn-primary w-100 mb-3', role: "button" %>
-            <%= link_to 'Mes anterior',     instructor_path(:id => current_usuario.instructor.id, :fecha => DateTime.now()-1.month), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
-            <%= link_to 'Clases Asignadas', clase_clasesDesde_path(:fecha => DateTime.now()-1.month), class: 'btn btn-primary w-100 mb-3', role: "button"  %>
-        </div>
-      </div> <!-- fin clase card -->
+        <% end %>
+        <p class="text-muted small">Consulta las clases de cualquier día y gestiona la asistencia.</p>
+      </div>
+    </div>
+
+    <div class="m-3 card">
+      <div class="card-header bg-success text-white">
+        <h5><i class="fas fa-chart-line"></i> Resumen Mensual</h5>
+      </div>
+      <div class="card-body">
+        <%= link_to 'Mes actual', instructor_path(id: current_usuario.instructor.id, fecha: DateTime.now), 
+            class: 'btn btn-success w-100 mb-2' %>
+        <%= link_to 'Mes anterior', instructor_path(id: current_usuario.instructor.id, fecha: DateTime.now-1.month), 
+            class: 'btn btn-outline-success w-100 mb-2' %>
+        <p class="text-muted small">Consulta tu historial de clases y ganancias.</p>
+      </div>
+    </div>
+
+    <div class="m-3 card">
+      <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-calendar-alt"></i> Agenda Completa</h5>
+      </div>
+      <div class="card-body">
+        <%= link_to 'Ver mi calendario', clase_clasesDesde_path(fecha: DateTime.now-1.month), 
+            class: 'btn btn-info w-100 mb-2' %>
+        <p class="text-muted small">Todas tus clases en vista de calendario.</p>
+      </div>
+    </div>
+  </div>
 </section>

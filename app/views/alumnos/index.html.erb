@@ -1,164 +1,162 @@
+<% content_for :title, "Listado de Alumnos" %>
 
-<% content_for :title,  "Alm-Listado" %>
-
-<ul class="list-group">
-  <li class="list-group-item border-1 rounded-3 mb-2">
-    <div class="m-0 p-0 d-flex w-100 justify-content-end" id="filtrosCard">
-        <%= search_form_for(@q, url: "/alumnos/index", method: :get) do |f| %>
-          <%= f.search_field :nombre_cont, class: "form-control" %>
-          <%= f.submit 'Filtrar', class: "btn btn-success" %>
-        <% end %>
-    </div>
-  </li>
-  <% @alumnos.each do |almn| %>
-    <li class="list-group-item border-1 rounded-3 mb-2 d-flex flex-wrap">
-
-      <div class="m-0 p-0 d-flex w-100 justify-content-between">
-        <div class=" m-0 p-0">
-          <h5> <%= almn.nombre%> </h5>
+<div class="container">
+  <!-- Barra de búsqueda -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <%= search_form_for(@q, url: alumnos_index_path, method: :get) do |f| %>
+        <div class="input-group">
+          <%= f.search_field :nombre_cont, class: "form-control", placeholder: "Buscar alumno..." %>
+          <%= f.submit 'Buscar', class: "btn btn-primary" %>
+          <%= link_to 'Limpiar', alumnos_index_path, class: "btn btn-outline-secondary" %>
         </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Lista de alumnos -->
+  <% @alumnos.each do |alumno| %>
+    <div class="card mb-3 shadow-sm">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <%= alumno.nombre %>
+          <% if alumno.alias.present? %>
+            <small class="text-muted">(<%= alumno.alias %>)</small>
+          <% end %>
+        </h5>
+        <span class="badge bg-<%= alumno.regalo ? 'success' : 'warning' %>">
+          <%= alumno.regalo ? 'Regalo enviado' : 'Pendiente' %>
+        </span>
       </div>
 
-        <div class=" d-flex flex-wrap justify-content-between m-0 p-0">
-
-            <!-- Te lleva a la url de el SHOW del alumno -->
-            <div class="me-2"><%= link_to "Ver" , alumnos_path(almn), class: 'btn btn-primary w-100 mb-1' %> </div>
-
-            <!-- Genera un pdf con la domiciliación bancaria y protección de datos -->
-            <div class="me-2"><%= link_to "Ficha" , alumnos_path(almn, format: :pdf), class: 'btn btn-primary w-100 mb-1'%></div>
-
-            <!-- link a las clases agendadas para este alumno -->
-            <div class="me-2 m-0 p-0">
-                <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseLink-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseLink-<%=almn.id.to_s%>">
-                  Link
-              </a>
-              <div class="collapse m-0 p-0" id="collapseLink-<%=almn.id.to_s%>">
-                <ul class="list-group">
-                  <li class="list-group-item m-0 p-0">
-                    <%="#{alumnos_clases_agendadas_url(almn.id)} " %>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Clases agendadas entre las fechas expecificadas-->
-            <div class="me-2">
-              <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
-                <input id="fechaInicio" name="fechaInicio" class="form-control" type="hidden"   value="<%=@fechaInicio.to_s%>" />
-                <input id="fechaFin"    name="fechaFin"    class="form-control" type="hidden"   value="<%=@fechaHoy.to_s%>" />
-                <input id="id"          name="id"          class="form-control" type="hidden" value="<%=almn.id%>" />
-                <button class="btn btn-primary w-100 mb-3" type="submit"> Agendadas </button>
-              <% end %>
-            </div>
-
-            <!-- link a cada una de las clases del alumno -->
-            <div class="me-2 m-0 p-0">
-                <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseClases-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseClases-<%=almn.id.to_s%>">
-                  Link clases
-              </a>
-              <div class="collapse m-0 p-0" id="collapseClases-<%=almn.id.to_s%>">
-                <ul class="list-group">
-                  <li class="list-group-item m-0 p-0 d-flex justify-content-between align-items-center">
-                    <ul class="list-group">
-                      <% @clases.where(usuario_id: almn.id).order(:diaHora).each do |cl| %>
-                          <li class="list-group-item m-0 p-0 d-flex justify-content-start align-items-center">
-                            <%= form_tag(clase_baja_alumnos_path, method: :post) do %> <!-- Remesar  -->
-                              <input id="clase_alumno_id"          name="clase_alumno_id"          class="form-control" type="hidden" value="<%=cl.id%>" />
-                              <button class="btn btn-danger btn-sm w-100 mb-1" type="submit"> 
-                                  <i class="bi bi-person-x-fill"></i>
-                              </button>
-                            <% end %>
-                            <% if cl.clase.present? %>
-                              <% color = "btn btn-sm btn-#{cl.claseAlumnoEstado.color} mb-1" %>
-                              <%= link_to cl.clase.clase_humano, clase_dia_path(cl.diaHora.strftime('%F'), anchor: 'clase-' + cl.clase_id.to_s), class: color %>
-                            <% else %>
-                              <!-- Opcional: Mostrar algo cuando no haya clase asociada -->
-                              <span class="text-danger">Clase no encontrada</span>
-                            <% end %>
-                          </li>
-                      <% end %>
-                    </ul>
-                  </li>
-                </ul>
-                <p class="mt-2"> Hola <%= almn.alias %> 😊, <br/> las clases que tenemos programadas por ahora son:  </p>
-                <% @clases.where(usuario_id: almn.id).order(:diaHora).each do |cl| %>
-                  <% if cl.claseAlumnoEstado_id == 1 %>
-                    <p class=" mb-1 p-2" >
-                      <div class="mb-0">🗓 <%= I18n.l(cl.diaHora, format: '%A %d de %B') %> </div>
-                      <div class="mb-0">⏰ <%= cl.diaHora.strftime('%H:%M horas') %> </div>
-
-                      <% if cl.clase.present? %>
-                      <div class="mb-0">🧘 Profesor: <%= cl.clase.instructor.nombre %></div>
-                      <%end%>
-                    </p>
-                  <% end %>
-                <% end %>
-              </div>
-            </div>
-
-            <!-- Historial entre fechas del alumno -->
-            <div class="me-2">
-                <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseExample-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseExample-<%=almn.id.to_s%>">
-                  Historial
-              </a>
-              <div class="collapse" id="collapseExample-<%=almn.id.to_s%>">
-                <div class="card card-body">
-                    <%= form_tag(alumno_clasesAgendadas_path, method: :post) do %> <!-- Remesar  -->
-                      <input id="fechaInicio" name="fechaInicio" class="form-control" type="date"   value="<%=@fechaInicio.to_s%>" />
-                      <input id="fechaFin"    name="fechaFin"    class="form-control" type="date"   value="<%=@fechaHoy.to_s%>" />
-                      <input id="id"          name="id"          class="form-control" type="number" value="<%=almn.id%>" />
-                      <button class="btn btn-primary w-100 mb-3" type="submit"> ver historial </button>
-                    <% end %>
-                </div>
-              </div>
-            </div>
-
-
-            <!-- Horario del alumno -->
-            <div class="me-2 m-0 p-0">
-                <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseHorario-<%=almn.id.to_s%>"  aria-expanded="false" aria-controls="collapseHorario-<%=almn.id.to_s%>">
-                  Horario
-              </a>
-              <div class="collapse m-0 p-0" id="collapseHorario-<%=almn.id.to_s%>">
-                <ul class="list-group">
-                    <% almn.horarioAlumno.each do |hr| %>
-                      <li class="list-group-item m-0 p-0 d-flex justify-content-start align-items-center">
-                      <%
-                        # Crea un hash con los parámetros permitidos
-                        button_params = {
-                          q: params.fetch(:q, {}).permit!.to_h.merge(nombre_cont: hr.usuario.nombre),
-                          fechainicio: params[:fechainicio],
-                          fechahoy: params[:fechahoy]
-                        }.compact
-                      %>
-
-                        <%= button_to '×',
-                        horario_alumno_path(hr, button_params),
-                        method: :delete,
-                        class: "btn btn-sm btn-outline-danger mb-1",
-                        form: {
-                          data: {
-                            turbo_confirm: '¿Quitar esta clase del horario?'
-                          }
-                        } %>
-
-                        <%= link_to hr.horario.clase_humano, horario_nuevo_path, class: "btn btn-sm btn-#{hr.horario.instructor.color} mb-1" %>
-                      </li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Si se le ha envido el regalo -->
-            <div class="me-2">
-                <% if almn.regalo then %>
-                    <% color = "text-success" %>
-                <% else %>
-                    <% color = "text-danger" %>
-                <%end%>
-                <td> <%= link_to "Regalo" , alumnos_regalo_path(almn),  class: 'btn btn-primary w-100 mb-3' %> </td>
-            </div>
+      <div class="card-body">
+        <!-- Botones principales -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <%= link_to "📄 Ficha PDF", alumnos_path(alumno, format: :pdf), class: "btn btn-sm btn-outline-primary" %>
+          <%= link_to "📅 Clases Agendadas", "#clases-#{alumno.id}", class: "btn btn-sm btn-outline-info", data: { bs_toggle: "collapse" } %>
+          <%= link_to "📤 WhatsApp", "#whatsapp-#{alumno.id}", class: "btn btn-sm btn-outline-success", data: { bs_toggle: "collapse" } %>
+          <%= link_to "🕒 Historial", "#historial-#{alumno.id}", class: "btn btn-sm btn-outline-secondary", data: { bs_toggle: "collapse" } %>
+          <%= link_to "👁‍🗨 Ver", alumnos_path(alumno), class: "btn btn-sm btn-outline-dark" %>
         </div>
-    </li>
+
+        <!-- Panel de CLASES AGENDADAS (colapsable) -->
+        <div class="collapse mb-3" id="clases-<%= alumno.id %>">
+          <div class="card card-body">
+            <h6><i class="bi bi-calendar3"></i> Clases Programadas</h6>
+            <% if @clases.where(usuario_id: alumno.id).any? %>
+              <ul class="list-group list-group-flush">
+                <% @clases.where(usuario_id: alumno.id).order(:diaHora).each do |clase| %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <% if clase.clase.present? %>
+                        <%= link_to clase.clase.clase_humano, clase_dia_path(clase.diaHora.strftime('%F')), class: "text-decoration-none" %>
+                      <% else %>
+                        <span class="text-danger">Clase no disponible</span>
+                      <% end %>1
+                      <small class="text-muted d-block">
+                        <%= I18n.l(clase.diaHora, format: "%A %d/%m a las %H:%M") %>
+                      </small>
+                    </div>
+                    <span class="badge bg-<%= clase.claseAlumnoEstado.color %>">
+                      <%= clase.claseAlumnoEstado.nombre %>
+                    </span>
+                  </li>
+                <% end %>
+              </ul>
+            <% else %>
+              <p class="text-muted">No hay clases agendadas.</p>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Panel de WHATSAPP (colapsable) -->
+        <div class="collapse mb-3" id="whatsapp-<%= alumno.id %>">
+          <div class="card card-body">
+            <h6><i class="bi bi-whatsapp"></i> Mensaje para WhatsApp</h6>
+            <div class="bg-light p-3 rounded mb-2" id="whatsapp-text-<%= alumno.id %>">
+              <p>
+                Hola <%= alumno.alias.presence || alumno.nombre.split.first %> 😊,<br>
+                las clases que tenemos programadas son:<br><br>
+                <% if @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1).any? %>
+                  <% @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1).order(:diaHora).each do |cl| %>
+                    -📅  <%= I18n.l(cl.diaHora, format: "%A %d/%m a las ⏰  %H:%M") %>
+                    <% if cl.clase.present? && cl.clase.instructor.present? %>
+                      con <%= cl.clase.instructor.nombre.split.first %><br>
+                    <% end %>
+                  <% end %>
+                <% else %>
+                  No tienes clases agendadas por ahora.
+                <% end %>
+              </p>
+            </div>
+            <button class="btn btn-sm btn-success" onclick="copyToClipboard('whatsapp-text-<%= alumno.id %>')">
+              <i class="bi bi-clipboard"></i> Copiar texto
+            </button>
+            <% if alumno.movil.present? %>
+              <%
+                telefono = "34#{alumno.movil.to_s.gsub(/\D/, '')}"
+                texto_whatsapp = @whatsapp_texts[alumno.id]
+
+                # Codificación que preserva emojis (versión simplificada)
+                texto_codificado = URI.encode_www_form_component(texto_whatsapp)
+                                      .gsub(/\+/, '%20')
+              %>
+
+              <!-- Enlace directo para WhatsApp -->
+              <a href="https://wa.me/<%= telefono %>?text=<%= texto_codificado %>"
+                 class="btn btn-sm btn-success mt-2"
+                 target="_blank"
+                 onclick="window.open('whatsapp://send?phone=<%= telefono %>&text=<%= texto_codificado %>', '_blank'); return false;">
+                <i class="bi bi-whatsapp"></i> Enviar por WhatsApp
+              </a>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Panel de HISTORIAL (colapsable) -->
+        <div class="collapse" id="historial-<%= alumno.id %>">
+          <div class="card card-body">
+            <h6><i class="bi bi-clock-history"></i> Historial de Clases</h6>
+            <%= form_tag(alumno_clasesAgendadas_path, method: :post, class: "row g-3") do %>
+              <%= hidden_field_tag :id, alumno.id %>
+              <div class="col-md-5">
+                <%= label_tag :fechaInicio, "Desde", class: "form-label" %>
+                <%= date_field_tag :fechaInicio, @fechaInicio, class: "form-control" %>
+              </div>
+              <div class="col-md-5">
+                <%= label_tag :fechaFin, "Hasta", class: "form-label" %>
+                <%= date_field_tag :fechaFin, @fechaHoy, class: "form-control" %>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <%= submit_tag "Buscar", class: "btn btn-primary w-100" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
   <% end %>
-</ul>
+</div>
+
+<script>
+  function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Texto copiado al portapapeles ✅");
+    });
+  }
+</script>
+ <script>
+    // Fuerza apertura en app nativa con fallback
+    document.querySelectorAll('.whatsapp-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = `whatsapp://send?phone=${this.dataset.phone}&text=${this.dataset.text}`;
+        setTimeout(() => {
+          window.open(`https://web.whatsapp.com/send?phone=${this.dataset.phone}&text=${this.dataset.text}`, '_blank');
+        }, 500);
+      });
+    });
+  </script>
+

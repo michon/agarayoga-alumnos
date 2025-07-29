@@ -1,0 +1,80 @@
+<!-- Dentro de _alumno_actions.html.erb -->
+
+<div class="row">
+  <!-- ... (botones principales anteriores) ... -->
+
+  <!-- Botón para clases agendadas (colapsable) -->
+  <div class="col-12 mt-2">
+    <button class="btn btn-outline-info w-100" type="button" data-bs-toggle="collapse"
+            data-bs-target="#clases-agendadas-<%= alumno.id %>"
+            aria-expanded="false" aria-controls="clases-agendadas-<%= alumno.id %>">
+      <i class="bi bi-calendar-check"></i> Clases Agendadas
+    </button>
+
+    <div class="collapse mt-2" id="clases-agendadas-<%= alumno.id %>">
+      <div class="card card-body">
+        <h6>Clases Programadas:</h6>
+
+        <!-- Lista interactiva de clases -->
+        <div class="list-group mb-3">
+          <% @clases.where(usuario_id: alumno.id).order(:diaHora).each do |clase| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <% if clase.clase.present? %>
+                <div>
+                  <%= link_to clase.clase.clase_humano,
+                              clase_dia_path(clase.diaHora.strftime('%F'), anchor: 'clase-' + clase.clase_id.to_s),
+                              class: "text-decoration-none" %>
+                  <small class="text-muted d-block">
+                    <%= I18n.l(clase.diaHora, format: '%A %d de %B a las %H:%M') %>
+                  </small>
+                </div>
+                <span class="badge bg-<%= clase.claseAlumnoEstado.color %>">
+                  <%= clase.claseAlumnoEstado.nombre %>
+                </span>
+              <% else %>
+                <span class="text-danger">Clase no disponible</span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Texto para WhatsApp -->
+        <div class="border-top pt-2">
+          <h6>Mensaje para WhatsApp:</h6>
+          <div class="bg-light p-3 rounded mb-2">
+            <p id="whatsapp-text-<%= alumno.id %>">
+              Hola <%= alumno.alias.presence || alumno.nombre.split.first %> 😊,<br/>
+              las clases que tenemos programadas son:<br/><br/>
+
+              <% @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1).order(:diaHora).each do |cl| %>
+                - <%= I18n.l(cl.diaHora, format: '%A %d/%m a las %H:%M') %>
+                <% if cl.clase.present? %>
+                  con <%= cl.clase.instructor.nombre.split.first %>
+                <% end %><br/>
+              <% end %>
+            </p>
+          </div>
+          <button class="btn btn-sm btn-success"
+                  onclick="copyToClipboard('whatsapp-text-<%= alumno.id %>')">
+            <i class="bi bi-clipboard"></i> Copiar texto
+          </button>
+          <a href="https://wa.me/<%= alumno.telefono %>?text=<%= URI.encode_www_form_component(render 'whatsapp_text', alumno: alumno) %>"
+             class="btn btn-sm btn-success" target="_blank">
+            <i class="bi bi-whatsapp"></i> Enviar por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Añadir este JavaScript al final -->
+<script>
+function copyToClipboard(elementId) {
+  const element = document.getElementById(elementId);
+  const text = element.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Texto copiado al portapapeles');
+  });
+}
+</script>

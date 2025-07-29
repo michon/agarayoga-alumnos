@@ -4,19 +4,20 @@ class AlumnosController < ApplicationController
   # requires authentication only for "update" and "destroy"
 
   def index
-
       unless AlumnosPolicy.new(current_usuario).verIndex?
         render :file => "public/401.html", :status => :unauthorized
       end
-#      @alumnos = Usuario.where(debaja: [false,  nil]).all
+        @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
+        @alumnos = @q.result(distinct: true)
+        @clases = ClaseAlumno.where(diaHora: Date.today.beginning_of_day..)
+        @fechaInicio = Date.today.beginning_of_month
+        @fechaHoy = Date.today.next_month
 
-      @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
-      @alumnos = @q.result(distinct: true)
-      @clases = ClaseAlumno.where(diaHora: Date.today.beginning_of_day..)
-      @estados = ClaseAlumnoEstado.all
-
-      @fechaInicio = Date.today.beginning_of_month
-      @fechaHoy = Date.today.next_month
+        # Prepara el texto de WhatsApp para cada alumno
+        @whatsapp_texts = {}
+        @alumnos.each do |alumno|
+          @whatsapp_texts[alumno.id] = generate_whatsapp_text(alumno)
+        end
   end
 
   def clientes
@@ -209,7 +210,7 @@ class AlumnosController < ApplicationController
   end
 
   def clasesAgendadas
-      @fechaInicio = params[:fechaInicio].to_datetime
+    @fechaInicio = params[:fechaInicio].to_datetime - 1.month
       @fechaFin = params[:fechaFin].to_datetime
       @id = params[:id].to_i
 
@@ -330,4 +331,27 @@ def ficha
 
   private
 
+  def generate_whatsapp_text(alumno)
+    clases_activas = @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1)
+                           .where("diaHora >= ?", Date.today)
+                           .order(:diaHora)
+
+    # Usamos solo emojis básicos compatibles
+    text = "¡Hola #{alumno.alias.presence || alumno.nombre.split.first}!"
+    text = text + "👋 \n"
+    text = text + "\n"
+    text = text + "*TUS PRÓXIMAS CLASES*\n\n" 
+
+    clases_activas.each do |cl|
+      text = text + "📅 *#{I18n.l(cl.diaHora, format: '%A %d/%m')}*\n"
+      text = text + "⏰ *" + "#{cl.diaHora.strftime('%H:%M')} con #{cl.clase.instructor.nombre.split.first}*\n"
+      text = text + "➖➖➖➖➖➖➖➖➖➖" + "\n\n"
+    end
+
+    text = text + "Gracias por llegar puntual para mantener la armonía del grupo\n\n"
+
+    text = text + "¡Nos vemos en clase!"
+
+    text
+  end
 end

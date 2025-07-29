@@ -1,0 +1,26 @@
+<%# _whatsapp_text.html.erb %>
+<%
+  alumno_nombre = alumno.alias.presence || alumno.nombre.to_s.split.first
+%>
+
+¡Hola <%= alumno_nombre %>! 🌿
+
+🔷 *TUS PRÓXIMAS CLASES* 🔷
+
+<% if clases_activas.any? %>
+  <% clases_activas.group_by { |cl| cl.diaHora.to_date }.each do |fecha, clases_dia| %>
+  🗓 *<%= I18n.l(fecha, format: '%A %d/%m').capitalize %>*
+    <% clases_dia.each do |cl| %>
+      ⏰ <%= cl.diaHora.strftime('%H:%M') %>
+      👤 <%= cl.clase.instructor.nombre.split.first %>
+      ＿＿＿＿＿＿＿＿＿＿＿
+    <% end %>
+  <% end %>
+
+  📌 *Recordatorio importante:*
+  Gracias por ayudar a mantener la armonía llegando puntual 🙏
+
+<% else %>
+  Actualmente no tienes clases programadas.
+  ¿Quieres que te reserve plaza en alguna sesión?
+<% end %>
