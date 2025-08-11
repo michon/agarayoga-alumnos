@@ -6,7 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
-vendedor/bundle
+/vendor/
 
 # Ignore all logfiles and tempfiles.
 /*.swp
