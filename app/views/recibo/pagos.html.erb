@@ -1,50 +1,79 @@
- parametros .... <%= @parametros %>
- 
-<%= form_tag(recibo_busqueda_path, method: :post) do %> <!-- Vista clases semanal -->
+<h1>Filtro de Recibos</h1>
 
-
-  <% @rcbEstado.each do |stdo| %>
-
-    <div class="form-check">
-      <input name="busquedaEstado[]" class="form-check-input" type="checkbox" value="<%=stdo.id%>" id="checkEstado-<%=stdo.id%>">
-      <label class="form-check-label" for="checkEstado-<%=stdo.id%>">
-        <%= stdo.nombre %>
-      </label>
+<%= form_tag recibo_pagos_path, method: :get do %>
+  <div class="row mb-3">
+    <!-- Filtro por Nombre -->
+    <div class="col-md-4">
+      <%= label_tag 'q[usuario_nombre_cont]', "Nombre", class: "form-label" %>
+      <%= text_field_tag 'q[usuario_nombre_cont]', 
+            params.dig(:q, :usuario_nombre_cont),
+            class: "form-control",
+            placeholder: "Buscar por nombre..." %>
     </div>
-  <% end %>
 
-  <label for="nombre">Nombre</label>
-  <input id="nombre" type="text" name="busquedaNombre" value="" class="form-control">
-
-  <button type="submit"> Filtrar </button>
-
-<% end %>
-
-
-<div class="d-flex w-100 justify-content-end">
-  <% @rcbEstado.each do |stdo| %>
-    <button class="p-2 m-2 btn btn-<%=stdo.color%>" type="submit"><%=stdo.nombre%></button>
-  <% end %>
+    <!-- Filtro por Estado -->
+<div class="col-md-3">
+  <%= label_tag 'q[reciboEstado_id_eq]', "Estado", class: "form-label" %>
+  <%= select_tag 'q[reciboEstado_id_eq]',
+        options_from_collection_for_select(@estados_recibo, 'id', 'nombre', params.dig(:q, :reciboEstado_id_eq)),
+        include_blank: 'Todos los estados',
+        class: "form-control" %>
 </div>
 
-<ul class="list-group">
-<% @rcbs.order(:reciboEstado_id).each do |rcb| %>
-  <li class="list-group-item ">
-    <div class="m-0 p-0 d-flex w-100 justify-content-between">
-      <div class="flex-fill btn btn-<%=rcb.reciboEstado.color%> ">
-        <h5><%= rcb.usuario.nombre unless rcb.usuario.blank? %> </h5>
-      </div>
-      <div class="d-flex justify-content-between">
-        <% @rcbEstado.each do |stdo| %>
-        <a class="m-2 btn btn<%= (rcb.reciboEstado_id == stdo.id) ? "-" : "-outline-" %><%= stdo.color %>" href="<%= recibo_estado_path(rcb.id,stdo.id)%>" <%= (rcb.reciboEstado_id == stdo.id) ? " disabled " : " " %> role="button"><%= stdo.nombre %></a>
-        <% end %>
-        <a class="m-2 btn btn-primary" href="#" role="button">Imprimir</a>
-        <a class="m-2 btn btn-primary" href="#" role="button">Modificar</a>
-        <a class="m-2 btn btn-primary" href="#" role="button">Ver</a>
-        <a class="m-2 btn btn-danger" href="#" role="button">Factura</a>
-      </div>
+    <!-- Filtro por Año -->
+    <div class="col-md-2">
+      <%= label_tag :year, "Año", class: "form-label" %>
+      <%= select_tag :year,
+            options_for_select(
+              (2020..Date.current.year).to_a.reverse,
+              params[:year] || Date.current.year
+            ),
+            class: "form-control" %>
     </div>
-  </li>
 
+    <!-- Filtro por Mes -->
+<div class="col-md-3">
+  <%= label_tag :mes, "Mes", class: "form-label" %>
+  <%= select_tag :mes,
+        options_for_select(
+          (1..12).map { |m| [I18n.t('date.month_names')[m], m] },
+          params[:mes]
+        ),
+        include_blank: 'Todos los meses',
+        class: "form-control" %>
+</div>
+
+  <div class="row mb-4">
+    <div class="col">
+      <%= submit_tag "Filtrar", class: "btn btn-primary me-2" %>
+      <%= link_to "Limpiar", recibo_pagos_path, class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
 <% end %>
-</ul>
+
+
+
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= sort_link(@q, :usuario_nombre, "Usuario") %></th>
+      <th><%= sort_link(@q, :reciboEstado_nombre, "Estado") %></th>
+      <th><%= sort_link(@q, :vencimiento, "Fecha") %></th>
+      <th><%= sort_link(@q, :importe, "Importe") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @recibos_filtrados.each do |recibo| %>
+      <tr>
+        <td><%= recibo.usuario.nombre %></td>
+        <td><span class="badge" style="background-color:<%= recibo.reciboEstado.color %>">
+            <%= recibo.reciboEstado.nombre %>
+          </span>
+        </td>
+        <td><%= recibo.vencimiento.strftime("%d/%m/%Y") if recibo.vencimiento %></td>
+        <td><%= number_to_currency(recibo.importe, unit: "€") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

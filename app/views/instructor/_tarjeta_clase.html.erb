@@ -1,0 +1,13 @@
+<div class="card mb-3 shadow-sm">
+  <!-- Cabecera -->
+  <%= render 'instructor/cabecera_clase', clase: clase %>
+  
+  <!-- Formulario principal -->
+  <%= render 'instructor/formulario_clase', clase: clase, estados: @estados %>
+  
+  <!-- Pruebas -->
+  <%= render 'instructor/seccion_pruebas', clase: clase if clase.pruebas.any? %>
+  
+  <!-- Solicitudes -->
+  <%= render 'instructor/seccion_solicitudes', clase: clase if clase.claseSolicitum.any? %>
+</div>

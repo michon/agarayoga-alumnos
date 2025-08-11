@@ -1,0 +1,14 @@
+<%# app/views/instructor/dianuevo.html.erb %>
+<div class="container-fluid p-2">
+  <%= render 'instructor/cabecera_dia' %>
+
+  <!-- Listado de clases -->
+  <div class="mt-2">
+    <% @clasesHoy.each do |clase| %>
+      <%= render 'instructor/tarjeta_clase', clase: clase %>
+      <%= render 'instructor/acciones_clase', clase: clase %>
+    <% end %>
+  </div>
+</div>
+
+<%= javascript_pack_tag 'clases_interaccion' %>

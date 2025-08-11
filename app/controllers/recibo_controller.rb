@@ -342,84 +342,52 @@ class ReciboController < ApplicationController
   end
 
   def pagos
-      @parametros = ""
-      @rcbs = Recibo.all
-      @rcbEstado = ReciboEstado.all
+    @q = Recibo.ransack(params[:q])
+    
+    # Filtros manuales para año/mes
+    @selected_year = params[:year] || Date.current.year
+    @selected_month = params[:mes]
+
+    # Aplicar todos los filtros
+    @recibos_filtrados = @q.result
+    @recibos_filtrados = @recibos_filtrados.where("YEAR(vencimiento) = ?", @selected_year) if @selected_year.present?
+    @recibos_filtrados = @recibos_filtrados.where("MONTH(vencimiento) = ?", @selected_month) if @selected_month.present?
+
+    @recibos_filtrados = @recibos_filtrados.includes(:usuario, :reciboEstado)
+                         .order(:reciboEstado_id)
+    
+    @estados_recibo = ReciboEstado.all
   end
 
 
-  #Recogemos los parametros recibo y acción y presenta los datos seleccionados
+
   def busqueda
-      unless params[:recibo].blank?
-        #seleccionamos los recibos según su estado
-        case params[:accion].to_i
-        when 1..3
-          estado = params[:accion].to_i
-          rcb = Recibo.find(params[:recibo])
-          estadoAnt = rcb.reciboEstado_id
-          rcb.reciboEstado_id = params[:accion].to_i
-          if rcb.save
-            # Realizamos el apunte en caja..
-            # 1.- Calculamos el importe
-            #  El importe será en negativo si:
-            #     de PAGADO a EMITIDO
-            #     de PAGADO a DEVUELTO
-            #  El importe será positivo si:
-            #     de EMITIDO a PAGADO
-            #     de DEVUELTO a PAGADO
-            #  El importe será 0 si:
-            #     de EMITIDO a DEVUELTO
-            #     de DEVUELTO a EMITIDO
-            #  El
-            importe = 0
-            if estadoAnt == 1 || estadoAnt == 3
-              importe = Money.new(0,'eur')
-            end
-            if estado == 2
-              importe = Money.new((rcb.importe * 100), 'eur')
-            end
-            if estadoAnt == 2
-              importe = Money.new((rcb.importe * (-100)), 'eur')
-            end
-            estados = ReciboEstado.all.pluck(:nombre)
-            apunte = Caja.new
-            apunte.fecha = DateTime.now
-            apunte.concepto =  rcb.usuario.nombre + '. Cambio del estado del recibo ' + rcb.id.to_s + ' de ' + estados[estadoAnt-1] + ' a ' + estados[estado-1]
-            apunte.usuario_id = rcb.usuario_id
-            apunte.importe = importe
-            if Caja.all.count == 0
-              total = Money.new(0, 'eur')
-            else
-              total = Caja.all.last.total
-            end
-            apunte.total = total + apunte.importe
-            apunte.save
-          end
-        end
-      end
+  # Convertir parámetros a formato consistente
+    @parametros_busqueda = {
+      'nombre' => params[:busquedaNombre].to_s,
+      'estado' => params[:busquedaEstado].to_s,
+      'mes' => params[:busquedaMes].to_s
+    }
 
-      #de los recibos seleccionados filtramos según el nombre
-      @parametros = params
-      @prms = params[:busquedaNombre]
-      @rcbs = Recibo.all
-      unless params[:busquedaNombre].blank?
-        @prms = Usuario.where('nombre like ?', "%#{params[:busquedaNombre]}%").pluck(:id)
-        @rcbs =  Recibo.where(usuario_id: @prms)
-      end
+    # Aplicar filtros en una sola variable sin reasignaciones
+    recibos = Recibo.all
+    recibos = recibos.joins(:usuario).where("usuarios.nombre LIKE ?", "%#{@parametros_busqueda['nombre']}%") if @parametros_busqueda['nombre'].present?
+    recibos = recibos.where(reciboEstado_id: @parametros_busqueda['estado']) if @parametros_busqueda['estado'].present?
 
-      #de los recibos seleccionados filtramos según el estado
-      unless params[:busquedaEstado].blank?
-        @rcbs =  @rcbs.where(reciboEstado_id: params[:busquedaEstado])
-      end
+    if @parametros_busqueda['mes'].present? && @parametros_busqueda['mes'].to_i.between?(1, 12)
+      mes = @parametros_busqueda['mes'].to_i
+      fecha_inicio = Date.current.change(month: mes).beginning_of_month
+      fecha_fin = fecha_inicio.end_of_month
+      recibos = recibos.where(vencimiento: fecha_inicio..fecha_fin)
+    end
 
-      #de los recibos seleccionados filtramos según el mes
-      unless params[:busquedaMes].blank?
-        if params[:busquedaMes].to_i < 12 then
-          @rcbs = @rcbs.where(created_at: ((Date.current.at_beginning_of_year + (params[:busquedaMes].to_i-1).month).at_beginning_of_month)..((Date.current.at_beginning_of_year + (params[:busquedaMes].to_i-1).month).at_end_of_month + 1.day))
-        end
-      end
+    # Asignar FINALMENTE la variable de instancia
+    @recibos_filtrados = recibos.order(:reciboEstado_id)
 
-      @rcbEstado = ReciboEstado.all
+    Rails.logger.debug "SQL FINAL: #{@recibos_filtrados.to_sql}"
+    Rails.logger.debug "Total filtrado: #{@recibos_filtrados.count}"
+
+    @estados_recibo = ReciboEstado.all
   end
 
   def destroy
@@ -476,8 +444,11 @@ class ReciboController < ApplicationController
 
   protected
 
-  def configure_permitted_parameters
-    params.permit(fecha, busquedaNombre, busquedaEstado[],busquedaMes, rcb_ids[], recibo, accion, rcb[], usr, cuota, fechaFin, fechaInicio)
-  end
+    def configure_permitted_parameters
+      params.permit(:authenticity_token, :commit, :busquedaNombre, :busquedaEstado,
+                    :busquedaMes, date: [:busquedaMes],
+                    rcb_ids: [], recibo: [], rcb: [],
+                    usr: [], cuota: [], fechaFin: [], fechaInicio: [])
+    end
 
 end

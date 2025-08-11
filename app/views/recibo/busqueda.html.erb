@@ -1,164 +1,70 @@
+<%# Debug extremo %>
+<%= content_tag :pre, "PARAMS: #{params.to_json}" %>
+<%= content_tag :pre, "@recibos_filtrados: #{@recibos_filtrados.to_a.to_json}" %>
 
-<div class="row justify-content-left">
-  <div class="col-8 col-lg-6 col-xl-5">
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCard" aria-expanded="false" aria-controls="filtrosCard">
-      Filtros
-    </button>
-    <div class="card collapse" id="filtrosCard">
-      <div class="card-body p-4 p-md-5">
-        <%= form_tag(recibo_busqueda_path, method: :post) do %>
-          <div class="form-outline mb-4 justify-content-left">
-            <div class="row mb-4 ">
-              <div class="d-flex justify-content-between flex-row-reverse ">
-                  <% (1..4).each do |idx| %>
-                    <%  dd =  (idx + 2).month.ago.month %>
-                    <input name="busquedaMes" class="btn-check" type="radio" value="<%=dd%>" <%= @parametros[:busquedaMes].to_i == dd ? 'checked' : '' %> id="checkMes-<%=dd%>">
-                    <label class="btn btn-outline-primary flex-fill" for="checkMes-<%=dd%>">
-                        <%= I18n.t('date.month_names')[(dd).to_i].capitalize %>
-                    </label>
-                  <% end %>
-              </div>
+<% if false # Deshabilitar toda la vista original %>
+
+
+
+<!-- Formulario de filtrado -->
+<%= form_tag recibo_busqueda_path, method: :post, data: { turbo: false } do %>
+  <%= text_field_tag :busquedaNombre, @parametros_busqueda['nombre'], placeholder: "Nombre" %>
+
+  <%= select_tag :busquedaEstado,
+      options_from_collection_for_select(@estados_recibo, "id", "nombre", @parametros_busqueda['estado']),
+      include_blank: "Todos" %>
+
+  <% selected_month = @parametros_busqueda['mes'].presence %>
+  <%= select_month(
+      selected_month.blank? ? nil : selected_month.to_i,
+      {field_name: :busquedaMes, include_blank: true},
+      {class: "form-control", name: "busquedaMes"}
+    ) %>
+
+  <%= submit_tag "Filtrar" %>
+<% end %>
+
+<!-- Debug: Muestra la consulta REAL que se ejecutó -->
+<div class="alert alert-info">
+  <strong>Consulta SQL ejecutada:</strong>
+  <code><%= @recibos_filtrados.to_sql %></code>
+  <br>
+  <strong>Total registros encontrados:</strong> <%= @recibos_filtrados.count %>
+</div>
+
+<!-- Resultados REALES del filtro -->
+<% if @recibos_filtrados.any? %>
+  <div class="mt-4">
+    <h4>Recibos encontrados:</h4>
+    <div class="list-group">
+      <% @recibos_filtrados.each do |rcb| %>
+        <div class="list-group-item">
+          <div class="d-flex justify-content-between">
+            <div>
+              <strong>#<%= rcb.id %></strong> -
+              <%= rcb.usuario.nombre rescue 'SIN USUARIO' %>
             </div>
-            <div class="row mb-4">
-              <div class="d-flex justify-content-between flex-row-reverse">
-                <input name="busquedaMes" class="btn-check" type="radio" value="13" id="checkMes-13">
-                <label class="btn btn-outline-primary flex-fill" for="checkMes-13">
-                    Todos
-                </label>
-                <% (0..2).each do |idx| %>
-                    <%  dd =  idx.month.ago.month %>
-                    <input name="busquedaMes" class="btn-check" type="radio" value="<%= dd %>" <%= @parametros[:busquedaMes].to_i == dd ? 'checked' : '' %> id="checkMes-<%=dd%>">
-                    <label class="btn btn-outline-primary flex-fill" for="checkMes-<%=dd%>">
-                        <%= I18n.t('date.month_names')[dd.to_i].capitalize %>
-                    </label>
-                <% end %>
-              </div>
-            </div>
-
-            <div class="row mb-4">
-              <div class="d-flex justify-content-between">
-                <% @rcbEstado.each do |stdo| %>
-                  <% estado = ''%>
-                  <% unless @parametros[:busquedaEstado].blank? then %>
-                    <% if @parametros[:busquedaEstado].include?(stdo.id.to_s) then %>
-                      <% estado = 'checked' %>
-                    <% end %>
-                  <% end %>
-
-                  <input name="busquedaEstado[]" class="btn-check" type="checkbox" value="<%=stdo.id%>" <%= estado  %> id="checkEstado-<%=stdo.id%>">
-                  <label class="flex-fill btn btn-outline-<%=stdo.color%>" for="checkEstado-<%=stdo.id%>">
-                    <%= stdo.nombre %>
-                  </label>
-                <% end %>
-              </div>
-            </div>
-
-            <div class="row mb-4">
-              <input id="nombre" type="text" name="busquedaNombre" value="<%= @parametros[:busquedaNombre]%>" class="form-control", placeholder="Nombre del Alumno">
-            </div>
-
-            <div class="row mb-4">
-              <button class="btn btn-primary btn-block mb-4kkO" type="submit"> Filtrar </button>
+            <div>
+              <%= rcb.created_at.strftime("%d/%m/%Y") %>
             </div>
           </div>
-        <% end %>
+          <div class="mt-2">
+            <span class="badge bg-<%= rcb.reciboEstado.color %>">
+              <%= rcb.reciboEstado.nombre %>
+            </span>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
-</div>
+<% else %>
+  <div class="alert alert-warning mt-4">
+    No se encontraron recibos con los filtros actuales
+  </div>
 
-
-<div class="d-flex w-100 justify-content-end">
-  <% @rcbEstado.each do |stdo| %>
-    <button class="p-2 m-2 btn btn-<%=stdo.color%>" type="submit"><%=stdo.nombre%></button>
-  <% end %>
-</div>
-
-<ul class="list-group">
-<% @rcbs.each do |rcb| %>
-  <li class="list-group-item border-1 rounded-3 mb-2">
-    <div class="m-0 p-0 d-flex w-100 justify-content-between">
-      <div class="flex-fill btn btn-<%=rcb.reciboEstado.color%> border-2 border-<%=rcb.serie.to_s == 'A' ? 'warning' : 'success' %> ">
-        <h5> <%= rcb.usuario.nombre + ' (' + rcb.importe.to_s + '€) ' unless rcb.usuario.blank?  %> </h5>
-      </div>
-      <div class="d-flex justify-content-between">
-        <% @rcbEstado.each do |stdo| %>
-          <% unless rcb.reciboEstado_id == stdo.id  then %>
-              <%= form_tag(recibo_busqueda_path, method: :post) do %> <!-- Vista horario dia -->
-                <% unless @parametros[:busquedaEstado].blank? then %>
-                  <% @parametros[:busquedaEstado].each do |id| %>
-                    <%= hidden_field_tag "busquedaEstado[]", id %>
-                  <% end %>
-                <%end %>
-                    <input name="busquedaMes"  type="hidden" value="<%= @parametros[:busquedaMes]%>">
-                    <input name="busquedaNombre"  type="hidden" value="<%= @parametros[:busquedaNombre]%>">
-                    <input name="accion"  type="hidden" value="<%= stdo.id %>">
-                    <input name="recibo"  type="hidden" value="<%= rcb.id %>">
-
-                    <button class="m-2 btn btn<%= (rcb.reciboEstado_id == stdo.id) ? "-" : "-outline-" %><%= stdo.color %>" type="submit"> <%= stdo.nombre %> </button>
-              <% end %>
-          <%else%>
-              <button class="m-2 btn btn<%= (rcb.reciboEstado_id == stdo.id) ? "-" : "-outline-" %><%= stdo.color %>" disabled type="submit"> <%= stdo.nombre %> </button>
-          <%end%>
-        <% end %>
-        <a class="m-2 btn btn-primary" href="#" role="button">Imprimir</a>
-          <%= button_to  recibo_path(rcb), method: :delete, class: "m-2 btn btn-warning",  :onclick => "return confirm('Ojito que borras el recibo')" do %>
-            Borrar
-          <% end %>
-          <button class="m-2 btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
-            ver
-          </button>
-        <a class="m-2 btn btn-danger" href="#" role="button">Factura</a>
-      </div>
-    </div>
-    <div id="frmOculto-<%=rcb.id%>" class="oculto  collapse">
-      <!----------------------------------------------------------------------->
-      <!-- Visualización del recibo  ------------------------------------------>
-      <!----------------------------------------------------------------------->
-      <div class="row d-flex justify-content-center">
-        <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center  rounded-3 m-2 border border-2 border-<%=rcb.reciboEstado.color%> ">
-          <%= form_tag(recibo_modificar_path, method: :post) do %>
-            <div class="form-outline mb-6">
-              <h2 class="text-end"> Recibo número <%= rcb.id %> </h2>
-              <h6 class="text-end"> fecha de emisión: <%= rcb.created_at.strftime("%d de %B de %Y") %> </h6>
-              <input class="form-control " type="hidden" name="rcb[id]" value="<%=rcb.id%>" aria-describedby="nombre-descripcion" readonly>
-
-              <div class="input-group input-group-lg mb-4">
-                <span class="input-group-text" id="nombre-descripcion">Recido de: </span>
-                <input class="form-control" type="text" name="rcb[nombre]" value="<%=rcb.usuario.nombre%>" aria-describedby="nombre-descripcion" readonly>
-              </div>
-
-              <div class="input-group input-group-lg mb-4">
-                <span class="input-group-text" id="importe-descripcion">la cantidad de: </span>
-                <input class="form-control text-end me-2" type="number" name="rcb[importe]" value="<%=rcb.importe%>" aria-describedby="importe-descripcion" >
-                <span class="input-group-text" id="estado-descripcion">Estado:  </span>
-                <input class="form-control text-center bg-<%=rcb.reciboEstado.color%>" type="text" name="rcb[estado]" value="<%=rcb.reciboEstado.nombre%>" aria-describedby="estado-descripcion" readonly>
-              </div>
-
-              <div class="input-group input-group-lg mb-4">
-                <span class="input-group-text" id="concepto-descripcion">En concepto de: </span>
-                <input class="form-control" type="text" name="rcb[concepto]" value="<%=rcb.concepto%>" aria-describedby="concepto-descripcion" >
-              </div>
-
-              <div class="input-group  input-group-lg mb-4">
-                <span class="input-group-text" id="lugar-descripcion">En: </span>
-                <input class="form-control me-2 text-center" type="text" name="rcb[lugar]" value="<%=rcb.lugar%>LUGO" aria-describedby="lugar-descripcion" >
-                <span class="input-group-text" id="pago-descripcion"> a </span>
-                <input class="form-control text-center" type="date" name="rcb[pago]" value="<%=rcb.pago.blank? ? Date.today.strftime("%Y-%m-%d") : rcb.pago.strftime("%Y-%m-%d") %>" aria-describedby="pago-descripcion" >
-              </div>
-
-              <div class="input-group  input-group-lg mb-4 d-flex justify-content-right content-ali">
-                <button class="form-control btn btn-primary  mb-4" type="submit"> Modificar </button>
-                <button class="form-control btn btn-primary  mb-4" type="button" data-bs-toggle="collapse" data-bs-target="#frmOculto-<%=rcb.id%>" aria-expanded="false" aria-controls="frmOculto-<%=rcb.id%>">
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-
-      </div>
-  </li>
 
 <% end %>
-</ul>
+
+
+
+<% end %>

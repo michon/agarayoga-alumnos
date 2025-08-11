@@ -1,0 +1,43 @@
+<%= form_with url: update_estado_alumno_path,
+              id: "form-estado-#{clase.id}",
+              class: "clase-form" do |f| %>
+  <input type="hidden" name="clase_id" value="<%= clase.id %>">
+
+  <!-- Filtros rápidos -->
+  <div class="btn-group w-100" role="group">
+    <button type="button" class="btn btn-sm btn-outline-secondary filter-btn active"
+            data-target="all">Todos</button>
+    <% estados.each do |estado| %>
+      <button type="button"
+              class="btn btn-sm btn-outline-<%= estado.color %> filter-btn"
+              data-target="estado-<%= estado.id %>">
+        <%= estado.nombre %>
+      </button>
+    <% end %>
+  </div>
+
+  <!-- Lista de alumnos -->
+  <div class="list-group list-group-flush">
+    <% clase.claseAlumno.joins(:usuario)
+           .includes(:claseAlumnoEstado)
+           .order('clase_alumnos.claseAlumnoEstado_id, usuarios.nombre')
+           .each do |ca| %>
+      <div class="list-group-item py-2 estado-<%= ca.claseAlumnoEstado_id %>">
+        <%= render 'instructor/item_alumno', ca: ca %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Acciones masivas -->
+  <div class="card-footer p-1 bg-light">
+    <div class="btn-group w-100">
+      <% estados.each do |estado| %>
+        <button type="button"
+                class="btn btn-sm btn-<%= estado.color %> estado-btn"
+                data-estado="<%= estado.id %>">
+          <%= estado.nombre %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+<% end %>

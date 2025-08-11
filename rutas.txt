@@ -1,0 +1,181 @@
+                                  Prefix Verb   URI Pattern                                                                                       Controller#Action
+                stats_monthly_comparison GET    /stats/monthly_comparison(.:format)                                                               stats#monthly_comparison
+                             julio_index GET    /julio/index(.:format)                                                                            julio#index
+                             julio_links GET    /julio/links(.:format)                                                                            julio#links
+                          julio_facturar GET    /julio/facturar(.:format)                                                                         julio#facturar
+                            julio_editar POST   /julio/editar(.:format)                                                                           julio#editar
+                      julio_generate_pdf GET    /julio/generate_pdf(.:format)                                                                     julio#generate_pdf
+                                 pruebas POST   /pruebas(.:format)                                                                                pruebas#create
+                              new_prueba GET    /pruebas/new(.:format)                                                                            pruebas#new
+                         solicitum_index POST   /solicitum(.:format)                                                                              solicitum#create
+                           new_solicitum GET    /solicitum/new(.:format)                                                                          solicitum#new
+                       alta_clase_alumno POST   /alumnos/:id/alta_clase(.:format)                                                                 alumnos#alta_clase
+                       baja_clase_alumno POST   /alumnos/:id/baja_clase(.:format)                                                                 alumnos#baja_clase
+                   cambiar_estado_alumno POST   /alumnos/:id/cambiar_estado(.:format)                                                             alumnos#cambiar_estado
+                     alta_prueba_alumnos POST   /alumnos/:clase_id/alta_prueba(.:format)                                                          alumnos#alta_prueba
+                     baja_prueba_alumnos POST   /alumnos/:clase_id/baja_prueba/:id(.:format)                                                      alumnos#baja_prueba
+                  alta_solicitud_alumnos POST   /alumnos/:clase_id/alta_solicitud(.:format)                                                       alumnos#alta_solicitud
+                  baja_solicitud_alumnos POST   /alumnos/:clase_id/baja_solicitud/:id(.:format)                                                   alumnos#baja_solicitud
+                                 alumnos GET    /alumnos(.:format)                                                                                alumnos#index
+                                         POST   /alumnos(.:format)                                                                                alumnos#create
+                              new_alumno GET    /alumnos/new(.:format)                                                                            alumnos#new
+                             edit_alumno GET    /alumnos/:id/edit(.:format)                                                                       alumnos#edit
+                                  alumno GET    /alumnos/:id(.:format)                                                                            alumnos#show
+                                         PATCH  /alumnos/:id(.:format)                                                                            alumnos#update
+                                         PUT    /alumnos/:id(.:format)                                                                            alumnos#update
+                                         DELETE /alumnos/:id(.:format)                                                                            alumnos#destroy
+                           alumnos_index GET    /alumnos/index(.:format)                                                                          alumnos#index
+                        alumnos_clientes GET    /alumnos/clientes(.:format)                                                                       alumnos#clientes
+                       alumnos_enhorario GET    /alumnos/enhorario(.:format)                                                                      alumnos#enhorario
+                  alumnos_clasesJulioURL GET    /alumnos/clasesJulioURL(.:format)                                                                 alumnos#clasesJulioURL
+                      alumnos_actualizar GET    /alumnos/actualizar/:id(.:format)                                                                 alumnos#actualizar
+                    alumnos_clases_julio GET    /alumnos/clases_julio/:id(.:format)                                                               alumnos#clasesJulio
+                alumnos_clases_agendadas GET    /alumnos/clases_agendadas/:id(.:format)                                                           alumnos#clasesJulio
+                          alumnos_regalo GET    /alumnos/regalo/:id(.:format)                                                                     alumnos#regalo
+                         alumnos_navidad GET    /alumnos/navidad/:id(.:format)                                                                    alumnos#navidad
+                           alumnos_ficha GET    /alumnos/ficha/:id(.:format)                                                                      alumnos#ficha
+                            alumnos_sepa GET    /alumnos/sepa/:id(.:format)                                                                       alumnos#sepa
+                    alumnos_business_get GET    /alumnos/business/:fecha(.:format)                                                                alumnos#business
+                        alumnos_business POST   /alumnos/business(.:format)                                                                       alumnos#business
+                        alumnos_procesos POST   /alumnos/procesos(.:format)                                                                       alumnos#procesos
+                    alumnos_procesos_get GET    /alumnos/procesos/:proceso(.:format)                                                              alumnos#procesos
+                   alumnos_procesos_alta POST   /alumnos/procesosAlta(.:format)                                                                   alumnos#procesosAlta
+                  alumno_clasesAgendadas POST   /alumnos/clasesAgendadas(.:format)                                                                alumnos#clasesAgendadas
+               alumnos_procesos_alta_get GET    /alumnos/procesosAlta/:proceso(.:format)                                                          alumnos#procesosAlta
+                      alumnos_pdfAlumnos GET    /alumnos/pdfAlumnos(.:format)                                                                     alumnos#pdfAlumnos
+                        asistencia_julio GET    /julio/:id/asistencia(.:format)                                                                   julio#asistencia
+                                   julio GET    /julio/:id(.:format)                                                                              julio#show
+                                         PATCH  /julio/:id(.:format)                                                                              julio#update
+                                         PUT    /julio/:id(.:format)                                                                              julio#update
+                                         GET    /stats/monthly_comparison(.:format)                                                               stats#monthly_comparison
+                stats_evolucion_ingresos GET    /stats/evolucion_ingresos(.:format)                                                               stats#evolucion_ingresos
+                            remesa_index GET    /remesa/index(.:format)                                                                           remesa#index
+                             remesa_show GET    /remesa/show/:id(.:format)                                                                        remesa#show
+                              remesa_new GET    /remesa/new(.:format)                                                                             remesa#new
+                     remesa_quitarRecibo GET    /remesa/quitarRecibo/:rcb_id,:rms_id(.:format)                                                    remesa#quitarRecibo
+                             remesa_edit GET    /remesa/edit(.:format)                                                                            remesa#edit
+                           remesa_emitir GET    /remesa/emitir/:id(.:format)                                                                      remesa#emitir
+                remesa_anhadirRcbARemesa POST   /remesa/anhadirRcbARemesa(.:format)                                                               remesa#anhadirRcbARemesa
+                            caja_listado GET    /caja/listado(.:format)                                                                           caja#listado
+                          caja_modificar GET    /caja/modificar(.:format)                                                                         caja#modificar
+                                caja_ver GET    /caja/ver(.:format)                                                                               caja#ver
+                              caja_nuevo POST   /cajas/nuevo(.:format)                                                                            caja#nuevo
+                            recibo_pagos GET    /recibo/pagos(.:format)                                                                           recibo#pagos
+                         recibo_facturar GET    /recibo/facturar(.:format)                                                                        recibo#facturar
+                      recibo_facturacion GET    /recibo/facturacion(.:format)                                                                     recibo#facturacion
+                            recibo_pagar GET    /recibo/pagar/:id(.:format)                                                                       recibo#pagar
+                       recibo_facturaPdf GET    /recibo/facturaPdf/:id(.:format)                                                                  recibo#facturaPdf
+                          recibo_generar GET    /recibo/generar/:fecha(.:format)                                                                  recibo#generar
+               recibo_remesarSeleccionar GET    /recibo/remesar_seleccionar(.:format)                                                             recibo#remesarSeleccionar
+        recibo_remesar_seleccionar_todos GET    /recibo/remesar_seleccionar_todos(.:format)                                                       recibo#remesar_seleccionar_todos
+       recibo_remesar_seleccionar_actual GET    /recibo/remesar_seleccionar_actual(.:format)                                                      recibo#remesar_seleccionar_actual
+     recibo_remesar_seleccionar_anterior GET    /recibo/remesar_seleccionar_anterior(.:format)                                                    recibo#remesar_seleccionar_anterior
+           recibo_remesarSeleccionarPost POST   /recibo/remesar_seleccionar_post(.:format)                                                        recibo#remesarSeleccionarPost
+                           recibo_estado GET    /recibo/estado/:id/:estado(.:format)                                                              recibo#estado
+                          recibo_numerar GET    /recibo/numerar(.:format)                                                                         recibo#numerar
+                            recibo_yacob POST   /recibo/yacob(.:format)                                                                           recibo#yacob
+                      recibo_generarPost POST   /recibo/generarPost(.:format)                                                                     recibo#generarPost
+                         recibo_busqueda POST   /recibo/busqueda(.:format)                                                                        recibo#busqueda
+                          recibo_remesar POST   /recibo/remesar(.:format)                                                                         recibo#remesar
+                        recibo_modificar POST   /recibo/modificar(.:format)                                                                       recibo#modificar
+             recibo_descargarFacturacion POST   /recibo/descargarFacturacion(.:format)                                                            recibo#descargarFacturacion
+                      recibo_numerarPost POST   /recibo/numerarPost(.:format)                                                                     recibo#numerarPost
+                                  recibo DELETE /recibo/:id(.:format)                                                                             recibo#destroy
+                            clase_alumno DELETE /clase_alumno/:id(.:format)                                                                       clase_alumno#destroy
+                    update_estado_alumno POST   /update_estado_alumno(.:format)                                                                   instructor#update_estado_alumno
+                            clase_semana GET    /clase/semana/:fecha(.:format)                                                                    clase#semana
+                               clase_dia GET    /clase/dia/:fecha(.:format)                                                                       clase#dia
+                            clase_actual GET    /clase/actual(.:format)                                                                           clase#actual
+                       clase_clasesDesde GET    /clase/clasesDesde(.:format)                                                                      clase#clasesDesde
+                        clase_calendario GET    /clase/calendario(.:format)                                                                       clase#calendario
+                             clase_libre GET    /clase/libre(.:format)                                                                            clase#libre
+                         clase_seleccion POST   /clase/semana(.:format)                                                                           clase#seleccion
+                     clase_seleccion_dia POST   /clase/dia(.:format)                                                                              clase#seleccionDia
+                       clase_alta_alumno POST   /clase/altaAlumno(.:format)                                                                       clase#altaAlumno
+                      clase_baja_alumnos POST   /clase/bajaAlumnos(.:format)                                                                      clase#bajaAlumnos
+                      clase_anular_clase POST   /clase/anularClase(.:format)                                                                      clase#anularClase
+                       clase_alta_prueba POST   /clase/altaPrueba(.:format)                                                                       clase#altaPrueba
+                       clase_baja_prueba POST   /clase/bajaPrueba(.:format)                                                                       clase#bajaPrueba
+                            clase_estado POST   /clase/estado(.:format)                                                                           clase#estado
+                     clase_alta_solicita POST   /clase/altaSolicita(.:format)                                                                     clase#altaSolicita
+                     clase_baja_solicita POST   /clase/bajaSolicita(.:format)                                                                     clase#bajaSolicita
+                                   clase DELETE /clase/:id(.:format)                                                                              clase#destroy
+                           horario_index GET    /horario/index(.:format)                                                                          horario#index
+                           horario_libre GET    /horario/libre(.:format)                                                                          horario#libre
+                           horario_nuevo GET    /horario/nuevo(.:format)                                                                          horario#nuevo
+                           horario_crear GET    /horario/crear(.:format)                                                                          horario#crear
+                          horario_delete GET    /horario/delete/:id(.:format)                                                                     horario#delete
+           horario_crear_horario_semanal POST   /horario/crear_horario_semanal(.:format)                                                          horario#crearClases
+             horario_crear_horario_julio POST   /horario/crear_horario_julio(.:format)                                                            horario#crearJulio
+                          horario_alumno DELETE /horario_alumno/:id(.:format)                                                                     horario_alumno#destroy
+                        instructor_index GET    /instructor/index(.:format)                                                                       instructor#index
+                       instructor_agenda GET    /instructor/agenda(.:format)                                                                      instructor#agenda
+                              instructor GET    /instructor/show/:id/:fecha(.:format)                                                             instructor#show
+                          instructor_dia GET    /instructor/dia/:fecha(.:format)                                                                  instructor#dia
+                     instructor_dianuevo GET    /instructor/dianuevo/:fecha(.:format)                                                             instructor#dianuevo
+                instructor_seleccion_dia POST   /instructor/dia(.:format)                                                                         instructor#seleccionDia
+                  instructor_alta_alumno POST   /instructor/altaAlumno(.:format)                                                                  instructor#altaAlumno
+                 instructor_baja_alumnos POST   /instructor/bajaAlumnos(.:format)                                                                 instructor#bajaAlumnos
+                  instructor_alta_prueba POST   /instructor/altaPrueba(.:format)                                                                  instructor#altaPrueba
+                  instructor_baja_prueba POST   /instructor/bajaPrueba(.:format)                                                                  instructor#bajaPrueba
+               instructor_baja_solicitud POST   /instructor/baja_solicitud/:solicitud_id(.:format)                                                instructor#baja_solicitud
+         instructor_update_estado_alumno PATCH  /instructor/update_estado_alumno(.:format)                                                        instructor#update_estado_alumno
+                                  indice GET    /indice(.:format)                                                                                 comun#indice
+                                  inicio GET    /inicio(.:format)                                                                                 comun#inicio
+                                  michon GET    /michon(.:format)                                                                                 comun#michon
+                             facturacion GET    /facturacion(.:format)                                                                            comun#facturacion
+                             rails_admin        /admin                                                                                            RailsAdmin::Engine
+                     new_usuario_session GET    /usuario/sign_in(.:format)                                                                        devise/sessions#new
+                         usuario_session POST   /usuario/sign_in(.:format)                                                                        devise/sessions#create
+                 destroy_usuario_session GET    /usuario/sign_out(.:format)                                                                       devise/sessions#destroy
+                    new_usuario_password GET    /usuario/password/new(.:format)                                                                   devise/passwords#new
+                   edit_usuario_password GET    /usuario/password/edit(.:format)                                                                  devise/passwords#edit
+                        usuario_password PATCH  /usuario/password(.:format)                                                                       devise/passwords#update
+                                         PUT    /usuario/password(.:format)                                                                       devise/passwords#update
+                                         POST   /usuario/password(.:format)                                                                       devise/passwords#create
+             cancel_usuario_registration GET    /usuario/cancel(.:format)                                                                         devise/registrations#cancel
+                new_usuario_registration GET    /usuario/sign_up(.:format)                                                                        devise/registrations#new
+               edit_usuario_registration GET    /usuario/edit(.:format)                                                                           devise/registrations#edit
+                    usuario_registration PATCH  /usuario(.:format)                                                                                devise/registrations#update
+                                         PUT    /usuario(.:format)                                                                                devise/registrations#update
+                                         DELETE /usuario(.:format)                                                                                devise/registrations#destroy
+                                         POST   /usuario(.:format)                                                                                devise/registrations#create
+                                    root GET    /                                                                                                 comun#inicio
+           rails_postmark_inbound_emails POST   /rails/action_mailbox/postmark/inbound_emails(.:format)                                           action_mailbox/ingresses/postmark/inbound_emails#create
+              rails_relay_inbound_emails POST   /rails/action_mailbox/relay/inbound_emails(.:format)                                              action_mailbox/ingresses/relay/inbound_emails#create
+           rails_sendgrid_inbound_emails POST   /rails/action_mailbox/sendgrid/inbound_emails(.:format)                                           action_mailbox/ingresses/sendgrid/inbound_emails#create
+     rails_mandrill_inbound_health_check GET    /rails/action_mailbox/mandrill/inbound_emails(.:format)                                           action_mailbox/ingresses/mandrill/inbound_emails#health_check
+           rails_mandrill_inbound_emails POST   /rails/action_mailbox/mandrill/inbound_emails(.:format)                                           action_mailbox/ingresses/mandrill/inbound_emails#create
+            rails_mailgun_inbound_emails POST   /rails/action_mailbox/mailgun/inbound_emails/mime(.:format)                                       action_mailbox/ingresses/mailgun/inbound_emails#create
+          rails_conductor_inbound_emails GET    /rails/conductor/action_mailbox/inbound_emails(.:format)                                          rails/conductor/action_mailbox/inbound_emails#index
+                                         POST   /rails/conductor/action_mailbox/inbound_emails(.:format)                                          rails/conductor/action_mailbox/inbound_emails#create
+       new_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/new(.:format)                                      rails/conductor/action_mailbox/inbound_emails#new
+      edit_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id/edit(.:format)                                 rails/conductor/action_mailbox/inbound_emails#edit
+           rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#show
+                                         PATCH  /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#update
+                                         PUT    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#update
+                                         DELETE /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#destroy
+new_rails_conductor_inbound_email_source GET    /rails/conductor/action_mailbox/inbound_emails/sources/new(.:format)                              rails/conductor/action_mailbox/inbound_emails/sources#new
+   rails_conductor_inbound_email_sources POST   /rails/conductor/action_mailbox/inbound_emails/sources(.:format)                                  rails/conductor/action_mailbox/inbound_emails/sources#create
+   rails_conductor_inbound_email_reroute POST   /rails/conductor/action_mailbox/:inbound_email_id/reroute(.:format)                               rails/conductor/action_mailbox/reroutes#create
+                      rails_service_blob GET    /rails/active_storage/blobs/redirect/:signed_id/*filename(.:format)                               active_storage/blobs/redirect#show
+                rails_service_blob_proxy GET    /rails/active_storage/blobs/proxy/:signed_id/*filename(.:format)                                  active_storage/blobs/proxy#show
+                                         GET    /rails/active_storage/blobs/:signed_id/*filename(.:format)                                        active_storage/blobs/redirect#show
+               rails_blob_representation GET    /rails/active_storage/representations/redirect/:signed_blob_id/:variation_key/*filename(.:format) active_storage/representations/redirect#show
+         rails_blob_representation_proxy GET    /rails/active_storage/representations/proxy/:signed_blob_id/:variation_key/*filename(.:format)    active_storage/representations/proxy#show
+                                         GET    /rails/active_storage/representations/:signed_blob_id/:variation_key/*filename(.:format)          active_storage/representations/redirect#show
+                      rails_disk_service GET    /rails/active_storage/disk/:encoded_key/*filename(.:format)                                       active_storage/disk#show
+               update_rails_disk_service PUT    /rails/active_storage/disk/:encoded_token(.:format)                                               active_storage/disk#update
+                    rails_direct_uploads POST   /rails/active_storage/direct_uploads(.:format)                                                    active_storage/direct_uploads#create
+
+Routes for RailsAdmin::Engine:
+  dashboard GET         /                                      rails_admin/main#dashboard
+      index GET|POST    /:model_name(.:format)                 rails_admin/main#index
+        new GET|POST    /:model_name/new(.:format)             rails_admin/main#new
+     export GET|POST    /:model_name/export(.:format)          rails_admin/main#export
+bulk_delete POST|DELETE /:model_name/bulk_delete(.:format)     rails_admin/main#bulk_delete
+bulk_action POST        /:model_name/bulk_action(.:format)     rails_admin/main#bulk_action
+       show GET         /:model_name/:id(.:format)             rails_admin/main#show
+       edit GET|PUT     /:model_name/:id/edit(.:format)        rails_admin/main#edit
+     delete GET|DELETE  /:model_name/:id/delete(.:format)      rails_admin/main#delete
+show_in_app GET         /:model_name/:id/show_in_app(.:format) rails_admin/main#show_in_app

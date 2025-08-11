@@ -79,3 +79,4 @@ gem 'sepa_king'
 gem 'sepa', github: 'conanite/sepa'
 
 gem "webpacker", "~> 5.4"
+gem 'simple_calendar'

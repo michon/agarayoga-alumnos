@@ -1,0 +1,13 @@
+<div class="card-footer">
+  <h6 class="fw-bold">Solicitudes:</h6>
+  <% clase.claseSolicitum.each do |solicitud| %>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <span><%= solicitud.usuario.nombre %></span>
+      <%= button_to "Eliminar",
+                    instructor_baja_solicitud_path(solicitud_id: solicitud.id, fecha: @fecha),
+                    method: :post,
+                    class: "btn btn-sm btn-outline-danger",
+                    form: { data: { turbo_confirm: "¿Eliminar esta solicitud?" } } %>
+    </div>
+  <% end %>
+</div>

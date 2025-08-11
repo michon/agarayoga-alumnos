@@ -1,0 +1,13 @@
+<div class="card-footer">
+  <h6 class="fw-bold">Pruebas:</h6>
+  <% clase.pruebas.each do |prueba| %>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <span><%= prueba.nombre %></span>
+      <%= button_to "Quitar",
+            instructor_baja_prueba_path(prueba_id: prueba.id, fecha: @fecha),
+            method: :post,
+            class: "btn btn-sm btn-outline-danger",
+            form: { data: { turbo_confirm: "¿Seguro que quieres eliminar la prueba '#{prueba.nombre}'?" } } %>
+    </div>
+  <% end %>
+</div>

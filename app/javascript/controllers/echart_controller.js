@@ -1,68 +1,92 @@
-import { Controller } from "@hotwired/stimulus";
-import * as echarts from "echarts";
+import { Controller } from "@hotwired/stimulus"
+import * as echarts from "echarts"
 
 export default class extends Controller {
-  initialize() {
-    try {
-      this.options = JSON.parse(this.element.dataset.echartOptions);
-      // Asegurar que las opciones tengan estructura mínima requerida
-      this.options = this.validateOptions(this.options);
-    } catch (error) {
-      console.error("Error parsing chart options:", error);
-      this.options = this.getDefaultOptions();
-    }
-  }
-
-  validateOptions(options) {
-    // Estructura mínima requerida
-    if (!options.xAxis) {
-      options.xAxis = { type: 'category' };
-    }
-    if (!options.yAxis) {
-      options.yAxis = { type: 'value' };
-    }
-    if (!options.series) {
-      options.series = [];
-    }
-    return options;
-  }
-
-  getDefaultOptions() {
-    return {
-      title: { text: 'Gráfico' },
-      xAxis: { type: 'category', data: ['A', 'B', 'C'] },
-      yAxis: { type: 'value' },
-      series: [{ type: 'bar', data: [1, 2, 3] }]
-    };
+  static values = {
+    years: Array,
+    months: Array,
+    data: Object
   }
 
   connect() {
-    this.initChart();
+    console.log("EChart controller connected", {
+      years: this.yearsValue,
+      months: this.monthsValue,
+      data: this.dataValue
+    })
+
+    this.initChart()
   }
 
   initChart() {
     if (!this.element.offsetWidth) {
-      setTimeout(() => this.initChart(), 100);
-      return;
+      setTimeout(() => this.initChart(), 100)
+      return
     }
 
     try {
-      this.chart = echarts.init(this.element);
-      this.chart.setOption(this.options);
-      window.addEventListener('resize', this.resizeChart.bind(this));
+      this.chart = echarts.init(this.element)
+      this.chart.setOption(this.buildOptions())
+
+      // Usar ResizeObserver para manejar cambios de tamaño
+      this.resizeObserver = new ResizeObserver(() => this.chart?.resize())
+      this.resizeObserver.observe(this.element)
     } catch (error) {
-      console.error("Chart initialization error:", error);
-      // Intento con opciones por defecto si falla
-      this.chart?.setOption(this.getDefaultOptions());
+      console.error("Error initializing chart:", error)
     }
   }
 
-  resizeChart() {
-    this.chart?.resize();
+  buildOptions() {
+    const monthNames = this.monthsValue.map(m => {
+      const monthIndex = parseInt(m, 10)
+      return this.getMonthName(monthIndex) || m
+    })
+
+    const series = this.yearsValue.map(year => ({
+      name: year,
+      type: 'bar',
+      data: this.monthsValue.map(month => this.dataValue[year]?.[month] || 0),
+      emphasis: { focus: 'series' }
+    }))
+
+    return {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: params => {
+          let result = params[0].axisValue
+          params.forEach(param => {
+            result += `<br/>${param.seriesName}: ${param.value.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'})}`
+          })
+          return result
+        }
+      },
+      legend: { data: this.yearsValue },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: {
+        type: 'category',
+        data: monthNames
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: value => value.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'})
+        }
+      },
+      series: series
+    }
+  }
+
+  getMonthName(monthIndex) {
+    const monthNames = [
+      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+    ]
+    return monthNames[monthIndex - 1] // -1 porque los meses van de 1 a 12
   }
 
   disconnect() {
-    window.removeEventListener('resize', this.resizeChart);
-    this.chart?.dispose();
+    this.chart?.dispose()
+    this.resizeObserver?.disconnect()
   }
 }

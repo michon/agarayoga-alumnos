@@ -1,0 +1,73 @@
+<div class="mobile-calendar">
+  <%= month_calendar(attribute: :diaHora, events: @clases_mes) do |date, clases| %>
+    <div class="day-container <%= 'today' if date == Date.today %>">
+      <div class="day-number"><%= date.day %></div>
+      
+      <% if clases.any? %>
+        <div class="classes-indicator">
+          <% clases.group_by(&:diaHora).each do |hora, clases_hora| %>
+            <%= link_to instructor_dia_path(date), class: "class-dot", 
+                        title: "#{clases_hora.size} clases a las #{hora.strftime('%H:%M')}" do %>
+              <span class="dot"></span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+.mobile-calendar {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.mobile-calendar .day-container {
+  height: 50px;
+  padding: 2px;
+  position: relative;
+  border: 1px solid #f0f0f0;
+}
+
+.mobile-calendar .today {
+  background-color: #e6f7ff;
+  font-weight: bold;
+}
+
+.mobile-calendar .day-number {
+  text-align: right;
+  padding-right: 3px;
+}
+
+.mobile-calendar .classes-indicator {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.mobile-calendar .class-dot {
+  display: block;
+  text-decoration: none;
+}
+
+.mobile-calendar .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #1890ff;
+}
+
+.mobile-calendar .table-header {
+  font-size: 12px;
+  padding: 5px 0;
+}
+
+/* Ajustes para días de otros meses */
+.mobile-calendar .prev-month, .mobile-calendar .next-month {
+  opacity: 0.5;
+}
+</style>

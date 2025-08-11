@@ -1,19 +1,11 @@
-// Importaciones básicas
-import '@rails/ujs'
-import '@popperjs/core'
-import 'bootstrap'
+// app/javascript/packs/application.js
+import { Application } from '@hotwired/stimulus'
+import AlumnosController from '../controllers/alumnos_controller'
 
-// Inicialización con Turbolinks
-document.addEventListener('turbolinks:load', () => {
-  // Inicializar dropdowns
-  document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(el => {
-    new bootstrap.Dropdown(el)
-  })
-})
+// Inicialización directa
+const application = Application.start()
+application.register('alumnos', AlumnosController)
 
-// Otras importaciones
-import * as echarts from 'echarts'
-import 'echarts/theme/dark'
-window.echarts = echarts
-
-import '../stylesheets/application.scss'
+// Solo para debug
+console.log('Stimulus iniciado con éxito')
+window.StimulusApp = application

@@ -1,0 +1,68 @@
+<%# Partial para las acciones de clase (agregar usuario, prueba, solicitum) %>
+<div class="modal fade" id="accionesModal<%= clase.id %>" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Acciones: <%= clase.diaHora.strftime("%H:%M") %></h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Pestañas para organizar las acciones -->
+        <ul class="nav nav-tabs mb-3">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#usuario<%= clase.id %>">Usuario</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#prueba<%= clase.id %>">Prueba</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#solicitum<%= clase.id %>">Solicitum</a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- Agregar Usuario -->
+          <div class="tab-pane fade show active" id="usuario<%= clase.id %>">
+            <%= form_with url: instructor_alta_alumno_path, method: :post do |f| %>
+              <%= f.hidden_field :clase_id, value: clase.id %>
+              <div class="mb-3">
+                <%= f.select :usuario_id,
+                            Usuario.activo.collect { |u| [u.nombre, u.id] },
+                            { prompt: "Selecciona alumno" },
+                            { class: "form-select form-select-sm", required: true } %>
+              </div>
+              <%= f.hidden_field :fecha, value: @fecha %>
+              <%= f.submit "Agregar a clase", class: "btn btn-success w-100 btn-sm" %>
+            <% end %>
+          </div>
+
+          <!-- Agregar Prueba -->
+          <div class="tab-pane fade" id="prueba<%= clase.id %>">
+            <%= form_with url: instructor_alta_prueba_path, method: :post do |f| %>
+              <%= f.hidden_field :clase_id, value: clase.id %>
+              <div class="mb-3">
+                <%= f.text_field :nombre, placeholder: "Nombre de la prueba", class: "form-control form-control-sm" %>
+              </div>
+              <%= f.submit "Crear prueba", class: "btn btn-info w-100 btn-sm" %>
+            <% end %>
+          </div>
+
+          <!-- Agregar Solicitum -->
+          <div class="tab-pane fade" id="solicitum<%= clase.id %>">
+            <%= form_with url: instructor_alta_solicitud_path, method: :post do |f| %>
+              <%= f.hidden_field :clase_id, value: clase.id %>
+              <div class="mb-3">
+                <%= f.select :usuario_id,
+                            Usuario.activo.collect { |u| [u.nombre, u.id] },
+                            { prompt: "Selecciona alumno" },
+                            { class: "form-select form-select-sm", required: true } %>
+              </div>
+              <%= f.hidden_field :fecha, value: @fecha %>
+              <%= f.submit "Agregar solicitum", class: "btn btn-warning w-100 btn-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

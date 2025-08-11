@@ -1,61 +1,9 @@
 <div class="container mt-5">
   <h2>Comparación Mensual Interanual</h2>
-  <div id="monthlyComparisonChart" style="width: 100%; height: 500px;"></div>
+  <div data-controller="echart"
+       data-echart-years-value="<%= @years.to_json %>"
+       data-echart-months-value="<%= @months.to_json %>"
+       data-echart-data-value="<%= @comparison_data.to_json %>"
+       style="width: 100%; height: 500px;"></div>
 </div>
 
-<%= javascript_include_tag 'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js' %>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const chartDom = document.getElementById('monthlyComparisonChart');
-  const myChart = echarts.init(chartDom);
-
-  const chartData = {
-    years: <%= raw @years.to_json %>,
-    months: <%= raw @months.to_json %>,
-    monthNames: <%= raw @months.map { |m| Date::ABBR_MONTHNAMES[m.to_i] }.to_json %>,
-    seriesData: <%= raw @comparison_data.to_json %>
-  };
-
-  const series = chartData.years.map(year => {
-    return {
-      name: year,
-      type: 'bar',
-      data: chartData.months.map(month => chartData.seriesData[year][month]),
-      emphasis: { focus: 'series' }
-    };
-  });
-
-  const option = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: { type: 'shadow' },
-      formatter: function(params) {
-        let result = params[0].axisValue;
-        params.forEach(param => {
-          result += `<br/>${param.seriesName}: ${param.value.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'})}`;
-        });
-        return result;
-      }
-    },
-    legend: { data: chartData.years },
-    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-    xAxis: {
-      type: 'category',
-      data: chartData.monthNames
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: {
-        formatter: function(value) {
-          return value.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'});
-        }
-      }
-    },
-    series: series
-  };
-
-  myChart.setOption(option);
-  window.addEventListener('resize', function() { myChart.resize(); });
-});
-</script>

@@ -17,6 +17,10 @@ class AlumnosPolicy
     usuario.rol == 'admin' || usuario.rol == 'michon'
   end
 
+  def puede_gestionar_clases?
+    usuario.rol == 'admin' || usuario.rol == 'michon' || usuario.rol == 'instructor'
+  end
+    
   def verProcesos?
     usuario.rol == 'admin' || usuario.rol == 'michon' || usuario.rol == 'instructor'
   end

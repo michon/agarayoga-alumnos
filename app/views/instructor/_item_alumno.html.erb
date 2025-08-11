@@ -1,0 +1,22 @@
+<div class="d-flex align-items-center">
+  <div class="form-check flex-grow-1">
+    <input class="form-check-input"
+           type="checkbox"
+           name="alumno_ids[]"
+           value="<%= ca.id %>"
+           id="alumno-<%= ca.id %>">
+    <label class="form-check-label text-<%= ca.claseAlumnoEstado.color %>"
+           for="alumno-<%= ca.id %>">
+      <%= ca.usuario.nombre %>
+    </label>
+  </div>
+  <%= link_to clase_alumno_path(ca),
+              method: :delete,
+              class: "btn btn-sm btn-outline-danger",
+              data: {
+                confirm: "¿Eliminar a #{ca.usuario.nombre} de la clase?",
+                turbo_method: :delete
+              } do %>
+    <i class="bi bi-trash"></i>
+  <% end %>
+</div>

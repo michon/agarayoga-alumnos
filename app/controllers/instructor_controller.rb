@@ -2,6 +2,9 @@ class InstructorController < ApplicationController
   def index
       @fechaHoy = Date.today
       @instructores = Instructor.all
+      @clases_mes = Clase.where(instructor_id: current_usuario.instructor.id)
+                     .where(diaHora: @fechaHoy.beginning_of_month..@fechaHoy.end_of_month)
+                     .order(:diaHora)
   end
 
   def show
@@ -40,8 +43,51 @@ class InstructorController < ApplicationController
          redirect_to instructor_index_path(), alert: "Este instructor aún no ha dado clases"
        end
   end
-
   #Presenta las clases del día para el instructor que esté logueado.
+  def dianuevo
+    @fecha = params[:fecha] ? Date.parse(params[:fecha]) : Date.today
+    @instructor = current_usuario.instructor
+    @clasesHoy = Clase.where(instructor: @instructor)
+                     .where("DATE(diaHora) = ?", @fecha)
+                     .order(:diaHora)
+                     .includes(:instructor,
+                              :claseAlumno => [:usuario, :claseAlumnoEstado],
+                              :claseSolicitum => [:usuario]) # Incluir solicitudes
+    @estados = ClaseAlumnoEstado.all
+  end
+  #Cambia el estado del alumno interactivamente.
+  #
+def update_estado_alumno
+  @clase_alumnos = ClaseAlumno.where(id: params[:alumno_id])
+  success = true
+  errors = []
+
+  # Actualizar cada registro individualmente
+  @clase_alumnos.each do |alumno|
+    unless alumno.update(claseAlumnoEstado_id: params[:nuevo_estado_id])
+      success = false
+      errors << "Error actualizando alumno #{alumno.id}: #{alumno.errors.full_messages.join(', ')}"
+    end
+  end
+
+  # Respuesta JSON
+  respond_to do |format|
+    if success
+      format.json { render json: { 
+        success: true, 
+        message: "Estados actualizados correctamente",
+        updates: @clase_alumnos.map { |a| { id: a.id, estado_id: a.claseAlumnoEstado_id } }
+      } }
+    else
+      format.json { render json: { 
+        success: false, 
+        errors: errors 
+      }, status: :unprocessable_entity }
+    end
+  end
+end
+
+# Presenta las clases del día para el instructor que esté logueado.
   def dia
       unless InstructorPolicy.new(current_usuario).verDia?
         render :file => "public/401.html", :status => :unauthorized
@@ -73,18 +119,18 @@ class InstructorController < ApplicationController
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaPrueba
       Prueba.find(params[:prueba_id]).destroy
-      redirect_to instructor_dia_url(params[:fecha])
+      redirect_to instructor_dianuevo_url(params[:fecha])
   end
 
   # Método POST
   # Recibe un nombre, movil y id de la clase y cursa un alta
   def altaPrueba
-      fecha = params[:fecha]
-
-      Prueba.new(nombre: params[:nombre], movil: params[:movil], clase_id: params[:clase_id]).save
-      redirect_to instructor_dia_url(params[:fecha])
+    if Prueba.new(nombre: params[:nombre], movil: params[:movil], clase_id: params[:clase_id]).save
+      redirect_back fallback_location: root_path, notice: 'Prueba agregada'
+    else
+      redirect_back fallback_location: root_path, alert: 'Error al agregar prueba'
+    end
   end
-
   # Método POST
   # Recibe una fecha y envía a la presentación de ese día
   def seleccionDia
@@ -102,20 +148,98 @@ class InstructorController < ApplicationController
   # Método POST
   # Recibe una Modelo ClaseAlumno y lo da de alta en la tabla
   def altaAlumno
-      clAlmParam = params[:clase_alumno]
+  # Versión segura que maneja parámetros nulos
+    usuario_id = params[:usuario_id] || params.dig(:clase_alumno, :usuario_id)
+    clase_id = params[:clase_id] || params.dig(:clase_alumno, :clase_id)
 
-      fecha = params[:fecha]
+    # Crear registro con manejo de errores
+    begin
+      clAlm = ClaseAlumno.new(
+        usuario_id: usuario_id,
+        clase_id: clase_id,
+        claseAlumnoEstado_id: 1, # Estado por defecto, ajusta según tu lógica
+        diaHora: Clase.find(clase_id).diaHora
+      )
 
-      clAlm = ClaseAlumno.new
-      clAlm.usuario_id = clAlmParam[:usuario_id]
-      clAlm.clase_id = clAlmParam[:clase_id]
-      clAlm.claseAlumnoEstado_id = clAlmParam[:claseAlumnoEstado_id]
-      clAlm.diaHora = Clase.find(clAlmParam[:clase_id]).diaHora
-      clAlm.instructor_id = Clase.find(clAlmParam[:clase_id]).instructor_id
-      clAlm.save
-
-      redirect_to instructor_dia_url(params[:fecha])
+      if clAlm.save
+        redirect_to instructor_dianuevo_path(fecha: params[:fecha]), notice: 'Alumno agregado correctamente'
+      else
+        redirect_to instructor_dianuevo_path(fecha: params[:fecha]), alert: "Error: #{clAlm.errors.full_messages.join(', ')}"
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      redirect_to instructor_dianuevo_path(fecha: params[:fecha]), alert: "Clase no encontrada"
+    end
   end
+
+
+# Añade estas acciones al final de tu AlumnosController
+
+# POST /alumnos/:clase_id/alta_solicitud
+def alta_solicitud
+  unless AlumnosPolicy.new(current_usuario).puede_gestionar_clases?
+    render file: "public/401.html", status: :unauthorized
+    return
+  end
+
+  @clase = Clase.find(params[:clase_id])
+  @solicitud = @clase.claseSolicitum.new(
+    usuario_id: params[:usuario_id]
+  )
+
+  if @solicitud.save
+    redirect_back fallback_location: root_path, notice: 'Solicitud añadida correctamente'
+  else
+    redirect_back fallback_location: root_path, 
+                  alert: "Error al añadir solicitud: #{@solicitud.errors.full_messages.join(', ')}"
+  end
+end
+
+# POST /alumnos/:clase_id/baja_solicitud/:id
+def baja_solicitud
+  @solicitud = ClaseSolicitum.find(params[:solicitud_id])
+  fecha = params[:fecha] || Date.today.to_s
+
+  if @solicitud.destroy
+    redirect_to instructor_dianuevo_path(fecha: fecha), notice: 'Solicitud eliminada correctamente'
+  else
+    redirect_to instructor_dianuevo_path(fecha: fecha), alert: 'Error al eliminar la solicitud'
+  end
+rescue ActiveRecord::RecordNotFound
+  redirect_to instructor_dianuevo_path(fecha: fecha), alert: 'Solicitud no encontrada'
+end
+# GET /alumnos/:clase_id/solicitudes
+def solicitudes
+  unless AlumnosPolicy.new(current_usuario).puede_gestionar_clases?
+    render file: "public/401.html", status: :unauthorized
+    return
+  end
+
+  @clase = Clase.includes(claseSolicitum: :usuario).find(params[:clase_id])
+  render json: @clase.claseSolicitum.map { |s| 
+    { id: s.id, usuario: s.usuario.nombre, usuario_id: s.usuario_id }
+  }
+end
+
+
+def altaSolicitud
+  begin
+    @solicitud = ClaseSolicitum.new(
+      clase_id: params[:clase_id],
+      usuario_id: params[:usuario_id]
+    )
+
+    if @solicitud.save
+      redirect_to instructor_dianuevo_path(fecha: params[:fecha]), notice: 'Solicitum agregado correctamente'
+    else
+      redirect_to instructor_dianuevo_path(fecha: params[:fecha]),
+                  alert: "Error: #{@solicitud.errors.full_messages.join(', ')}"
+    end
+  rescue => e
+    redirect_to instructor_dianuevo_path(fecha: params[:fecha]),
+                alert: "Error al procesar la solicitud: #{e.message}"
+  end
+end
+
   private
 
   def clase_vacia

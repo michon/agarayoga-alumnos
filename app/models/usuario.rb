@@ -10,6 +10,7 @@ class Usuario < ApplicationRecord
   has_one_attached :image, :dependent => :destroy
 
   scope :activo, -> {where(debaja: false)}
+
   scope :inactivos, -> {where(debaja: true)}
   default_scope { order(nombre: :asc) }
 

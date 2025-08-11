@@ -1,0 +1,13 @@
+<div class="card-header d-flex justify-content-between align-items-center"
+     style="background-color: <%= clase.instructor.color %>; color: white;">
+  <div>
+    <strong><%= clase.diaHora.strftime("%H:%M") %></strong>
+    <small class="d-block"><%= clase.instructor.nombre %></small>
+  </div>
+  <span class="badge bg-white text-dark">
+    <%= clase.asistentes %> <i class="bi bi-people"></i>
+  </span>
+  <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#accionesModal<%= clase.id %>">
+    <i class="bi bi-plus-circle"></i> Acciones
+  </button>
+</div>
