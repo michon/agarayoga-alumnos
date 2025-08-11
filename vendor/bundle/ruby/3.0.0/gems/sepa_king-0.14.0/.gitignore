@@ -1,9 +1,0 @@
-nbproject/*
-.rvmrc
-coverage/*
-rdoc/*
-pkg/*
-.DS_Store
-Gemfile*.lock
-# tmp disable
-docs/
