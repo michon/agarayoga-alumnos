@@ -30,7 +30,7 @@
                     <ul class="submenu dropdown-menu">
                       <li> <%= link_to 'Listado alumnos',      alumnos_path, class: "dropdown-item"  %> </li>
                       <li> <%= link_to 'Listado alumnos ODS',  alumnos_pdfAlumnos_path, class: "dropdown-item"  %> </li>
-                      <li> <%= link_to 'Listado clientes', alumnos_clientes_path, class: "dropdown-item"  %> </li>
+                      <li> <%= link_to 'Listado clientes', clientes_alumnos_path, class: "dropdown-item"  %> </li>
                       <li> <%= link_to "Últimas incorporaciones", alumnos_business_get_path(:fecha => DateTime.now), method: :post, class: "dropdown-item"  %></li>
                       <li> <%= link_to "Procesos", alumnos_procesos_get_path(Proceso.last.id), method: :post, class: "dropdown-item"  %></li>
                     </ul>

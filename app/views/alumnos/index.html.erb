@@ -4,11 +4,11 @@
   <!-- Barra de búsqueda -->
   <div class="card mb-4 shadow-sm">
     <div class="card-body">
-      <%= search_form_for(@q, url: alumnos_index_path, method: :get) do |f| %>
+      <%= search_form_for(@q, url: alumnos_path, method: :get) do |f| %>
         <div class="input-group">
           <%= f.search_field :nombre_cont, class: "form-control", placeholder: "Buscar alumno..." %>
           <%= f.submit 'Buscar', class: "btn btn-primary" %>
-          <%= link_to 'Limpiar', alumnos_index_path, class: "btn btn-outline-secondary" %>
+          <%= link_to 'Limpiar', alumnos_path, class: "btn btn-outline-secondary" %>
         </div>
       <% end %>
     </div>
@@ -32,11 +32,14 @@
       <div class="card-body">
         <!-- Botones principales -->
         <div class="d-flex flex-wrap gap-2 mb-3">
-          <%= link_to "📄 Ficha PDF", alumnos_path(alumno, format: :pdf), class: "btn btn-sm btn-outline-primary" %>
           <%= link_to "📅 Clases Agendadas", "#clases-#{alumno.id}", class: "btn btn-sm btn-outline-info", data: { bs_toggle: "collapse" } %>
+          <%= link_to "📋 Horario", "#horario-#{alumno.id}", class: "btn btn-sm btn-outline-warning", data: { bs_toggle: "collapse" } %>
           <%= link_to "📤 WhatsApp", "#whatsapp-#{alumno.id}", class: "btn btn-sm btn-outline-success", data: { bs_toggle: "collapse" } %>
+          <%= link_to "🔑 Generar Clave", "#", class: "btn btn-sm btn-outline-info generar-clave-btn", data: { alumno_id: alumno.id } %>
           <%= link_to "🕒 Historial", "#historial-#{alumno.id}", class: "btn btn-sm btn-outline-secondary", data: { bs_toggle: "collapse" } %>
-          <%= link_to "👁‍🗨 Ver", alumnos_path(alumno), class: "btn btn-sm btn-outline-dark" %>
+          <%= link_to "💰 Recibos", "#recibos-#{alumno.id}", class: "btn btn-sm btn-outline-danger", data: { bs_toggle: "collapse" } %>
+          <%= link_to "👁‍🗨 Ver", alumno_path(alumno.id), class: "btn btn-sm btn-outline-dark" %>
+          <%= link_to "📄 Ficha PDF", alumnos_path(alumno, format: :pdf), class: "btn btn-sm btn-outline-primary" %>
         </div>
 
         <!-- Panel de CLASES AGENDADAS (colapsable) -->
@@ -113,6 +116,128 @@
           </div>
         </div>
 
+        <!-- Panel de HORARIO (colapsable) -->
+        <div class="collapse mb-3" id="horario-<%= alumno.id %>">
+          <div class="card card-body">
+            <h6><i class="bi bi-calendar-week"></i> Horario del Alumno</h6>
+            <% horarios = @horarios_por_alumno[alumno.id] %>
+            <% if horarios&.any? %>
+              <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Día</th>
+                      <th>Hora</th>
+                      <th>Aula</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% # Agrupar horarios por día de la semana %>
+                    <% dias_semana = {
+                      1 => "Lunes",
+                      2 => "Martes",
+                      3 => "Miércoles",
+                      4 => "Jueves",
+                      5 => "Viernes",
+                      6 => "Sábado",
+                      7 => "Domingo"
+                    } %>
+                    
+                    <% horarios.group_by { |h| h[:dia_semana] }.each do |dia, horarios_dia| %>
+                      <% horarios_dia.sort_by { |h| [h[:hora], h[:minuto]] }.each_with_index do |horario, index| %>
+                        <tr>
+                          <% if index == 0 %>
+                            <td rowspan="<%= horarios_dia.size %>" class="align-middle">
+                              <strong><%= dias_semana[dia] || "Día #{dia}" %></strong>
+                            </td>
+                          <% end %>
+                          <td><%= sprintf('%02d:%02d', horario[:hora], horario[:minuto]) %></td>
+                          <td><%= horario[:aula]&.nombre || 'Sin aula asignada' %></td>
+                        </tr>
+                      <% end %>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% else %>
+              <p class="text-muted">El alumno no tiene horarios asignados.</p>
+            <% end %>
+          </div>
+        </div>
+
+<!-- Panel de RECIBOS (colapsable) -->
+<div class="collapse mb-3" id="recibos-<%= alumno.id %>">
+  <div class="card card-body">
+    <h6><i class="bi bi-receipt"></i> Últimos 12 Recibos Emitidos</h6>
+    <% recibos = @recibos_por_alumno[alumno.id] %>
+    <% if recibos&.any? %>
+      <p class="text-muted small">Mostrando los 12 recibos más recientes</p>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Vencimiento</th>
+              <th>Concepto</th>
+              <th>Importe</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% recibos.each do |recibo| %>
+              <tr>
+                <td><%= recibo.vencimiento.strftime("%d/%m/%Y") if recibo.vencimiento %></td>
+                <td><%= recibo.concepto %></td>
+                <td><%= number_to_currency(recibo.importe, unit: "€", separator: ",", delimiter: ".", format: "%n %u") %></td>
+                <td>
+                  <span class="badge bg-<%= recibo.reciboEstado.color %>">
+                    <%= recibo.reciboEstado.nombre %>
+                  </span>
+                </td>
+                <td>
+                  <%= link_to "👁‍🗨", recibo_path(recibo), class: "btn btn-sm btn-outline-info" if defined?(recibo_path) %>
+                  <%= link_to "📄", recibo_path(recibo, format: :pdf), class: "btn btn-sm btn-outline-primary" if defined?(recibo_path) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr class="table-active">
+              <td colspan="2"><strong>Total</strong></td>
+              <td><strong><%= number_to_currency(recibos.sum(:importe), unit: "€", separator: ",", delimiter: ".", format: "%n %u") %></strong></td>
+              <td colspan="2">
+                <span class="badge bg-info">
+                  <%= recibos.where(reciboEstado_id: 2).count %>/<%= recibos.count %> pagados
+                </span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      
+      <!-- Enlace para ver todos los recibos si hay más de 12 -->
+      <% total_recibos = alumno.recibos.count %>
+      <% if total_recibos > 12 %>
+        <div class="mt-2">
+          <%= link_to "📋 Ver todos los recibos (#{total_recibos} total)", recibos_path(q: { usuario_id_eq: alumno.id }), class: "btn btn-sm btn-outline-secondary" if defined?(recibos_path) %>
+        </div>
+      <% end %>
+      
+    <% else %>
+      <p class="text-muted">No se han emitido recibos para este alumno.</p>
+    <% end %>
+    
+    <% if defined?(new_recibo_path) %>
+      <div class="mt-3">
+        <%= link_to "➕ Emitir nuevo recibo", new_recibo_path(usuario_id: alumno.id), class: "btn btn-sm btn-success" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+
+
         <!-- Panel de HISTORIAL (colapsable) -->
         <div class="collapse" id="historial-<%= alumno.id %>">
           <div class="card card-body">
@@ -137,6 +262,122 @@
     </div>
   <% end %>
 </div>
+
+<!-- Modal para mostrar la clave generada -->
+<div class="modal fade" id="claveModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Clave Generada</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <strong>Clave generada:</strong> <span id="claveGenerada"></span>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Mensaje para WhatsApp:</label>
+          <textarea class="form-control" id="mensajeWhatsApp" rows="6" readonly></textarea>
+        </div>
+        <button class="btn btn-sm btn-secondary" onclick="copiarMensajeWhatsApp()">
+          📋 Copiar mensaje
+        </button>
+        <a href="#" class="btn btn-sm btn-success" id="enviarWhatsAppBtn" style="display: none;">
+          📤 Enviar por WhatsApp
+        </a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Función para generar claves
+document.querySelectorAll('.generar-clave-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const alumnoId = this.dataset.alumnoId;
+
+    if (!confirm('¿Generar una nueva clave para este alumno? La clave actual se reemplazará.')) {
+      return;
+    }
+
+    // Mostrar loading
+    const originalText = this.innerHTML;
+    this.innerHTML = '⏳ Generando...';
+    this.disabled = true;
+
+    fetch(`/alumnos/${alumnoId}/generar_clave`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Mostrar modal con la información
+        document.getElementById('claveGenerada').textContent = data.clave;
+        document.getElementById('mensajeWhatsApp').value = data.mensaje_whatsapp;
+
+        // Configurar botón de WhatsApp si hay teléfono
+        const whatsappBtn = document.getElementById('enviarWhatsAppBtn');
+        if (data.telefono) {
+          const textoCodificado = encodeURIComponent(data.mensaje_whatsapp).replace(/\+/g, '%20');
+          const telefonoLimpio = '34' + data.telefono.replace(/\D/g, '');
+          whatsappBtn.href = `https://wa.me/${telefonoLimpio}?text=${textoCodificado}`;
+          whatsappBtn.style.display = 'inline-block';
+          
+          // Añadir evento para abrir en app nativa
+          whatsappBtn.onclick = function(e) {
+            e.preventDefault();
+            window.open(`whatsapp://send?phone=${telefonoLimpio}&text=${textoCodificado}`, '_blank');
+            setTimeout(() => {
+              window.open(`https://web.whatsapp.com/send?phone=${telefonoLimpio}&text=${textoCodificado}`, '_blank');
+            }, 500);
+          };
+        } else {
+          whatsappBtn.style.display = 'none';
+        }
+
+        // Mostrar modal
+        new bootstrap.Modal(document.getElementById('claveModal')).show();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error al generar la clave');
+    })
+    .finally(() => {
+      // Restaurar botón
+      this.innerHTML = originalText;
+      this.disabled = false;
+    });
+  });
+});
+
+function copiarMensajeWhatsApp() {
+  const mensaje = document.getElementById('mensajeWhatsApp');
+  mensaje.select();
+  document.execCommand('copy');
+  alert('Mensaje copiado al portapapeles ✅');
+}
+
+function copyToClipboard(elementId) {
+  const element = document.getElementById(elementId);
+  const text = element.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Texto copiado al portapapeles ✅");
+  });
+}
+</script>
+
 
 <script>
   function copyToClipboard(elementId) {

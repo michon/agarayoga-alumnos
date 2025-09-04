@@ -6,7 +6,7 @@
       <% if clases.any? %>
         <div class="classes-indicator">
           <% clases.group_by(&:diaHora).each do |hora, clases_hora| %>
-            <%= link_to instructor_dia_path(date), class: "class-dot", 
+            <%= link_to instructor_dianuevo_path(date), class: "class-dot", 
                         title: "#{clases_hora.size} clases a las #{hora.strftime('%H:%M')}" do %>
               <span class="dot"></span>
             <% end %>

@@ -135,7 +135,7 @@ end
   # Recibe una fecha y envía a la presentación de ese día
   def seleccionDia
       fecha = params[:fecha]
-      redirect_to instructor_dia_url(fecha)
+      redirect_to instructor_dianuevo_url(fecha)
   end
 
   # Método POST

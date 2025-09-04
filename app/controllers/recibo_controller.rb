@@ -343,22 +343,78 @@ class ReciboController < ApplicationController
 
   def pagos
     @q = Recibo.ransack(params[:q])
-    
-    # Filtros manuales para año/mes
+
+    # Filtros por defecto (mes/año actual)
     @selected_year = params[:year] || Date.current.year
-    @selected_month = params[:mes]
+    @selected_month = params[:mes] || Date.current.month
+    @selected_estado = params.dig(:q, :reciboEstado_id_eq) || 1
 
-    # Aplicar todos los filtros
     @recibos_filtrados = @q.result
-    @recibos_filtrados = @recibos_filtrados.where("YEAR(vencimiento) = ?", @selected_year) if @selected_year.present?
-    @recibos_filtrados = @recibos_filtrados.where("MONTH(vencimiento) = ?", @selected_month) if @selected_month.present?
+      .where("YEAR(vencimiento) = ?", @selected_year)
+      .where("MONTH(vencimiento) = ?", @selected_month)
+      .where(reciboEstado_id: @selected_estado)
+      .includes(:usuario, :reciboEstado)
+      .order(:vencimiento).order(serie: :desc).order(:nombre)
 
-    @recibos_filtrados = @recibos_filtrados.includes(:usuario, :reciboEstado)
-                         .order(:reciboEstado_id)
-    
     @estados_recibo = ReciboEstado.all
   end
 
+
+  def estado
+    recibo = Recibo.find(params[:id])
+    estado_anterior = recibo.reciboEstado_id
+    nuevo_estado = params[:estado].to_i
+
+    if recibo.update(reciboEstado_id: nuevo_estado)
+      # Lógica de apunte en caja
+      importe = calcular_importe(recibo, estado_anterior, nuevo_estado)
+      crear_apunte_caja(recibo, estado_anterior, nuevo_estado, importe) if importe != 0
+
+      # Usar filtro_params para los parámetros permitidos
+      redirect_params = {
+        q: filtro_params[:q],
+        year: filtro_params[:year],
+        mes: filtro_params[:mes],
+        notice: "Recibo ##{recibo.id} de #{recibo.usuario.nombre} cambiado de " \
+                "#{ReciboEstado.find(estado_anterior).nombre} a " \
+                "#{recibo.reciboEstado.nombre}"
+      }.compact
+
+      redirect_to recibo_pagos_path(redirect_params)
+    else
+      redirect_to recibo_pagos_path(
+        q: filtro_params[:q],
+        year: filtro_params[:year],
+        mes: filtro_params[:mes],
+        alert: "Error al cambiar el estado del recibo"
+      )
+    end
+  end
+
+
+  def cambiar_estado
+    unless params[:recibo_ids].blank?
+      recibos = Recibo.find(params[:recibo_ids])
+      nuevo_estado = params[:nuevo_estado].to_i
+      
+      recibos.each do |recibo|
+        estado_anterior = recibo.reciboEstado_id
+        recibo.reciboEstado_id = nuevo_estado
+        
+        if recibo.save
+          # Realizar el apunte en caja
+          importe = calcular_importe(recibo, estado_anterior, nuevo_estado)
+          crear_apunte_caja(recibo, estado_anterior, nuevo_estado, importe) if importe != 0
+        end
+      end
+      
+      redirect_to recibo_pagos_path(q: params[:q], year: params[:year], mes: params[:mes]), 
+                  notice: "Estados actualizados correctamente"
+    else
+      redirect_to recibo_pagos_path(q: params[:q], year: params[:year], mes: params[:mes]), 
+                  alert: "No se seleccionaron recibos"
+    end
+  end
 
 
   def busqueda
@@ -407,7 +463,7 @@ class ReciboController < ApplicationController
     redirect_to remesa_show_path(rcb.remesa_id)
   end
 
-  def estado
+  def estado_antiguo_para_borrar
     if params[:estado].present?
       estado = params[:estado]
       rcb = Recibo.find(params[:id])
@@ -442,13 +498,72 @@ class ReciboController < ApplicationController
     end
   end
 
+
+  private
+
+    def calcular_importe(recibo, estado_anterior, nuevo_estado)
+      # 1 = EMITIDO, 2 = PAGADO, 3 = DEVUELTO
+      if (estado_anterior == 1 || estado_anterior == 3) && nuevo_estado == 2
+        Money.new((recibo.importe * 100), 'eur') # PAGADO: importe positivo
+      elsif estado_anterior == 2 && (nuevo_estado == 1 || nuevo_estado == 3)
+        Money.new((recibo.importe * (-100)), 'eur') # DESHACER PAGO: importe negativo
+      else
+        Money.new(0, 'eur') # Otros cambios no afectan a la caja
+      end
+    end
+
+    def crear_apunte_caja(recibo, estado_anterior, nuevo_estado, importe)
+      estados = ReciboEstado.all.pluck(:nombre)
+
+      apunte = Caja.new(
+        fecha: DateTime.now,
+        concepto: "#{recibo.usuario.nombre}. Cambio del estado del recibo #{recibo.id} " +
+                  "de #{estados[estado_anterior-1]} a #{estados[nuevo_estado-1]}",
+        usuario_id: recibo.usuario_id,
+        importe: importe
+      )
+
+      # Calcular el total acumulado
+      ultimo_apunte = Caja.last
+      apunte.total = ultimo_apunte ? ultimo_apunte.total + importe : importe
+
+      apunte.save
+    end
+
+    def filtro_params
+        params.permit(
+          :authenticity_token,
+          :commit,
+          :busquedaNombre,
+          :busquedaEstado,
+          :busquedaMes,
+          :year,
+          :mes,
+          :nuevo_estado,
+          date: [:busquedaMes],
+          rcb_ids: [],
+          recibo: [],
+          rcb: [],
+          usr: [],
+          cuota: [],
+          fechaFin: [],
+          fechaInicio: [],
+          q: [
+            :usuario_nombre_cont,
+            :reciboEstado_id_eq,
+            :vencimiento_eq,
+            :importe_eq,
+            :id_eq,
+            :s # parámetro de búsqueda global de Ransack
+          ]
+        ).to_h.with_indifferent_access
+    end
+
   protected
 
     def configure_permitted_parameters
-      params.permit(:authenticity_token, :commit, :busquedaNombre, :busquedaEstado,
-                    :busquedaMes, date: [:busquedaMes],
-                    rcb_ids: [], recibo: [], rcb: [],
-                    usr: [], cuota: [], fechaFin: [], fechaInicio: [])
+      filtro_params
     end
+
 
 end

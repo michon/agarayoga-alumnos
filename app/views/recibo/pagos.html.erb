@@ -1,24 +1,24 @@
-<h1>Filtro de Recibos</h1>
+<% content_for :title,  "rcb - Pagos" %>
 
 <%= form_tag recibo_pagos_path, method: :get do %>
   <div class="row mb-3">
     <!-- Filtro por Nombre -->
     <div class="col-md-4">
       <%= label_tag 'q[usuario_nombre_cont]', "Nombre", class: "form-label" %>
-      <%= text_field_tag 'q[usuario_nombre_cont]', 
+      <%= text_field_tag 'q[usuario_nombre_cont]',
             params.dig(:q, :usuario_nombre_cont),
             class: "form-control",
             placeholder: "Buscar por nombre..." %>
     </div>
 
     <!-- Filtro por Estado -->
-<div class="col-md-3">
-  <%= label_tag 'q[reciboEstado_id_eq]', "Estado", class: "form-label" %>
-  <%= select_tag 'q[reciboEstado_id_eq]',
-        options_from_collection_for_select(@estados_recibo, 'id', 'nombre', params.dig(:q, :reciboEstado_id_eq)),
-        include_blank: 'Todos los estados',
-        class: "form-control" %>
-</div>
+    <div class="col-md-2">
+      <%= label_tag 'q[reciboEstado_id_eq]', "Estado", class: "form-label" %>
+      <%= select_tag 'q[reciboEstado_id_eq]',
+            options_from_collection_for_select(@estados_recibo, 'id', 'nombre', @selected_estado),
+            include_blank: 'Todos',
+            class: "form-control" %>
+    </div>
 
     <!-- Filtro por Año -->
     <div class="col-md-2">
@@ -26,54 +26,92 @@
       <%= select_tag :year,
             options_for_select(
               (2020..Date.current.year).to_a.reverse,
-              params[:year] || Date.current.year
+              @selected_year
             ),
             class: "form-control" %>
     </div>
 
     <!-- Filtro por Mes -->
-<div class="col-md-3">
-  <%= label_tag :mes, "Mes", class: "form-label" %>
-  <%= select_tag :mes,
-        options_for_select(
-          (1..12).map { |m| [I18n.t('date.month_names')[m], m] },
-          params[:mes]
-        ),
-        include_blank: 'Todos los meses',
-        class: "form-control" %>
-</div>
+    <div class="col-md-2">
+      <%= label_tag :mes, "Mes", class: "form-label" %>
+      <%= select_tag :mes,
+            options_for_select(
+              (1..12).map { |m| [I18n.t('date.month_names')[m], m] },
+              @selected_month
+            ),
+            class: "form-control" %>
+    </div>
 
-  <div class="row mb-4">
-    <div class="col">
+    <!-- Botones de acción -->
+    <div class="col-md-2 d-flex align-items-end">
       <%= submit_tag "Filtrar", class: "btn btn-primary me-2" %>
       <%= link_to "Limpiar", recibo_pagos_path, class: "btn btn-outline-secondary" %>
     </div>
   </div>
 <% end %>
 
-
-
+<% if notice %>
+  <div class="alert alert-success"><%= notice %></div>
+<% end %>
 
 <table class="table table-striped">
   <thead>
     <tr>
-      <th><%= sort_link(@q, :usuario_nombre, "Usuario") %></th>
-      <th><%= sort_link(@q, :reciboEstado_nombre, "Estado") %></th>
-      <th><%= sort_link(@q, :vencimiento, "Fecha") %></th>
-      <th><%= sort_link(@q, :importe, "Importe") %></th>
+      <th></th>
+      <th>Usuario</th>
+      <th>Estado</th>
+      <th>Vencimiento</th>
+      <th>Importe</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
     <% @recibos_filtrados.each do |recibo| %>
       <tr>
+        <td>
+          <% color_indicador = case recibo.serie
+                               when 'A' then 'success'
+                               when 'B' then 'warning'
+                               when 'C' then 'danger'
+                               when 'D' then 'info'
+                               else 'secondary'
+                               end %>
+          <span class="color-indicator bg-<%= color_indicador %>"
+                title="Serie: <%= recibo.serie %>">
+          </span>
+        </td>
         <td><%= recibo.usuario.nombre %></td>
-        <td><span class="badge" style="background-color:<%= recibo.reciboEstado.color %>">
+        <td>
+          <span class="badge text-<%= recibo.reciboEstado.color %>">
             <%= recibo.reciboEstado.nombre %>
           </span>
         </td>
         <td><%= recibo.vencimiento.strftime("%d/%m/%Y") if recibo.vencimiento %></td>
         <td><%= number_to_currency(recibo.importe, unit: "€") %></td>
+        <td>
+          <%= link_to "Pagar", recibo_estado_path(recibo, 2, q: filtro_params[:q], year: filtro_params[:year], mes: filtro_params[:mes]),
+                      method: :get,
+                      class: "btn btn-sm #{recibo.reciboEstado_id == 2 ? 'btn-success disabled' : 'btn-outline-success'}" %>
+
+          <%= link_to "Devolver", recibo_estado_path(recibo, 3, q: filtro_params[:q], year: filtro_params[:year], mes: filtro_params[:mes]),
+                      method: :get,
+                      class: "btn btn-sm #{recibo.reciboEstado_id == 3 ? 'btn-warning disabled' : 'btn-outline-warning'}" %>
+
+          <%= link_to "Emitir", recibo_estado_path(recibo, 1, q: filtro_params[:q], year: filtro_params[:year], mes: filtro_params[:mes]),
+                      method: :get,
+                      class: "btn btn-sm #{recibo.reciboEstado_id == 1 ? 'btn-info disabled' : 'btn-outline-info'}" %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+
+<script>
+  // JavaScript para seleccionar/deseleccionar todos los checkboxes
+  document.getElementById('select_all').addEventListener('click', function() {
+    const checkboxes = document.querySelectorAll('.recibo-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = this.checked;
+    });
+  });
+</script>

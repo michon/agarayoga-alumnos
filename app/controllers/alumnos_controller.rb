@@ -7,17 +7,38 @@ class AlumnosController < ApplicationController
       unless AlumnosPolicy.new(current_usuario).verIndex?
         render :file => "public/401.html", :status => :unauthorized
       end
-        @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
-        @alumnos = @q.result(distinct: true)
-        @clases = ClaseAlumno.where(diaHora: Date.today.beginning_of_day..)
-        @fechaInicio = Date.today.beginning_of_month
-        @fechaHoy = Date.today.next_month
 
-        # Prepara el texto de WhatsApp para cada alumno
-        @whatsapp_texts = {}
-        @alumnos.each do |alumno|
-          @whatsapp_texts[alumno.id] = generate_whatsapp_text(alumno)
+      @q = Usuario.where(debaja: [false, nil]).ransack(params[:q])
+      @alumnos = @q.result(distinct: true)
+      @clases = ClaseAlumno.where(diaHora: Date.today.beginning_of_day..)
+      @fechaInicio = Date.today.beginning_of_month
+      @fechaHoy = Date.today.next_month
+
+      # Prepara el texto de WhatsApp para cada alumno
+      @whatsapp_texts = {}
+      @alumnos.each do |alumno|
+        @whatsapp_texts[alumno.id] = generate_whatsapp_text(alumno)
+      end
+
+      # Pre-cargar los horarios de los alumnos para evitar el problema N+1
+      @horarios_por_alumno = {}
+      @alumnos.includes(horarioAlumno: :horario).each do |alumno|
+        @horarios_por_alumno[alumno.id] = alumno.horarioAlumno.map do |ha|
+          {
+            horario: ha.horario,
+            dia_semana: ha.horario.diaSemana,
+            hora: ha.horario.hora,
+            minuto: ha.horario.minuto,
+            aula: ha.horario.aula
+          }
         end
+      end
+
+      # AÑADIR ESTO: Pre-cargar los últimos 12 recibos de los alumnos ordenados por fecha (más reciente primero)
+      @recibos_por_alumno = {}
+      @alumnos.includes(:recibos).each do |alumno|
+        @recibos_por_alumno[alumno.id] = alumno.recibos.order(vencimiento: :desc, created_at: :desc).limit(12)
+      end
   end
 
   def clientes
@@ -155,7 +176,7 @@ class AlumnosController < ApplicationController
             usr.errors.full_messages
         end
       end # if usuario.exists?
-      redirect_to alumnos_clientes_path, alert: alerta + "Alumno actualizado "
+      redirect_to clientes_alumnos_path, alert: alerta + "Alumno actualizado "
   end
 
   def procesos
@@ -323,6 +344,52 @@ def ficha
       redirect_to alumnos_enhorario_path
   end
 
+
+  def generar_clave
+    @alumno = Usuario.find(params[:id])
+
+    unless AlumnosPolicy.new(current_usuario).puede_editar?(@alumno)
+      render json: { error: "No autorizado" }, status: :unauthorized
+      return
+    end
+
+    nueva_clave = @alumno.establecer_clave_temporal
+
+    if @alumno.save
+      # Prepara el mensaje de WhatsApp
+      mensaje_whatsapp = generar_mensaje_bienvenida(@alumno, nueva_clave)
+
+      render json: {
+        success: true,
+        clave: nueva_clave,
+        mensaje_whatsapp: mensaje_whatsapp,
+        telefono: @alumno.movil
+      }
+    else
+      render json: { error: "Error al generar la clave" }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def generar_mensaje_bienvenida(alumno, clave)
+    nombre = alumno.alias.presence || alumno.nombre.split.first
+    usuario = alumno.email # o el campo que uses como usuario
+
+    <<~MENSAJE
+      ¡Hola #{nombre}! 👋
+
+      ¡Bienvenido a AgâraYoga! 🌸 Nos alegra mucho que te unas a nuestra familia.
+
+      Aquí tienes tus claves para acceder a la web y gestionar tus clases:
+
+      🔗 Web: https://familia.agarayoga.eu
+      👤 Usuario: #{usuario}
+      🔒 Clave: #{clave}
+
+      Si tienes algún problema, avísanos. ¡Estamos aquí para ayudarte!
+    MENSAJE
+  end
   protected
 
   def configure_permitted_parameters

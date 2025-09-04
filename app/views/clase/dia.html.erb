@@ -16,6 +16,9 @@
                       <span class="card-title"><%= "#{cl.diaHora.strftime('%H:%M')}" %> </span>
                   </h5>
                   <h5 class="d-flex justify-content-between">
+                      <span class="card-title"><%= "--#{cl.id}" %> </span>
+                  </h5>
+                  <h5 class="d-flex justify-content-between">
                   <% arIconos = ['bi-person-vcard-fill','bi-person-check-fill','bi-person-fill-down','bi-person-x-fill']  %>
                       <% @estados.each_with_index do |est,idx| %> 
                       <span class="text-right text-<%= est.color %>"><%= cl.alumnos_en_clase.where(claseAlumnoEstado: est.id).count%></span>

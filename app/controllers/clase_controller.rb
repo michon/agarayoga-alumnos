@@ -152,7 +152,8 @@ end
     clAlm = params[:alm_ids]
 
     # seleccionar la clase d y recorrer todos los alumnos
-    ClaseAlumno.where(id: clAlm).update_all(clase_id: clAid)
+    clA = Clase.find(clAid.to_i)
+    ClaseAlumno.where(id: clAlm).update_all(clase_id: clAid, diaHora: clA.diaHora)
 
     redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAid}")
 

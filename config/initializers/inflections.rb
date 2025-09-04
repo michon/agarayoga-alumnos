@@ -21,4 +21,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'dircliente',   'dirclientes'
   inflect.irregular 'instructor',   'instructores'
   inflect.irregular 'grupo_alumno', 'grupos_alumnos'
+  inflect.irregular 'preinscripcion', 'preinscripciones'
 end

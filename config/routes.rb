@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :pruebas, only: [:new, :create]
   resources :solicitum, only: [:new, :create]
 
-  resources :alumnos, except: [:index, :show] do 
+  resources :alumnos, except: [:index] do 
     member do
       post 'alta_clase'
       post 'baja_clase'
@@ -19,6 +19,11 @@ Rails.application.routes.draw do
     
 
     collection do
+      get  'index'
+      get  'clientes'
+      get  'enhorario'
+      get  'clasesJulioURL'
+
       post ':clase_id/alta_prueba', to: 'alumnos#alta_prueba', as: 'alta_prueba'
       post ':clase_id/baja_prueba/:id', to: 'alumnos#baja_prueba', as: 'baja_prueba'
       post ':clase_id/alta_solicitud', to: 'alumnos#alta_solicitud', as: 'alta_solicitud'
@@ -26,16 +31,14 @@ Rails.application.routes.draw do
     end
   end
 
-  get  'alumnos/index'
-  get  'alumnos/clientes'
-  get  'alumnos/enhorario'
-  get  'alumnos/clasesJulioURL'
+      get  'alumnos/ficha/:id',              to: 'alumnos#ficha',           as: 'alumnos_ficha'
+      get  'alumnos/pdfAlumnos',             to: 'alumnos#pdfAlumnos',      as: "alumnos/pdfAlumnos"
+
   get  'alumnos/actualizar/:id',         to: 'alumnos#actualizar',      as: 'alumnos/actualizar'
   get  'alumnos/clases_julio/:id',       to: 'alumnos#clasesJulio',     as: 'alumnos/clases_julio'
   get  'alumnos/clases_agendadas/:id',   to: 'alumnos#clasesJulio',     as: 'alumnos/clases_agendadas'
   get  'alumnos/regalo/:id',             to: 'alumnos#regalo',          as: 'alumnos_regalo'
   get  'alumnos/navidad/:id',            to: 'alumnos#navidad',         as: 'alumnos_navidad'
-  get  'alumnos/ficha/:id',              to: 'alumnos#ficha',           as: 'alumnos_ficha'
   get  'alumnos/sepa/:id',               to: 'alumnos#sepa',            as: 'alumnos_sepa'
   get  'alumnos/business/:fecha',        to: 'alumnos#business',        as: 'alumnos/business_get'
   post 'alumnos/business/',              to: 'alumnos#business',        as: 'alumnos/business'
@@ -44,7 +47,7 @@ Rails.application.routes.draw do
   post 'alumnos/procesosAlta/',          to: 'alumnos#procesosAlta' ,   as: 'alumnos/procesos_alta'
   post 'alumnos/clasesAgendadas',        to: 'alumnos#clasesAgendadas', as: "alumno/clasesAgendadas"
   get  'alumnos/procesosAlta/:proceso',  to: 'alumnos#procesosAlta',    as: 'alumnos/procesos_alta_get'
-  get  'alumnos/pdfAlumnos',             to: 'alumnos#pdfAlumnos',      as: "alumnos/pdfAlumnos"
+  post 'alumnos/:id/generar_clave', to: 'alumnos#generar_clave', as: 'generar_clave_alumno'
 
 
   resources :julio, only: [:show, :update] do
@@ -87,28 +90,29 @@ Rails.application.routes.draw do
   post   'recibo/modificar',                       to: 'recibo#modificar',                       as: "recibo/modificar"
   post   'recibo/descargarFacturacion',            to: 'recibo#descargarFacturacion',            as: "recibo/descargarFacturacion"
   post   'recibo/numerarPost',                     to: 'recibo#numerarPost',                     as: 'recibo/numerarPost'
+  post   'cambiar_estado',                         to: 'recibo#cambiar_estado',                  as: 'cambiar_estado'
   resources :recibo, only: [:destroy]
 
 resources :clase_alumno, only: [:destroy]
 
 
-  get    'clase/semana/:fecha',                    to: "clase#semana",       as: "clase/semana"
-  get    'clase/dia/:fecha',                       to: 'clase#dia',          as: "clase/dia"
+  get    'clase/semana/:fecha',                    to: "clase#semana",                          as: "clase/semana"
+  get    'clase/dia/:fecha',                       to: 'clase#dia',                             as: "clase/dia"
   get    'clase/actual'
-  get    'clase/clasesDesde',                      to: 'clase#clasesDesde',  as: "clase/clasesDesde"
-  get    'clase/calendario',                       to: 'clase#calendario',   as: "clase/calendario"
-  get    'clase/libre',                            to: 'clase#libre',        as: "clase/libre"
+  get    'clase/clasesDesde',                      to: 'clase#clasesDesde',                     as: "clase/clasesDesde"
+  get    'clase/calendario',                       to: 'clase#calendario',                      as: "clase/calendario"
+  get    'clase/libre',                            to: 'clase#libre',                           as: "clase/libre"
 
-  post   'clase/semana',                  to: 'clase#seleccion',          as: "clase/seleccion"
-  post   'clase/dia',                     to: 'clase#seleccionDia',       as: "clase/seleccion_dia"
-  post   'clase/altaAlumno',              to: 'clase#altaAlumno',         as: "clase/alta_alumno"
-  post   'clase/bajaAlumnos',             to: 'clase#bajaAlumnos',        as: "clase/baja_alumnos"
-  post   'clase/anularClase',             to: 'clase#anularClase',        as: "clase/anular_clase"
-  post   'clase/altaPrueba',              to: 'clase#altaPrueba',         as: "clase/alta_prueba"
-  post   'clase/bajaPrueba',              to: 'clase#bajaPrueba',         as: "clase/baja_prueba"
-  post   'clase/estado',                  to: 'clase#estado',             as: "clase/estado"
-  post   'clase/altaSolicita',            to: 'clase#altaSolicita',       as: "clase/alta_solicita"
-  post   'clase/bajaSolicita',            to: 'clase#bajaSolicita',       as: "clase/baja_solicita"
+  post   'clase/semana',                           to: 'clase#seleccion',                       as: "clase/seleccion"
+  post   'clase/dia',                              to: 'clase#seleccionDia',                    as: "clase/seleccion_dia"
+  post   'clase/altaAlumno',                       to: 'clase#altaAlumno',                      as: "clase/alta_alumno"
+  post   'clase/bajaAlumnos',                      to: 'clase#bajaAlumnos',                     as: "clase/baja_alumnos"
+  post   'clase/anularClase',                      to: 'clase#anularClase',                     as: "clase/anular_clase"
+  post   'clase/altaPrueba',                       to: 'clase#altaPrueba',                      as: "clase/alta_prueba"
+  post   'clase/bajaPrueba',                       to: 'clase#bajaPrueba',                      as: "clase/baja_prueba"
+  post   'clase/estado',                           to: 'clase#estado',                          as: "clase/estado"
+  post   'clase/altaSolicita',                     to: 'clase#altaSolicita',                    as: "clase/alta_solicita"
+  post   'clase/bajaSolicita',                     to: 'clase#bajaSolicita',                    as: "clase/baja_solicita"
   resources :clase, only: [:destroy]
 
 
@@ -155,5 +159,5 @@ resources :clase_alumno, only: [:destroy]
   devise_for :usuario
 
 
-  root to: 'comun#inicio'
+  root to: 'comun#indice'
 end

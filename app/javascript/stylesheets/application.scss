@@ -61,3 +61,25 @@ h1 {
   box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
   transform: scale(1.05);
 }
+
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  margin: 0 2px;
+}
+
+.badge {
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+
+.color-indicator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; /* Cambia a 0 para rectángulo en lugar de círculo */
+  cursor: default;
+}
