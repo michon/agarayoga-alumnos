@@ -199,17 +199,17 @@ class ReciboController < ApplicationController
     # Seleccionar los recibos de serie A como facturados
     rcb = Recibo.where(vencimiento: fechaInicio..fechaFin)
     rcb = rcb.where(serie: 'A')
-    
+
     # 2.- Comprobar que entre los recibos seleccionados no tengamos ninguno que ya tenga número de factura.
-    if rcb.where('ISNULL(factura)').count == 0
 
       # 3.- Buscacar el último numero de factura ????
       numFra = Recibo.order(:factura).last.factura[6..].to_i
       rcb.order(:id).each do |r|
-        r.factura = '20250A' + (numFra += 1).to_s.rjust(6,'0')
-        r.save
+        unless r.factura? 
+          r.factura = '20250A' + (numFra += 1).to_s.rjust(6,'0')
+          r.save
+        end
       end
-    end
   end
  
   def yacob
@@ -248,7 +248,11 @@ class ReciboController < ApplicationController
       )
 
       ficNombre = "facturas_clientes_#{I18n.l(fechaInicio, format: "%Y%m%d")}-#{I18n.l(fechaFin, format: "%Y%m%d")}.xlsx"
-      send_data file_data, filename: ficNombre, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', disposition: 'inline'
+      send_data file_data, 
+                filename: ficNombre, 
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+                disposition: 'attachment' # ← Este cambio es clave
+
   end
   # listado de recibos que hay que hacer factura
   def facturar
@@ -499,6 +503,63 @@ class ReciboController < ApplicationController
   end
 
 
+  # NUEVAS ACCIONES CRUD
+  def index
+  @q = Recibo.ransack(params[:q])
+  @recibos = @q.result.includes(:usuario, :reciboEstado) # ← QUITA :serie de aquí
+               .order(created_at: :desc)
+               .page(params[:page]).per(150)
+  @series = Recibo.where.not(serie: [nil, '']).distinct.order(:serie).pluck(:serie)
+end
+
+  def new
+    @recibo = Recibo.new
+    @usuarios = Usuario.all.order(:nombre)
+    @recibo_estados = ReciboEstado.all
+  end
+
+  def create
+    @recibo = Recibo.new(recibo_params)
+    
+    if @recibo.save
+      redirect_to gestion_recibos_path, notice: 'Recibo creado exitosamente.'
+    else
+      @usuarios = Usuario.all.order(:nombre)
+      @recibo_estados = ReciboEstado.all
+      render :new
+    end
+  end
+
+  def show
+    @recibo = Recibo.find(params[:id])
+  end
+
+  def edit
+    @recibo = Recibo.find(params[:id])
+    @usuarios = Usuario.all.order(:nombre)
+    @recibo_estados = ReciboEstado.all
+  end
+
+  def update
+    @recibo = Recibo.find(params[:id])
+    
+    if @recibo.update(recibo_params)
+      redirect_to gestion_recibos_path, notice: 'Recibo actualizado exitosamente.'
+    else
+      @usuarios = Usuario.all.order(:nombre)
+      @recibo_estados = ReciboEstado.all
+      render :edit
+    end
+  end
+
+  def destroy
+    @recibo = Recibo.find(params[:id])
+    @recibo.destroy
+    redirect_to gestion_recibos_path, notice: 'Recibo eliminado exitosamente.'
+  end
+
+
+
   private
 
     def calcular_importe(recibo, estado_anterior, nuevo_estado)
@@ -559,11 +620,16 @@ class ReciboController < ApplicationController
         ).to_h.with_indifferent_access
     end
 
+  def recibo_params
+    params.require(:recibo).permit(
+      :usuario_id, :reciboEstado_id, :importe, :concepto, :vencimiento, 
+      :pago, :factura, :serie, :iban, :bic, :nombre, :moneda, :referencia,
+      :mandatoFecha, :sepaTipo, :sepaSecuencia, :batchBooking, :lugar, :remesa_id
+    )
+  end
   protected
 
     def configure_permitted_parameters
       filtro_params
     end
-
-
 end

@@ -93,6 +93,7 @@ end
       unless ClasePolicy.new(current_usuario).verDia?
         render :file => "public/401.html", :status => :unauthorized
       end
+       @highlight_alumno_id = params[:highlight_alumno]
     fecha = params[:fecha].to_datetime
     @fecha = params[:fecha].to_datetime
     @clasesHoy = Clase.where(:diaHora => fecha.beginning_of_day..fecha.end_of_day).order(:diaHora)
@@ -118,8 +119,9 @@ end
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaPrueba
       clAlmId = Prueba.find(params[:prueba_id]).clase_id
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{clAlmId}"
       Prueba.find(params[:prueba_id]).destroy
-      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
+      redirect_to clase_dia_url(params[:fecha])
   end
 
   # Método POST
@@ -127,8 +129,9 @@ end
   def altaPrueba
       fecha = params[:fecha]
 
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{params[:clase_id]}"
       Prueba.new(nombre: params[:nombre], movil: params[:movil], clase_id: params[:clase_id]).save
-      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{params[:clase_id]}")
+      redirect_to clase_dia_url(params[:fecha])
   end
 
   # Método POST
@@ -138,6 +141,7 @@ end
       fecha = cl.diaHora
       clAlmId = cl.clase_id
 
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{cl.clase_id}"
       ClaseAlumno.find(params[:clase_alumno_id]).destroy
       redirect_to clase_dia_url(fecha, anchor: "clase-#{clAlmId}")
   end
@@ -155,7 +159,8 @@ end
     clA = Clase.find(clAid.to_i)
     ClaseAlumno.where(id: clAlm).update_all(clase_id: clAid, diaHora: clA.diaHora)
 
-    redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAid}")
+    session[:scroll_to_anchor] = "cuerpoTarjeta-#{clAid}"
+    redirect_to clase_dia_url(params[:fecha])
 
   end
 
@@ -168,6 +173,8 @@ end
 
       fecha = params[:fecha]
 
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{clAlmParam[:clase_id]}"
+
       clAlm = ClaseAlumno.new
       clAlm.usuario_id = clAlmParam[:usuario_id]
       clAlm.clase_id = clAlmParam[:clase_id]
@@ -176,15 +183,16 @@ end
       clAlm.instructor_id = Clase.find(clAlmParam[:clase_id]).instructor_id
       clAlm.save
 
-      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlm.clase_id}")
+      redirect_to clase_dia_url(params[:fecha])
   end
 
   # Método POST
   # Recibe una id ClaseAlumno_id y lo borra
   def bajaSolicita
       clAlmId = ClaseSolicitum.find(params[:clase_alumno_id]).clase_id
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{clAlmId}"
       ClaseSolicitum.find(params[:clase_alumno_id]).destroy
-      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlmId}")
+      redirect_to clase_dia_url(params[:fecha])
   end
 
   # Método POST
@@ -194,12 +202,13 @@ end
 
       fecha = params[:fecha]
 
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{clAlmParam[:clase_id]}"
       clAlm = ClaseSolicitum.new
       clAlm.usuario_id = clAlmParam[:usuario_id]
       clAlm.clase_id = clAlmParam[:clase_id]
       clAlm.save
 
-      redirect_to clase_dia_url(params[:fecha], anchor: "clase-#{clAlm.clase_id}")
+      redirect_to clase_dia_url(params[:fecha])
   end
   # Método POST
   # Recibe una fecha y envía a la presentación de ese día
@@ -212,21 +221,21 @@ end
   # Recibe una lista de alumnos y una acción a realizar que debe corresponder
   # con la tabla claseAlumnoEstado.
   def estado
-    accion = 0
-    clase = " "
-    unless params.each.blank? 
-      params.each do |p|
-        if p[0].start_with?('accion') then
-            accion = p[1]
-            clase = p[0]
-        end
+    accion_param = params.keys.find { |key| key.to_s.start_with?('accion#') }
+
+    if accion_param
+      accion = params[accion_param]
+      clase_id = accion_param.to_s.split('#').last
+
+      unless params[:alumnos_ids].blank?
+        fijarEstado(params[:alumnos_ids], accion.to_i)
       end
 
-      unless params[:alumnos_ids].blank? 
-        fijarEstado(params[:alumnos_ids],accion.to_i)
-      end
+      session[:scroll_to_anchor] = "cuerpoTarjeta-#{clase_id}"
+      redirect_to request.referrer.gsub(/#.*$/, '')
+    else
+      redirect_to request.referrer
     end
-    redirect_to "#{request.referrer}#clase-#{clase.split('#')[1]}"
   end
 
   protected

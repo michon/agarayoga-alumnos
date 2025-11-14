@@ -1,0 +1,10 @@
+<div class="calendar-event bg-<%= clase_alumno.claseAlumnoEstado.color %>"
+     data-bs-toggle="tooltip"
+     data-bs-placement="top"
+     title="<%= clase_alumno.clase.instructor.nombre %> - <%= clase_alumno.claseAlumnoEstado.nombre %> - <%= clase_alumno.clase.aula.nombre %>">
+  <%= clase_alumno.diaHora.strftime("%H:%M") %>
+  <br>
+  <small><%= clase_alumno.clase.instructor.nombre.split.first %></small>
+  <br>
+  <small><%= clase_alumno.clase.aula.nombre[0..2] %></small>
+</div>

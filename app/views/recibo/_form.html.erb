@@ -1,0 +1,67 @@
+<%= form_with(model: recibo, url: recibo.persisted? ? update_gestion_recibo_path(recibo) : create_gestion_recibo_path, local: true) do |form| %>
+  <% if recibo.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(recibo.errors.count, "error") %> prohiben guardar este recibo:</h4>
+      <ul>
+        <% recibo.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= form.label :usuario_id %>
+        <%= form.select :usuario_id,
+                       options_from_collection_for_select(@usuarios, :id, :nombre, recibo.usuario_id),
+                       { include_blank: 'Seleccionar usuario' }, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :importe %>
+        <%= form.number_field :importe, step: 0.01, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :reciboEstado_id %>
+        <%= form.select :reciboEstado_id,
+                       options_from_collection_for_select(@recibo_estados, :id, :nombre, recibo.reciboEstado_id),
+                       { include_blank: 'Seleccionar estado' }, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :vencimiento %>
+        <%= form.date_field :vencimiento, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= form.label :concepto %>
+        <%= form.text_area :concepto, class: 'form-control', rows: 3 %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :factura %>
+        <%= form.text_field :factura, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :serie %>
+        <%= form.text_field :serie, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :pago %>
+        <%= form.datetime_local_field :pago, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.submit 'Guardar', class: 'btn btn-primary' %>
+    <%= link_to 'Cancelar', gestion_recibos_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

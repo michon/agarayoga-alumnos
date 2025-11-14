@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
 
-  get 'stats/monthly_comparison'
   get  'julio/index'
   get  'julio/links'
   get  'julio/facturar'
   post 'julio/editar',                     to: 'julio#editar',       as: "julio/editar"
   get  'julio/generate_pdf',               to: 'julio#generate_pdf', as: 'julio_generate_pdf'
+  post '/calcular_bic',                    to: 'alumnos#calcular_bic'
 
   resources :pruebas, only: [:new, :create]
   resources :solicitum, only: [:new, :create]
@@ -15,6 +15,12 @@ Rails.application.routes.draw do
       post 'alta_clase'
       post 'baja_clase'
       post 'cambiar_estado'
+      get 'clases_agendadas_pdf'
+
+      get 'editar', to: 'alumnos#editar', as: 'editar'
+      patch 'actualizar', to: 'alumnos#actualizar', as: 'actualizar'
+      put 'actualizar', to: 'alumnos#actualizar'
+      post 'sincronizar_facturacion', to: 'alumnos#sincronizar_facturacion', as: 'sincronizar_facturacion'
     end
     
 
@@ -23,6 +29,9 @@ Rails.application.routes.draw do
       get  'clientes'
       get  'enhorario'
       get  'clasesJulioURL'
+      
+      get 'alta', to: 'alumnos#nueva_alta', as: 'nueva_alta'
+      post 'alta', to: 'alumnos#crear_alta', as: 'crear_alta'
 
       post ':clase_id/alta_prueba', to: 'alumnos#alta_prueba', as: 'alta_prueba'
       post ':clase_id/baja_prueba/:id', to: 'alumnos#baja_prueba', as: 'baja_prueba'
@@ -34,28 +43,34 @@ Rails.application.routes.draw do
       get  'alumnos/ficha/:id',              to: 'alumnos#ficha',           as: 'alumnos_ficha'
       get  'alumnos/pdfAlumnos',             to: 'alumnos#pdfAlumnos',      as: "alumnos/pdfAlumnos"
 
-  get  'alumnos/actualizar/:id',         to: 'alumnos#actualizar',      as: 'alumnos/actualizar'
-  get  'alumnos/clases_julio/:id',       to: 'alumnos#clasesJulio',     as: 'alumnos/clases_julio'
-  get  'alumnos/clases_agendadas/:id',   to: 'alumnos#clasesJulio',     as: 'alumnos/clases_agendadas'
-  get  'alumnos/regalo/:id',             to: 'alumnos#regalo',          as: 'alumnos_regalo'
-  get  'alumnos/navidad/:id',            to: 'alumnos#navidad',         as: 'alumnos_navidad'
-  get  'alumnos/sepa/:id',               to: 'alumnos#sepa',            as: 'alumnos_sepa'
-  get  'alumnos/business/:fecha',        to: 'alumnos#business',        as: 'alumnos/business_get'
-  post 'alumnos/business/',              to: 'alumnos#business',        as: 'alumnos/business'
-  post 'alumnos/procesos/',              to: 'alumnos#procesos',        as: 'alumnos/procesos'
-  get  'alumnos/procesos/:proceso',      to: 'alumnos#procesos',        as: 'alumnos/procesos_get'
-  post 'alumnos/procesosAlta/',          to: 'alumnos#procesosAlta' ,   as: 'alumnos/procesos_alta'
-  post 'alumnos/clasesAgendadas',        to: 'alumnos#clasesAgendadas', as: "alumno/clasesAgendadas"
-  get  'alumnos/procesosAlta/:proceso',  to: 'alumnos#procesosAlta',    as: 'alumnos/procesos_alta_get'
-  post 'alumnos/:id/generar_clave', to: 'alumnos#generar_clave', as: 'generar_clave_alumno'
+      get  'alumnos/actualizar/:id',         to: 'alumnos#actualizar',      as: 'alumnos/actualizar'
+      get  'alumnos/clases_julio/:id',       to: 'alumnos#clasesJulio',     as: 'alumnos/clases_julio'
+      get  'alumnos/clases_agendadas/:id',   to: 'alumnos#clasesJulio',     as: 'alumnos/clases_agendadas'
+      get  'alumnos/regalo/:id',             to: 'alumnos#regalo',          as: 'alumnos_regalo'
+      get  'alumnos/navidad/:id',            to: 'alumnos#navidad',         as: 'alumnos_navidad'
+      get  'alumnos/sepa/:id',               to: 'alumnos#sepa',            as: 'alumnos_sepa'
+      get  'alumnos/business/:fecha',        to: 'alumnos#business',        as: 'alumnos/business_get'
+      post 'alumnos/business/',              to: 'alumnos#business',        as: 'alumnos/business'
+      post 'alumnos/procesos/',              to: 'alumnos#procesos',        as: 'alumnos/procesos'
+      get  'alumnos/procesos/:proceso',      to: 'alumnos#procesos',        as: 'alumnos/procesos_get'
+      post 'alumnos/procesosAlta/',          to: 'alumnos#procesosAlta' ,   as: 'alumnos/procesos_alta'
+
+      post 'alumnos/:id/clasesAgendadas', to: 'alumnos#clasesAgendadas', as: 'alumno_clasesAgendadas'
+      get 'alumnos/:id/clases_agendadas', to: 'alumnos#clasesAgendadas', as: 'alumno_clases_agendadas'
+
+      get  'alumnos/procesosAlta/:proceso',  to: 'alumnos#procesosAlta',    as: 'alumnos/procesos_alta_get'
+      post 'alumnos/:id/generar_clave', to: 'alumnos#generar_clave', as: 'generar_clave_alumno'
 
 
-  resources :julio, only: [:show, :update] do
-    get 'asistencia', on: :member, as: 'asistencia'
-  end
+      resources :julio, only: [:show, :update] do
+        get 'asistencia', on: :member, as: 'asistencia'
+      end
 
-  get 'stats/monthly_comparison', to: 'stats#monthly_comparison'
-  get 'stats/evolucion_ingresos', to: 'stats#evolucion_ingresos'
+    get 'stats/dashboard', to: 'stats#dashboard'
+    get 'stats/monthly_comparison', to: 'stats#monthly_comparison'
+    get 'stats/evolucion_ingresos', to: 'stats#evolucion_ingresos'
+    get 'stats/asistencia_mensual', to: 'stats#asistencia_mensual'
+    get 'stats/asistencia_instructor', to: 'stats#asistencia_instructor'
 
   get 'remesa/index'
   get 'remesa/show/:id',                           to: 'remesa#show',                as: 'remesa/show'
@@ -92,6 +107,17 @@ Rails.application.routes.draw do
   post   'recibo/numerarPost',                     to: 'recibo#numerarPost',                     as: 'recibo/numerarPost'
   post   'cambiar_estado',                         to: 'recibo#cambiar_estado',                  as: 'cambiar_estado'
   resources :recibo, only: [:destroy]
+
+# REEMPLAZA el namespace por estas rutas personalizadas:
+get     'gestion/recibos',          to: 'recibo#index',     as: 'gestion_recibos'
+get     'gestion/recibos/new',      to: 'recibo#new',       as: 'new_gestion_recibo'
+post    'gestion/recibos',          to: 'recibo#create',    as: 'create_gestion_recibo'
+get     'gestion/recibos/:id',      to: 'recibo#show',      as: 'gestion_recibo'
+get     'gestion/recibos/:id/edit', to: 'recibo#edit',      as: 'edit_gestion_recibo'
+patch   'gestion/recibos/:id',      to: 'recibo#update',    as: 'update_gestion_recibo'
+put     'gestion/recibos/:id',      to: 'recibo#update'
+delete  'gestion/recibos/:id',      to: 'recibo#destroy',   as: 'destroy_gestion_recibo'
+
 
 resources :clase_alumno, only: [:destroy]
 

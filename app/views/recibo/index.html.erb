@@ -1,0 +1,115 @@
+<div class="container">
+  <h1>Recibos</h1>
+
+  <div class="d-flex justify-content-between mb-3">
+    <%= link_to 'Nuevo Recibo', new_gestion_recibo_path, class: 'btn btn-primary' %>
+    <%= link_to 'Ver Pagos', recibo_pagos_path, class: 'btn btn-info' %>
+  </div>
+
+  <!-- formulario de filtrado Ramsak -->
+  <%= search_form_for @q, url: gestion_recibos_path, class: 'mb-3' do |f| %>
+    <div class="row">
+      <div class="col-md-3">
+        <%= f.search_field :usuario_nombre_cont, class: 'form-control', placeholder: 'Buscar por nombre' %>
+      </div>
+      
+      <div class="col-md-2">
+        <%= f.select :reciboEstado_id_eq,
+                     options_from_collection_for_select(ReciboEstado.all, :id, :nombre, @q.reciboEstado_id_eq),
+                     { include_blank: 'Todos los estados' }, class: 'form-control' %>
+      </div>
+
+      <div class="col-md-2">
+        <select name="q[serie_eq]" id="q_serie_eq" class="form-control">
+          <option value="">Todas las series</option>
+          <% @series.each do |serie| %>
+            <option value="<%= serie %>" <%= 'selected' if params.dig(:q, :serie_eq) == serie %>>
+              <%= serie %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+
+      <!-- Filtro por fecha de vencimiento -->
+      <div class="col-md-2">
+        <%= f.label :vencimiento_gteq, "Vencimiento desde", class: 'form-label small' %>
+        <%= f.date_field :vencimiento_gteq, value: params.dig(:q, :vencimiento_gteq), class: 'form-control' %>
+      </div>
+
+      <div class="col-md-2">
+        <%= f.label :vencimiento_lteq, "Vencimiento hasta", class: 'form-label small' %>
+        <%= f.date_field :vencimiento_lteq, value: params.dig(:q, :vencimiento_lteq), class: 'form-control' %>
+      </div>
+
+      <div class="col-md-2">
+        <%= f.submit 'Buscar', class: 'btn btn-primary' %>
+        <%= link_to 'Limpiar', gestion_recibos_path, class: 'btn btn-secondary' %>
+      </div>
+      
+    </div> <!-- Final formulario de filtrado Ramsak -->
+
+  <% end %>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th> </th>
+        <th><%= sort_link(@q, :id, 'Recibo', default_order: :desc) %></th>
+        <th><%= sort_link(@q, :usuario_nombre, 'Usuario') %></th>
+        <th>Importe</th>
+        <th>Estado</th>
+        <th><%= sort_link(@q, :vencimiento, 'vencimiento', default_order: :desc) %> </th>
+        <th><%= sort_link(@q, :factura, 'Factura', default_order: :desc) %> </th>
+        <th>Remesa</th> <!-- NUEVA COLUMNA -->
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recibos.each do |recibo| %>
+        <tr>
+        <td>
+          <% color_indicador = case recibo.serie
+                               when 'A' then 'success'
+                               when 'B' then 'warning'
+                               when 'C' then 'danger'
+                               when 'D' then 'info'
+                               else 'secondary'
+                               end %>
+          <span class="color-indicator bg-<%= color_indicador %>"
+                title="Serie: <%= recibo.serie %>">
+          </span>
+        </td>
+          <td><%= recibo.id %></td>
+          <td><%= recibo.usuario.nombre %></td>
+          <td><%= number_to_currency(recibo.importe) %></td>
+          <td><span class="badge bg-<%= estado_badge_color(recibo.reciboEstado_id) %>">
+            <%= recibo.reciboEstado.nombre %>
+          </span></td>
+          <td><%= recibo.vencimiento.strftime('%d/%m/%Y') if recibo.vencimiento %></td>
+          <td><%= recibo.factura %></td>
+          <td>
+            <% if recibo.remesa.present? %>
+              <%= link_to "Remesa ##{recibo.remesa_id}", remesa_show_path(recibo.remesa_id), class: 'badge bg-info text-decoration-none' %>
+            <% else %>
+              <span class="badge bg-secondary">Sin remesar</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to 'Ver', gestion_recibo_path(recibo), class: 'btn btn-sm btn-info' %>
+            <%= link_to 'Editar', edit_gestion_recibo_path(recibo), class: 'btn btn-sm btn-warning' %>
+            <%= button_to 'Eliminar', gestion_recibo_path(recibo),
+               method: :delete,
+               data: { confirm: '¿Estás seguro?', disable_with: 'Eliminando...' },
+               class: 'btn btn-sm btn-danger',
+               form: { class: 'd-inline' } %>
+            <% if recibo.factura.present? %>
+              <%= link_to 'PDF', recibo_facturaPdf_path(recibo, format: :pdf), class: 'btn btn-sm btn-secondary', target: '_blank' %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= paginate @recibos %>
+</div>

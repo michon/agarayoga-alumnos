@@ -1,0 +1,319 @@
+<div class="card-body">
+  <%= form_with model: @usuario, url: crear_alta_alumnos_path, local: true do |f| %>
+
+    <!-- Mostrar errores generales -->
+    <% if @usuario.errors.any? %>
+      <div class="alert alert-danger">
+        <h6>Por favor, corrige los siguientes errores:</h6>
+        <ul class="mb-0">
+          <% @usuario.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Datos Personales -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="border-bottom pb-2">Datos Personales</h4>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :nombre, "Nombre completo *" %>
+          <%= f.text_field :nombre, class: 'form-control', required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :email, "Email *" %>
+          <%= f.email_field :email, class: 'form-control', required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :dni, "DNI/NIE" %>
+          <%= f.text_field :dni, class: 'form-control' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :alias, "Alias/Apodo" %>
+          <%= f.text_field :alias, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :telefono, "Teléfono fijo" %>
+          <%= f.text_field :telefono, class: 'form-control' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :movil, "Móvil *" %>
+          <%= f.text_field :movil, class: 'form-control', required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :grupoAlumno_id, "Grupo *" %>
+          <%= f.collection_select :grupoAlumno_id, @grupos_alumno, :id, :nombre,
+                                { include_blank: 'Selecciona grupo' },
+                                class: 'form-control', required: true %>
+        </div>
+
+        <!-- QUITADO: Instructor asignado -->
+      </div>
+    </div>
+
+    <!-- Dirección -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="border-bottom pb-2">Dirección</h4>
+      </div>
+
+      <div class="col-12">
+        <div class="form-group">
+          <%= f.label :direccion, "Dirección" %>
+          <%= f.text_field :direccion, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= f.label :cp, "Código Postal" %>
+          <%= f.text_field :cp, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= f.label :localidad, "Localidad" %>
+          <%= f.text_field :localidad, class: 'form-control', value: 'LUGO' %>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= f.label :provincia, "Provincia" %>
+          <%= f.text_field :provincia, class: 'form-control', value: 'LUGO' %>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="form-group">
+          <%= f.label :pais, "País" %>
+          <%= f.text_field :pais, class: 'form-control', value: 'ES' %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos Bancarios -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="border-bottom pb-2">Datos Bancarios</h4>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :iban, "IBAN" %>
+          <%= f.text_field :iban, class: 'form-control', placeholder: "ES12 3456 7890 1234 5678 9012" %>
+          <small class="form-text text-muted">Se validará automáticamente el formato</small>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :bic, "BIC" %>
+          <%= f.text_field :bic, class: 'form-control', placeholder: "Se calculará automáticamente desde el IBAN" %>
+          <small class="form-text text-muted">
+            Se calculará automáticamente cuando completes el IBAN.
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="calcular-bic-manual">
+              <i class="bi bi-calculator"></i> Calcular BIC
+            </button>
+          </small>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :lugarfirma, "Lugar de Firma" %>
+          <%= f.text_field :lugarfirma, class: 'form-control', value: 'LUGO' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :fechafirma, "Fecha de Firma" %>
+          <%= f.date_field :fechafirma, class: 'form-control', value: Date.current %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos Adicionales -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="border-bottom pb-2">Datos Adicionales</h4>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :serie, "Serie" %>
+          <%= f.select :serie, ['A', 'B', 'C', 'D', 'E'], { selected: 'A' }, class: 'form-control' %>
+        </div>
+      </div>
+
+      <!-- QUITADOS: remesa, codigofacturacion, fechaCaducidad, referencia, tipo -->
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :fechaCaducidad, "Fecha Caducidad" %>
+          <%= f.date_field :fechaCaducidad, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <h6><i class="bi bi-info-circle"></i> Información importante</h6>
+      <ul class="mb-0">
+        <li>Los campos marcados con * son obligatorios</li>
+        <li>La contraseña se generará automáticamente y se enviará por email</li>
+        <li>El alumno será creado con rol "yogui"</li>
+        <li>El IBAN y BIC se validarán automáticamente</li>
+      </ul>
+    </div>
+
+    <div class="form-group">
+      <%= f.submit "Crear Alumno", class: 'btn btn-success btn-lg' %>
+      <%= link_to "Cancelar", alumnos_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Formateador de IBAN (el que ya teníamos)
+  const ibanInput = document.getElementById('usuario_iban');
+  if (ibanInput) {
+    ibanInput.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s+/g, '').toUpperCase();
+
+      if (value.length > 2) {
+        value = value.substring(0, 2) + ' ' + value.substring(2);
+      }
+      if (value.length > 7) {
+        value = value.substring(0, 7) + ' ' + value.substring(7);
+      }
+      if (value.length > 12) {
+        value = value.substring(0, 12) + ' ' + value.substring(12);
+      }
+      if (value.length > 17) {
+        value = value.substring(0, 17) + ' ' + value.substring(17);
+      }
+      if (value.length > 22) {
+        value = value.substring(0, 22) + ' ' + value.substring(22);
+      }
+
+      e.target.value = value.trim();
+    });
+
+    // Limpiar el valor al enviar el formulario
+    const form = ibanInput.closest('form');
+    if (form) {
+      form.addEventListener('submit', function() {
+        ibanInput.value = ibanInput.value.replace(/\s+/g, '');
+      });
+    }
+  }
+
+  // Formateador de BIC
+  const bicInput = document.getElementById('usuario_bic');
+  if (bicInput) {
+    bicInput.addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/\s+/g, '').toUpperCase();
+    });
+  }
+
+  // --- NUEVO: Cálculo automático de BIC ---
+  async function calcularBIC(iban) {
+    const ibanLimpio = iban.replace(/\s+/g, '').toUpperCase();
+
+    if (ibanLimpio.startsWith('ES') && ibanLimpio.length === 24) {
+      try {
+        // Mostrar loading
+        const bicPlaceholder = bicInput.placeholder;
+        bicInput.placeholder = "🔄 Calculando BIC...";
+        bicInput.disabled = true;
+
+        const response = await fetch('/calcular_bic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ iban: ibanLimpio })
+        });
+
+        const data = await response.json();
+
+        if (data.bic) {
+          bicInput.value = data.bic;
+          bicInput.placeholder = "✅ BIC calculado automáticamente";
+          showTempMessage('BIC calculado correctamente', 'success');
+        } else {
+          bicInput.placeholder = "❌ No se pudo calcular el BIC";
+          showTempMessage('No se pudo calcular el BIC automáticamente', 'warning');
+        }
+      } catch (error) {
+        console.error('Error calculando BIC:', error);
+        bicInput.placeholder = "❌ Error calculando BIC";
+        showTempMessage('Error al calcular el BIC', 'danger');
+      } finally {
+        bicInput.disabled = false;
+      }
+    }
+  }
+
+  // Función para mostrar mensajes temporales
+  function showTempMessage(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    const form = document.querySelector('form');
+    form.parentNode.insertBefore(alertDiv, form);
+
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+      if (alertDiv.parentNode) {
+        alertDiv.remove();
+      }
+    }, 5000);
+  }
+
+  // Calcular BIC automáticamente cuando el IBAN pierde el foco y está completo
+  if (ibanInput && bicInput) {
+    ibanInput.addEventListener('blur', function(e) {
+      const ibanValue = e.target.value.replace(/\s+/g, '');
+      if (ibanValue.length === 24 && ibanValue.startsWith('ES') && !bicInput.value) {
+        calcularBIC(ibanValue);
+      }
+    });
+
+    // También agregar botón manual para recalcular
+    const calcularBtn = document.getElementById('calcular-bic-manual');
+    if (calcularBtn) {
+      calcularBtn.addEventListener('click', function() {
+        const ibanValue = ibanInput.value.replace(/\s+/g, '');
+        if (ibanValue.length === 24 && ibanValue.startsWith('ES')) {
+          calcularBIC(ibanValue);
+        } else {
+          showTempMessage('Completa un IBAN español válido primero', 'warning');
+        }
+      });
+    }
+  }
+});
+</script>
+<% end %>

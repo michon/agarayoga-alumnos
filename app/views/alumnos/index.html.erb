@@ -18,16 +18,33 @@
   <% @alumnos.each do |alumno| %>
     <div class="card mb-3 shadow-sm">
       <div class="card-header bg-light d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">
-          <%= alumno.nombre %>
-          <% if alumno.alias.present? %>
-            <small class="text-muted">(<%= alumno.alias %>)</small>
-          <% end %>
-        </h5>
-        <span class="badge bg-<%= alumno.regalo ? 'success' : 'warning' %>">
-          <%= alumno.regalo ? 'Regalo enviado' : 'Pendiente' %>
-        </span>
-      </div>
+  <h5 class="mb-0">
+    <%= alumno.nombre %>
+    <% if alumno.alias.present? %>
+      <small class="text-muted">(<%= alumno.alias %>)</small>
+    <% end %>
+  </h5>
+
+  <div class="d-flex align-items-center gap-2">
+    <!-- Switch con AJAX -->
+    <div class="form-check form-switch">
+      <input type="checkbox"
+             class="form-check-input regalo-switch"
+             id="regalo_<%= alumno.id %>"
+             <%= 'checked' if alumno.regalo %>
+             data-alumno-id="<%= alumno.id %>">
+      <label class="form-check-label small fw-bold <%= alumno.regalo ? 'text-success' : 'text-warning' %>"
+             for="regalo_<%= alumno.id %>" id="label_regalo_<%= alumno.id %>">
+        <%= alumno.regalo ? '✅ Enviado' : '🎁 Pendiente' %>
+      </label>
+    </div>
+
+    <!-- Badge que se actualizará con AJAX -->
+    <span class="badge bg-<%= alumno.regalo ? 'success' : 'warning' %>" id="badge_regalo_<%= alumno.id %>">
+      <%= alumno.regalo ? 'Regalado' : 'Pendiente' %>
+    </span>
+  </div>
+</div>
 
       <div class="card-body">
         <!-- Botones principales -->
@@ -39,7 +56,8 @@
           <%= link_to "🕒 Historial", "#historial-#{alumno.id}", class: "btn btn-sm btn-outline-secondary", data: { bs_toggle: "collapse" } %>
           <%= link_to "💰 Recibos", "#recibos-#{alumno.id}", class: "btn btn-sm btn-outline-danger", data: { bs_toggle: "collapse" } %>
           <%= link_to "👁‍🗨 Ver", alumno_path(alumno.id), class: "btn btn-sm btn-outline-dark" %>
-          <%= link_to "📄 Ficha PDF", alumnos_path(alumno, format: :pdf), class: "btn btn-sm btn-outline-primary" %>
+          <%= link_to "📄 Ficha PDF", alumno_path(alumno, format: :pdf), class: "btn btn-sm btn-outline-primary" %>
+          <%= link_to "✏️ Editar", editar_alumno_path(alumno), class: "btn btn-sm btn-warning" %>
         </div>
 
         <!-- Panel de CLASES AGENDADAS (colapsable) -->
@@ -52,10 +70,14 @@
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                       <% if clase.clase.present? %>
-                        <%= link_to clase.clase.clase_humano, clase_dia_path(clase.diaHora.strftime('%F')), class: "text-decoration-none" %>
+                        <%= link_to clase.clase.clase_humano, clase_dia_path(clase.diaHora.strftime('%F'), 
+                                                  anchor: "cuerpoTarjeta-#{clase.clase.id}",
+                                                  highlight_alumno: clase.id), 
+                                    class: "text-decoration-none text-#{clase.claseAlumnoEstado.color}", 
+                                    target: "_blank" %>
                       <% else %>
                         <span class="text-danger">Clase no disponible</span>
-                      <% end %>1
+                      <% end %>
                       <small class="text-muted d-block">
                         <%= I18n.l(clase.diaHora, format: "%A %d/%m a las %H:%M") %>
                       </small>
@@ -204,10 +226,10 @@
           <tfoot>
             <tr class="table-active">
               <td colspan="2"><strong>Total</strong></td>
-              <td><strong><%= number_to_currency(recibos.sum(:importe), unit: "€", separator: ",", delimiter: ".", format: "%n %u") %></strong></td>
+              <td><strong><%= number_to_currency(recibos.sum(&:importe), unit: "€", separator: ",", delimiter: ".", format: "%n %u") %></strong></td>
               <td colspan="2">
                 <span class="badge bg-info">
-                  <%= recibos.where(reciboEstado_id: 2).count %>/<%= recibos.count %> pagados
+                  <%= recibos.count { |r| r.reciboEstado_id == 2 } %>/<%= recibos.count %> pagados
                 </span>
               </td>
             </tr>
@@ -242,7 +264,7 @@
         <div class="collapse" id="historial-<%= alumno.id %>">
           <div class="card card-body">
             <h6><i class="bi bi-clock-history"></i> Historial de Clases</h6>
-            <%= form_tag(alumno_clasesAgendadas_path, method: :post, class: "row g-3") do %>
+            <%= form_tag(alumno_clases_agendadas_path(alumno.id), method: :get, class: "row g-3") do %>
               <%= hidden_field_tag :id, alumno.id %>
               <div class="col-md-5">
                 <%= label_tag :fechaInicio, "Desde", class: "form-label" %>
@@ -258,6 +280,7 @@
             <% end %>
           </div>
         </div>
+
       </div>
     </div>
   <% end %>
@@ -401,3 +424,95 @@ function copyToClipboard(elementId) {
     });
   </script>
 
+
+<script>
+  // Control de regalo con AJAX usando event delegation
+document.addEventListener('DOMContentLoaded', function() {
+  // Usar event delegation para manejar elementos dinámicos
+  document.addEventListener('change', function(event) {
+    if (event.target.classList.contains('regalo-switch')) {
+      const switchElement = event.target;
+      const alumnoId = switchElement.dataset.alumnoId;
+      const isChecked = switchElement.checked;
+
+      // Mostrar loading
+      const label = document.getElementById(`label_regalo_${alumnoId}`);
+      const badge = document.getElementById(`badge_regalo_${alumnoId}`);
+      const originalLabelText = label.innerHTML;
+
+      label.innerHTML = '⏳ Actualizando...';
+      switchElement.disabled = true;
+
+      // Hacer la petición a la ruta existente
+      fetch(`/alumnos/regalo/${alumnoId}`, {
+        method: 'GET',
+        headers: {
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          // Actualizar la UI según la respuesta
+          if (data.regalo) {
+            label.innerHTML = '✅ Enviado';
+            label.classList.remove('text-warning');
+            label.classList.add('text-success');
+            if (badge) {
+              badge.innerHTML = 'Regalado';
+              badge.className = 'badge bg-success';
+            }
+            switchElement.checked = true;
+          } else {
+            label.innerHTML = '🎁 Pendiente';
+            label.classList.remove('text-success');
+            label.classList.add('text-warning');
+            if (badge) {
+              badge.innerHTML = 'Pendiente';
+              badge.className = 'badge bg-warning';
+            }
+            switchElement.checked = false;
+          }
+          showNotification(data.message, 'success');
+        } else {
+          throw new Error(data.message || 'Error desconocido');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Revertir visualmente
+        switchElement.checked = !isChecked;
+        label.innerHTML = originalLabelText;
+        showNotification('Error al actualizar el regalo: ' + error.message, 'error');
+      })
+      .finally(() => {
+        switchElement.disabled = false;
+      });
+    }
+  });
+
+  function showNotification(message, type) {
+    // Eliminar notificaciones existentes
+    document.querySelectorAll('.alert-notification').forEach(alert => alert.remove());
+
+    // Crear notificación temporal
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed alert-notification`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    // Remover después de 3 segundos
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
+  }
+});
+</script>

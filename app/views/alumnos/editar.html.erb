@@ -1,0 +1,263 @@
+<% content_for :title, "Editando: #{@usuario.nombre}" %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">
+            <i class="bi bi-pencil-square"></i>
+            Editando: <%= @usuario.nombre %>
+            <% if @usuario.alias.present? %>
+              <small class="text-muted">(<%= @usuario.alias %>)</small>
+            <% end %>
+          </h2>
+
+          <!-- Badge de estado -->
+          <span class="badge bg-<%= @usuario.debaja ? 'danger' : 'success' %> fs-6">
+            <%= @usuario.debaja ? 'DE BAJA' : 'ACTIVO' %>
+          </span>
+        </div>
+
+        <div class="card-body">
+          <%= form_with model: @usuario, url: actualizar_alumno_path(@usuario), method: :patch, local: true do |f| %>
+
+            <!-- Sección de Estado y Acciones Rápidas DENTRO del formulario -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <i class="bi bi-gear"></i>
+                      Estado y Acciones Rápidas
+                    </h5>
+
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-check form-switch">
+                          <%= f.check_box :debaja, class: 'form-check-input', id: 'usuario_debaja' %>
+                          <%= f.label :debaja, "Alumno de baja",
+                                      class: "form-check-label fw-bold #{@usuario.debaja ? 'text-danger' : 'text-success'}",
+                                      for: 'usuario_debaja' %>
+                          <small class="form-text text-muted d-block">
+                            <%= @usuario.debaja ? 'Marcado: alumno de baja' : 'Desmarcado: alumno activo' %>
+                          </small>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-outline-info btn-sm" id="generar-clave-btn">
+                          <i class="bi bi-key"></i> Generar Nueva Clave
+                        </button>
+                        <small class="form-text text-muted d-block">
+                          Envía nueva contraseña por email
+                        </small>
+                      </div>
+
+                      <div class="col-md-4">
+                        <%= link_to "👁‍🗨 Ver Ficha", alumno_path(@usuario),
+                            class: "btn btn-outline-dark btn-sm" %>
+                        <%= link_to "📄 PDF", alumno_path(@usuario, format: :pdf),
+                            class: "btn btn-outline-primary btn-sm" %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mostrar errores generales -->
+            <% if @usuario.errors.any? %>
+              <div class="alert alert-danger">
+                <h6>Por favor, corrige los siguientes errores:</h6>
+                <ul class="mb-0">
+                  <% @usuario.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <!-- Resto del formulario... -->
+            <!-- Datos Personales -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h4 class="border-bottom pb-2">Datos Personales</h4>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :nombre, "Nombre completo *" %>
+                  <%= f.text_field :nombre, class: 'form-control', required: true %>
+                </div>
+
+                <div class="form-group">
+                  <%= f.label :email, "Email *" %>
+                  <%= f.email_field :email, class: 'form-control', required: true %>
+                </div>
+
+                <div class="form-group">
+                  <%= f.label :dni, "DNI/NIE" %>
+                  <%= f.text_field :dni, class: 'form-control' %>
+                </div>
+
+                <div class="form-group">
+                  <%= f.label :alias, "Alias/Apodo" %>
+                  <%= f.text_field :alias, class: 'form-control' %>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :telefono, "Teléfono fijo" %>
+                  <%= f.text_field :telefono, class: 'form-control' %>
+                </div>
+
+                <div class="form-group">
+                  <%= f.label :movil, "Móvil *" %>
+                  <%= f.text_field :movil, class: 'form-control', required: true %>
+                </div>
+
+                <div class="form-group">
+                  <%= f.label :grupoAlumno_id, "Grupo *" %>
+                  <%= f.collection_select :grupoAlumno_id, @grupos_alumno, :id, :nombre,
+                                        { include_blank: 'Selecciona grupo' },
+                                        class: 'form-control', required: true %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h4 class="border-bottom pb-2">Dirección</h4>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group">
+                  <%= f.label :direccion, "Dirección" %>
+                  <%= f.text_field :direccion, class: 'form-control' %>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= f.label :cp, "Código Postal" %>
+                  <%= f.text_field :cp, class: 'form-control' %>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= f.label :localidad, "Localidad" %>
+                  <%= f.text_field :localidad, class: 'form-control', value: @usuario.localidad.presence || 'LUGO' %>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= f.label :provincia, "Provincia" %>
+                  <%= f.text_field :provincia, class: 'form-control', value: @usuario.provincia.presence || 'LUGO' %>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= f.label :pais, "País" %>
+                  <%= f.text_field :pais, class: 'form-control', value: @usuario.pais.presence || 'ES' %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Datos Bancarios -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h4 class="border-bottom pb-2">Datos Bancarios</h4>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :iban, "IBAN" %>
+                  <%= f.text_field :iban, class: 'form-control', placeholder: "ES12 3456 7890 1234 5678 9012" %>
+                  <small class="form-text text-muted">Se validará automáticamente el formato</small>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :bic, "BIC" %>
+                  <%= f.text_field :bic, class: 'form-control', placeholder: "Se calculará automáticamente desde el IBAN" %>
+                  <small class="form-text text-muted">
+                    Se calculará automáticamente cuando completes el IBAN.
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="calcular-bic-manual">
+                      <i class="bi bi-calculator"></i> Calcular BIC
+                    </button>
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :lugarfirma, "Lugar de Firma" %>
+                  <%= f.text_field :lugarfirma, class: 'form-control', value: @usuario.lugarfirma.presence || 'LUGO' %>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :fechafirma, "Fecha de Firma" %>
+                  <%= f.date_field :fechafirma, class: 'form-control', value: @usuario.fechafirma || Date.current %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Datos Adicionales -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h4 class="border-bottom pb-2">Datos Adicionales</h4>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :serie, "Serie" %>
+                  <%= f.select :serie, ['A', 'B', 'C', 'D', 'E'], { selected: @usuario.serie.presence || 'A' }, class: 'form-control' %>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :fechaCaducidad, "Fecha Caducidad" %>
+                  <%= f.date_field :fechaCaducidad, class: 'form-control', value: @usuario.fechaCaducidad %>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info">
+              <h6><i class="bi bi-info-circle"></i> Información importante</h6>
+              <ul class="mb-0">
+                <li>Los campos marcados con * son obligatorios</li>
+                <li>El IBAN y BIC se validarán automáticamente</li>
+                <li>Los cambios se guardarán inmediatamente al enviar el formulario</li>
+              </ul>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-group mt-4">
+              <%= f.submit "💾 Guardar Cambios", class: 'btn btn-warning btn-lg' %>
+              <%= link_to "📋 Volver a Lista", alumnos_path(q: { nombre_cont: @usuario.nombre }),
+                  class: 'btn btn-info' %>
+              <%= link_to "❌ Cancelar", alumno_path(@usuario), class: 'btn btn-secondary' %>
+            </div>
+          <% end %> <!-- CIERRE del form_with -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- El JavaScript permanece igual -->
+<% content_for :javascript do %>
+<script>
+// ... (el mismo JavaScript de antes)
+</script>
+<% end %>

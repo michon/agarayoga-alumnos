@@ -1,0 +1,30 @@
+<div class="container">
+  <h1>Recibo #<%= @recibo.id %></h1>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Usuario:</strong> <%= @recibo.usuario.nombre %></p>
+          <p><strong>Importe:</strong> <%= number_to_currency(@recibo.importe) %></p>
+          <p><strong>Estado:</strong> <span class="badge bg-<%= estado_badge_color(@recibo.reciboEstado_id) %>">
+            <%= @recibo.reciboEstado.nombre %>
+          </span></p>
+          <p><strong>Concepto:</strong> <%= @recibo.concepto %></p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Vencimiento:</strong> <%= @recibo.vencimiento.strftime('%d/%m/%Y') if @recibo.vencimiento %></p>
+          <p><strong>Factura:</strong> <%= @recibo.factura %></p>
+          <p><strong>Serie:</strong> <%= @recibo.serie %></p>
+          <p><strong>Pago:</strong> <%= @recibo.pago.strftime('%d/%m/%Y %H:%M') if @recibo.pago %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= link_to 'Editar', edit_gestion_recibo_path(@recibo), class: 'btn btn-warning' %>
+    <%= link_to 'Volver', gestion_recibos_path, class: 'btn btn-secondary' %>
+    <%= link_to 'PDF', recibo_facturaPdf_path(@recibo, format: :pdf), class: 'btn btn-info', target: '_blank' if @recibo.factura.present? %>
+  </div>
+</div>

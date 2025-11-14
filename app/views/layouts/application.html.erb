@@ -52,6 +52,7 @@
 
     <div class="container-fluid py-4 my-2">
         <%= yield %>
+        <%= content_for?(:javascript) ? yield(:javascript) : nil %>
     </div>
 
     <footer class="container">
@@ -75,6 +76,54 @@
        <% end %>
        </script>
     <% end %>
+
+
+  <% if session[:scroll_to_anchor] %>
+    <script>
+      function executeScroll() {
+        const anchor = '<%= session[:scroll_to_anchor] %>';
+        const element = document.getElementById(anchor);
+        
+        if (element) {
+          // Scroll suave
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          
+          // Efecto visual con clases de Bootstrap
+          element.classList.add(
+            'border', 
+            'border-primary', 
+            'border-3',
+            'shadow-lg'
+          );
+          
+          // Transición suave
+          element.style.transition = 'all 0.3s ease-in-out';
+          
+          // Remover el efecto después de 2 segundos
+          setTimeout(() => {
+            element.classList.remove(
+              'border', 
+              'border-primary', 
+              'border-3',
+              'shadow-lg'
+            );
+          }, 2000);
+        }
+        
+        <% session.delete(:scroll_to_anchor) %>
+      }
+      
+      // Ejecutar cuando esté listo
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', executeScroll);
+      } else {
+        setTimeout(executeScroll, 100);
+      }
+    </script>
+  <% end %>
+
+
+
 
   </body>
 

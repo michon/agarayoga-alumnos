@@ -1,121 +1,213 @@
 <% content_for :title,  "Historial de clases" %>
-<% content_for :description,  "Hola #{@clsDelAlumno.first.usuario.nombre.split(' ')[0]}. Estas son tus clases agendadas en AgâraYoga para el mes de JULIO" %>
+<% content_for :description,  "Hola #{@clsDelAlumno.first&.usuario&.nombre&.split(' ')&.first}. Estas son tus clases agendadas en AgâraYoga" %>
 
-<!-- ----------------------------------------------------------------------------
-# instructores a los que asiste
------------------------------------------------------------------------------ -->
-    <% total = @clsDelAlumno.where(claseAlumnoEstado_id: 2).count %>
+<% 
+# Preparamos el nombre para mostrar
+usuario = @clsDelAlumno.first&.usuario
+nombre_mostrar = usuario&.alias.presence || usuario&.nombre&.split(' ')&.first || "Alumno"
+fecha_inicio_formateada = I18n.l(@fechaInicio.to_date, format: '%d/%m/%Y')
+fecha_fin_formateada = I18n.l(@fechaFin.to_date, format: '%d/%m/%Y')
+%>
 
-    <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
-      <h5> Asistencia del alumno a cada instructor </h5>
-    </div>
-    <div class="p-5 mb-3 border border-2 bg-light border-light rounded-2">
-      <div class="mb-3">
-      <% @clsDelAlumno.where(claseAlumnoEstado_id: 2).group(:instructor_id).each do |clsAlm| %>
-        <button type="button" class="btn btn-<%= clsAlm.instructor.color %>"> <%= clsAlm.instructor.nombre %> </button>
-      <% end %>
-      </div>
+<% content_for :title, "Historial de clases de #{nombre_mostrar}" %>
+<% content_for :description, "Hola #{nombre_mostrar}. Este es tu diario de clases en AgâraYoga entre #{fecha_inicio_formateada} y #{fecha_fin_formateada}" %>
 
-      <div class="progress" style="height: 30px;">
-        <% @clsDelAlumno.where(claseAlumnoEstado_id: 2).group_by(&:instructor_id).each do |almIns| %>
-          <div class="progress-bar bg-<%=almIns[1].first.clase.instructor.color%> fs-6 fw-b" role="progressbar" style="width: <%=almIns[1].count.to_f*100/total%>%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"> 
-            <%= "#{number_to_percentage(almIns[1].count.to_f*100/total, precision: 2)} (#{almIns[1].count})" %> </div>
-        <% end %>
-      </div>
-    </div>
-<!-- ----------------------------------------------------------------------------
-# Presentación mensual de las clases a las que ha asistido el alumno
------------------------------------------------------------------------------ -->
-<% @arrayMeses.each do |dd| %>
-
-  <div class="row d-flex flex-column mb-5">  <!-- Un mes -->
-    <div class="row">  <!-- nombre del mes -->
-      <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
-        <h5><%= I18n.l(dd, format: '%B').upcase  %> <%=dd.year %>-<%= "#{@clsDelAlumno.first.usuario.nombre}" %></h5>
-      </div>
-    </div>
-
-    <div class="row d-flex flex-row">  <!-- Un mes -->
-      <% (1..5).each do |dd| %> <!-- dias de la semana -->
-        <div class="col border rounded d-flex justify-content-center bg-light text-black p-1">
-          <%=" #{I18n.t('date.day_names')[dd].capitalize[0..1]}" %>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- dias del mes -->
-      <% (dd.beginning_of_week..dd.end_of_month.end_of_week).each_with_index do |dm, idx| %>
-
-        <% if dm.monday? %> <div class="row d-flex flex-row"> <% end %>
-
-        <% unless dm.saturday? or dm.sunday? %>
-      <div class="col border rounded d-flex justify-content-center bg-light p-1 <%= (dm.month == dd.month) ? 'text-black' : 'text-muted' %> ">
-                       <!-- Comprobamos si hay clase este día -->
-                      <% clAlm = @clsDelAlumno.where(diaHora: dm.at_beginning_of_day..dm.at_end_of_day) %>
-                      <div class="col p-0 m-0 border d-flex justify-content-center flex-column rounded">
-
-                        <% colorFondoClase = 'sucess' %>
-                        <% colorTextoClase = 'sucess' %>
-                        <% if clAlm.blank? %>
-                          <% colorFondoClase = 'white' %>
-                          <% colorTextoClase = 'black' %>
-                        <% else %>
-                          <% colorFondoClase = clAlm.first.claseAlumnoEstado.color %>
-                          <% colorTextoClase = 'white' %>
-                        <% end %>
-
-                        <% unless dm.month == dd.month %>
-                          <% colorFondoClase = 'white' %>
-                          <% colorTextoClase = 'light' %>
-                        <% end %>
-
-                        <div class="d-flex justify-content-center flex-column rounded bg-<%= colorFondoClase %> text-<%= colorTextoClase %> ">
-                        <p class="text-center"><%= dm.day %> </p>
-                        <p class="p-0 m-0 text-center">
-                            <% unless clAlm.blank? %>
-                              <% clAlm.each do |cc| %>
-                                <%= "#{ cc.diaHora.strftime("%H:%M")}" %>
-                              <% end %>
-                            <% else %>
-                                .
-                            <% end %>
-                        </p>
-                        </div>
-                      </div>
-        </div>
-        <% end %>
-
-        <% if dm.sunday? %> </div> <% end %>
-
-      <% end %>
-  </div>
-
-<% end %>
-
-
-
-# Texto para mandar por WhatsApp
-<div class="row d-flex flex-column mb-5 pt-5">
-<h4> Para enviar por WhatsApp </h4>
-<ul>
-    <% @clsDelAlumno.each do |clAlm| %>
-        <li class="col bg-light ">
-          <%= link_to clase_dia_path(fecha: clAlm.clase.diaHora.to_s, target: '_blank', anchor: 'clase-'+clAlm.clase.id.to_s) do %>
-            <i class="bi bi-box-arrow-up-right"></i>
-          <% end %>
-          <% unless clAlm.diaHora.blank? then %>
-            <%=" *#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}, #{clAlm.diaHora.strftime('%d')}* #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las *#{clAlm.diaHora.strftime('%H:%M')}* en el aula *#{clAlm.clase.aula.nombre}* con *#{clAlm.clase.instructor.nombre}*" %>
-          <% end %>
-        </li>
+<div class="page-header mb-4">
+  <div class="page-header mb-4">
+  <div class="float-end">
+    <%= link_to clases_agendadas_pdf_alumno_path(id: @id, fechaInicio: @fechaInicio, fechaFin: @fechaFin, format: :pdf),
+                class: "btn btn-danger", target: "_blank" do %>
+      <i class="fas fa-file-pdf me-1"></i> Descargar PDF
     <% end %>
-</ul>
+  </div>
+  <h2 class="text-center">
+    <i class="fas fa-calendar-check me-2 text-primary"></i>
+    Hola <span class="text-primary"><%= nombre_mostrar %></span>
+  </h2>
+  <p class="text-center text-muted lead">
+    Este es tu diario de clases en AgâraYoga 
+    <br>
+    <small>desde <strong><%= fecha_inicio_formateada %></strong> hasta <strong><%= fecha_fin_formateada %></strong></small>
+  </p>
 </div>
 
-# Enlace a clases Agendadas method get
+<div class="row">
+  <!-- COLUMNA IZQUIERDA: GRÁFICOS PRINCIPALES -->
+  <div class="col-lg-8">
+    <!-- Tarjeta de Compromiso Semanal -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <i class="fas fa-chart-line me-2"></i>Evolución y Tendencia de Asistencia
+      </div>
+      <div class="card-body">
+        <div data-controller="echart-evolucion-tendencia"
+             data-echart-evolucion-tendencia-data-value="<%= @evolucion_tendencia.to_json %>"
+             style="height: 350px;">
+        </div>
+      </div>
+    </div>
 
-<div class="row d-flex flex-column mb-5 pt-5">
-<h4> Enlace app </h4>
-  <div class="col bg-light ">
-    <%="#{alumnos_clases_agendadas_url(@clsDelAlumno.first.usuario_id)} " %>
+    <!-- Gráfico de torta de instructores (EXISTENTE) -->
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">
+        <i class="fas fa-chart-pie me-2"></i>Porcentaje de asistencia por instructor
+      </div>
+      <div class="card-body">
+        <div data-controller="echart-asistencias"
+             data-echart-asistencias-data-value="<%= @instructores_data.to_json %>"
+             data-echart-asistencias-title-value=""
+             style="height: 300px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendarios mensuales (EXISTENTE) -->
+    <% @meses.each do |mes| %>
+      <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+          <i class="fas fa-calendar me-2"></i><%= I18n.l(mes, format: '%B %Y').upcase %>
+        </div>
+        <div class="card-body">
+          <%= month_calendar(start_date: mes) do |date| %>
+            <%= date.day %>
+            <% if @clases_por_dia[date] %>
+              <div class="d-flex justify-content-center mt-1">
+                <% @clases_por_dia[date].each do |estado| %>
+                  <div class="estado-indicador bg-<%= estado.color %>"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="<%= estado.nombre %> - <%= date.strftime('%d/%m/%Y') %>">
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- COLUMNA DERECHA: STATS Y GRÁFICOS SECUNDARIOS -->
+  <div class="col-lg-4">
+    <!-- Tarjeta de Resumen Rápido -->
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white">
+        <i class="fas fa-chart-line me-2"></i>Tu Resumen
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-6 mb-3">
+            <div class="stat-card">
+              <div class="stat-number text-primary"><%= @racha_actual %></div>
+              <div class="stat-label">Días desde última clase</div>
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <div class="stat-card">
+              <div class="stat-number text-success"><%= (@distribucion_estados || {})['Asistió'] || 0 %></div>
+              <div class="stat-label">Clases asistidas</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-card">
+              <div class="stat-number text-warning"><%= (@distribucion_estados || {})['No viene (avisó)'] || 0 %></div>
+              <div class="stat-label">Avisos</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-card">
+              <div class="stat-number text-danger"><%= (@distribucion_estados || {})['Faltó'] || 0 %></div>
+              <div class="stat-label">Faltas sin aviso</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Distribución de Estados -->
+    <div class="card mb-4">
+      <div class="card-header bg-warning text-dark">
+        <i class="fas fa-chart-donut me-2"></i>Distribución de Estados
+      </div>
+      <div class="card-body">
+        <div data-controller="echart-estados" 
+             data-echart-estados-data-value="<%= @distribucion_estados.to_json %>"
+             style="height: 250px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Horarios Frecuentes -->
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">
+        <i class="fas fa-clock me-2"></i>Tus Horarios Favoritos
+      </div>
+      <div class="card-body">
+        <div data-controller="echart-horarios" 
+             data-echart-horarios-data-value="<%= @horarios_frecuentes.to_json %>"
+             style="height: 250px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Leyenda de estados (EXISTENTE) -->
+    <div class="card mb-4">
+      <div class="card-header bg-light">
+        <i class="fas fa-key me-2"></i>Leyenda de Estados
+      </div>
+      <div class="card-body">
+        <% @estados.each do |estado| %>
+          <div class="d-flex align-items-center mb-2">
+            <div class="leyenda-color bg-<%= estado.color %> me-2" style="width: 20px; height: 20px;"></div>
+            <small><%= estado.nombre %></small>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Acordeón para WhatsApp (EXISTENTE) -->
+    <div class="card">
+      <div class="card-header bg-light">
+        <i class="fab fa-whatsapp me-2"></i>Resumen para WhatsApp
+      </div>
+      <div class="card-body">
+        <%= render 'whatsapp_section' %>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+})
+</script>
+
+<style>
+.stat-card {
+  padding: 10px;
+}
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.stat-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+.leyenda-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.estado-indicador {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: 0 1px;
+}
+</style>

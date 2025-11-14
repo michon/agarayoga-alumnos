@@ -6,6 +6,12 @@ class Clase < ApplicationRecord
   has_many :claseSolicitum, dependent: :destroy
   has_many :usuario, through: :claseAlumno
 
+  scope :futuras, -> { where('clases.diaHora >= ?', DateTime.now) }
+  scope :activas, -> { where(activa: true) }
+  scope :con_clase_alumno_activa, ->(usuario_id) {
+    joins(:claseAlumno)
+      .merge(ClaseAlumno.futuras.activas_por_usuario(usuario_id))
+  }
 
   def alumnos_en_clase
       self.claseAlumno

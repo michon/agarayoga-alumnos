@@ -1,0 +1,49 @@
+<!-- Resumen estadístico -->
+<div class="row mb-4">
+  <div class="col-md-4 mb-2">
+    <div class="card text-center bg-success text-white">
+      <div class="card-body py-2">
+        <h5 class="mb-0"><%= @clsDelAlumno.select { |c| [1,2].include?(c.claseAlumnoEstado_id) }.count %></h5>
+        <small>Asistencias</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-2">
+    <div class="card text-center bg-warning text-dark">
+      <div class="card-body py-2">
+        <h5 class="mb-0"><%= @clsDelAlumno.select { |c| c.claseAlumnoEstado_id == 3 }.count %></h5>
+        <small>Avisos</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-2">
+    <div class="card text-center bg-danger text-white">
+      <div class="card-body py-2">
+        <h5 class="mb-0"><%= @clsDelAlumno.select { |c| c.claseAlumnoEstado_id == 4 }.count %></h5>
+        <small>Faltas</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lista detallada -->
+<h6 class="mb-3">Detalle de clases:</h6>
+<div class="whatsapp-list">
+  <% @clsDelAlumno.each do |clAlm| %>
+    <div class="whatsapp-item mb-2 p-2 border rounded">
+      <span class="badge bg-<%= ['success', 'success', 'warning', 'danger'][clAlm.claseAlumnoEstado_id - 1] %> me-2">
+        <%= clAlm.claseAlumnoEstado.nombre[0] %>
+      </span>
+
+      <%= link_to clase_dia_path(fecha: clAlm.clase.diaHora.to_s, target: '_blank', anchor: 'clase-'+clAlm.clase.id.to_s), class: 'text-decoration-none me-2' do %>
+        <i class="bi bi-box-arrow-up-right"></i>
+      <% end %>
+
+      <% unless clAlm.diaHora.blank? %>
+        <span class="whatsapp-text">
+          <%= "*#{I18n.t('date.day_names')[clAlm.diaHora.strftime('%w').to_i]}, #{clAlm.diaHora.strftime('%d')}* #{I18n.t('date.abbr_month_names')[clAlm.diaHora.strftime('%m').to_i]} #{clAlm.diaHora.year} a las *#{clAlm.diaHora.strftime('%H:%M')}* en el aula *#{clAlm.clase.aula.nombre}* con *#{clAlm.clase.instructor.nombre}*" %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+</div>

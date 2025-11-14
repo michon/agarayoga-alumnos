@@ -1,0 +1,317 @@
+<section class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-6 text-center">
+        <i class="bi bi-speedometer2 me-2"></i>Dashboard General
+      </h1>
+      <p class="text-center text-muted">Visión integral del centro de yoga</p>
+    </div>
+  </div>
+
+  <!-- Tarjetas de Métricas Principales -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+  <div class="col">
+    <div class="card border-<%= @key_metrics[:data_health_issue] ? 'warning' : 'primary' %> h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-muted">Alumnos Activos</h6>
+            <h3 class="text-<%= @key_metrics[:data_health_issue] ? 'warning' : 'primary' %>">
+              <%= @key_metrics[:active_students] %>
+            </h3>
+            <% if @key_metrics[:data_health_issue] %>
+              <small class="text-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                Discrepancia: +<%= @key_metrics[:data_discrepancia] %> alumnos teóricos
+              </small>
+            <% else %>
+              <small class="text-muted">Basado en horarios activos</small>
+            <% end %>
+          </div>
+          <i class="bi bi-people-fill text-<%= @key_metrics[:data_health_issue] ? 'warning' : 'primary' %> fs-1"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="col">
+      <div class="card border-success h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title text-muted">Asistencia Mensual</h6>
+              <h3 class="text-success"><%= @key_metrics[:monthly_attendance_rate] %>%</h3>
+            </div>
+            <i class="bi bi-calendar-check text-success fs-1"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card border-success h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-title text-muted">Alumnos Estables</h6>
+              <h3 class="text-success"><%= @key_metrics[:stable_students_pct] %>%</h3>
+              <small class="text-muted">Fidelidad curso a curso</small>
+            </div>
+            <i class="bi bi-heart-fill text-success fs-1"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segmentación de Alumnos Activos -->
+<div class="row mb-4">
+  <div class="col-12">
+    <h5 class="text-center mb-3">Composición de Alumnos Activos</h5>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-info h-100">
+      <div class="card-body text-center">
+        <h2 class="text-info"><%= @segmentacion[:nuevos] %></h2>
+        <h6 class="card-title">Nuevos</h6>
+        <small class="text-muted">Menos de 3 meses</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-warning h-100">
+      <div class="card-body text-center">
+        <h2 class="text-warning"><%= @segmentacion[:nuevos_estables] %></h2>
+        <h6 class="card-title">Nuevos Estables</h6>
+        <small class="text-muted">≥3 meses, sin historial</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-success h-100">
+      <div class="card-body text-center">
+        <h2 class="text-success"><%= @segmentacion[:estables] %></h2>
+        <h6 class="card-title">Estables</h6>
+        <small class="text-muted">Regresan curso a curso</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Sección de Seguimiento de Alumnos -->
+<div class="row mt-4">
+  <!-- TOP 10 Alumnos con más faltas - VERSIÓN MEJORADA -->
+<div class="col-md-6">
+  <div class="card border-danger">
+    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        TOP 10 Alumnos con más Faltas (Este Mes)
+      </h5>
+      <span class="badge bg-light text-danger"><%= @alumnos_faltas.sum { |a| a[:faltas] } %> faltas totales</span>
+    </div>
+    <div class="card-body">
+      <% if @alumnos_faltas.any? %>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Faltas</th>
+                <th>Total Clases</th>
+                <th>Tasa</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%
+                fecha_inicio = Date.today.beginning_of_month
+                fecha_fin = Date.today.end_of_month
+              %>
+              <% @alumnos_faltas.each do |alumno| %>
+                <tr>
+                  <td>
+                    <strong><%= alumno[:nombre] %></strong>
+                  </td>
+                  <td>
+                    <span class="badge bg-<%= (alumno[:clases_pactadas].to_i > 0) && (alumno[:faltas].to_f / alumno[:clases_pactadas].to_i) >= 0.5 ? 'danger' : 'warning' %>">
+                      <%= alumno[:tasa_faltas] %>%
+                    </span>
+                  </td>
+                  <td><%= alumno[:total_clases].to_i %></td>
+<td>
+  <span class="badge bg-<%= alumno[:total_clases].to_i > 0 && (alumno[:faltas].to_f / alumno[:total_clases].to_i) >= 0.5 ? 'danger' : 'warning' %>">
+    <%= alumno[:total_clases].to_i > 0 ? (alumno[:faltas].to_f / alumno[:total_clases].to_i * 100).round(1) : 0 %>%
+  </span>
+</td>
+                  <td>
+                    <%= link_to alumno_clases_agendadas_path(alumno[:id], fechaInicio: fecha_inicio, fechaFin: fecha_fin),
+                      class: 'btn btn-sm d-flex align-items-center justify-content-center',
+                          target: '_blank',
+                          title: "Ver clases de #{fecha_inicio} a #{fecha_fin}",
+                          data: { bs_toggle: 'tooltip', bs_placement: 'top' } do %>
+                            <i class="bi bi-calendar-check"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-2 text-center">
+          <small class="text-muted">
+            Periodo: <%= l(fecha_inicio, format: :short) %> - <%= l(fecha_fin, format: :short) %>
+          </small>
+        </div>
+      <% else %>
+        <p class="text-muted text-center">¡Excelente! No hay alumnos con faltas significativas este mes.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+  <!-- Alumnos para Llamar -->
+  <div class="col-md-6">
+    <div class="card border-warning">
+      <div class="card-header bg-warning text-dark">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-telephone me-2"></i>
+          Alumnos para Contactar
+          <span class="badge bg-danger"><%= @alumnos_llamar.count %></span>
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @alumnos_llamar.any? %>
+          <div class="table-responsive">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Contacto</th>
+                  <th>Estadísticas</th>
+                  <th>Urgencia</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @alumnos_llamar.each do |alumno| %>
+                  <tr>
+                    <td>
+                      <strong><%= alumno[:nombre] %></strong>
+                    </td>
+                    <td>
+                      <% if alumno[:telefono].present? %>
+                        <a href="tel:<%= alumno[:telefono] %>" class="text-decoration-none">
+                          <i class="bi bi-telephone"></i> Llamar
+                        </a>
+                      <% else %>
+                        <a href="mailto:<%= alumno[:email] %>" class="text-decoration-none">
+                          <i class="bi bi-envelope"></i> Email
+                        </a>
+                      <% end %>
+                    </td>
+                    <td>
+                      <small>
+                        A: <%= alumno[:total_asistencias] %> |
+                        F: <%= alumno[:total_faltas] %> |
+                        T: <%= alumno[:total_clases] %>
+                      </small>
+                    </td>
+                    <td>
+                      <span class="badge bg-<%= alumno[:urgencia] >= 70 ? 'danger' : alumno[:urgencia] >= 40 ? 'warning' : 'info' %>">
+                        <%= alumno[:urgencia] %>%
+                      </span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="text-muted text-center">¡Perfecto! No hay alumnos que requieran contacto inmediato.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Resumen de Seguimiento -->
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row text-center">
+
+          <div class="col-md-3">
+            <h4 class="text-success"><%= @new_stable_count %></h4>
+            <small class="text-muted">Nuevos Estables</small>
+          </div>
+          <div class="col-md-3">
+            <h4 class="text-danger"><%= @lost_stable_count %></h4>
+            <small class="text-muted">Estables Perdidos</small>
+          </div>
+
+          <div class="col-md-3">
+            <h4 class="text-primary"><%= @alumnos_faltas.sum { |a| a[:faltas] } %></h4>
+            <small class="text-muted">Total Faltas Mes</small>
+          </div>
+          <div class="col-md-3">
+            <h4 class="text-warning"><%= @alumnos_llamar.count %></h4>
+            <small class="text-muted">Alumnos a Contactar</small>
+          </div>
+          <div class="col-md-3">
+            <h4 class="text-success"><%= Usuario.activo.count - @alumnos_llamar.count %></h4>
+            <small class="text-muted">Alumnos sin Problemas</small>
+          </div>
+          <div class="col-md-3">
+            <h4 class="text-info">
+              <% 
+                total_faltas = @alumnos_faltas.sum { |a| a[:faltas].to_i }
+                total_clases = @alumnos_faltas.sum { |a| a[:total_clases].to_i }
+                tasa_promedio = total_clases > 0 ? (total_faltas.to_f / total_clases * 100).round(1) : 0
+              %>
+              <%= tasa_promedio %>%
+            </h4>
+            <small class="text-muted">Tasa Faltas Promedio</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Gráficos Simples -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Resumen de Métricas</h5>
+        </div>
+        <div class="card-body">
+          <div class="list-group">
+            <div class="list-group-item d-flex justify-content-between">
+              <span>Clases por Alumno (promedio):</span>
+              <strong><%= @key_metrics[:avg_classes_per_student] %></strong>
+            </div>
+            <div class="list-group-item d-flex justify-content-between">
+              <span>Instructor Más Popular:</span>
+              <strong><%= @key_metrics[:popular_instructor] %></strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Acciones Rápidas</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <%= link_to 'Ver Comparación Mensual', stats_monthly_comparison_path, class: 'btn btn-outline-primary' %>
+            <%= link_to 'Ver Evolución Ingresos', stats_evolucion_ingresos_path, class: 'btn btn-outline-success' %>
+            <%= link_to 'Volver al Panel', michon_path, class: 'btn btn-outline-secondary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

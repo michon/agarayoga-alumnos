@@ -7,7 +7,7 @@ class Recibo < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[id importe created_at updated_at nombre bic iban moneda referencia
        vencimiento factura concepto lugar remesado pago reciboEstado_id
-       usuario_id remesa_id]
+       usuario_id remesa_id serie]
   end
 
   def self.ransackable_associations(auth_object = nil)

@@ -1,9 +1,21 @@
 <div class="container mt-5">
   <h2>Comparación Mensual Interanual</h2>
+
+  <!-- Gráfico de Ingresos -->
+  <h4 class="mt-4">Evolución de Ingresos</h4>
   <div data-controller="echart"
+       data-echart-tipo-value="ingresos"
        data-echart-years-value="<%= @years.to_json %>"
        data-echart-months-value="<%= @months.to_json %>"
        data-echart-data-value="<%= @comparison_data.to_json %>"
-       style="width: 100%; height: 500px;"></div>
-</div>
+       style="width: 100%; height: 400px;"></div>
 
+  <!-- Gráfico de Alumnos -->
+  <h4 class="mt-5">Evolución de Alumnos Activos</h4>
+  <div data-controller="echart"
+       data-echart-tipo-value="alumnos"
+       data-echart-years-value="<%= @years.to_json %>"
+       data-echart-months-value="<%= @months.to_json %>"
+       data-echart-datos-alumnos-value="<%= @datos_alumnos_mes.to_json %>"
+       style="width: 100%; height: 400px;"></div>
+</div>

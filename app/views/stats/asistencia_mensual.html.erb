@@ -1,0 +1,66 @@
+<!-- app/views/stats/asistencia_mensual.html.erb -->
+<section class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card card-border-purple">
+        <div class="card-header bg-purple text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="bi bi-calendar-heart me-2"></i>Asistencia Mensual - <%= @mes_nombre %>
+          </h5>
+          <%= link_to '← Volver', comun_michon_path, class: 'btn btn-sm btn-light' %>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <%= line_chart asistencia_mensual_chart_data,
+                  height: '100%',
+                  library: {
+                    maintainAspectRatio: false,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        max: 100
+                      }
+                    }
+                  } %>
+          </div>
+
+          <div class="mt-4">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-purple">
+                  <tr>
+                    <th>Semana</th>
+                    <th>Total Clases</th>
+                    <th>Asistencias</th>
+                    <th>Tasa Asistencia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @attendance_data.each do |data| %>
+                    <tr>
+                      <td><strong><%= data[:semana] %></strong></td>
+                      <td><%= data[:total] %></td>
+                      <td><%= data[:attended] %></td>
+                      <td>
+                        <span class="badge <%= data[:rate] >= 80 ? 'bg-success' : data[:rate] >= 60 ? 'bg-warning' : 'bg-danger' %>">
+                          <%= data[:rate] %>%
+                        </span>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.table-purple {
+  background-color: #6f42c1;
+  color: white;
+}
+</style>

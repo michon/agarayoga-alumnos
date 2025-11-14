@@ -11,58 +11,62 @@ $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 // Toastr
 @import 'toastr';
 
-// Tus estilos (versión corregida)
+// Variables
+$purple: #6f42c1;
+$estado-1: #0d6efd; /* Vendrá - Azul */
+$estado-2: #198754; /* Asistió - Verde */
+$estado-3: #fd7e14; /* Avisó - Naranja */
+$estado-4: #dc3545; /* Faltó - Rojo */
+
+// Estilos base
 h1 {
-  text-decoration: underline; /* Usa la propiedad CSS directamente */
+  text-decoration: underline;
   color: red;
 }
 
-
-/* Clases personalizadas para el color púrpura */
+// Utilidades de color púrpura
 .btn-outline-purple {
-  color: #6f42c1;          /* Color púrpura para texto/borde */
-  border-color: #6f42c1;   /* Borde púrpura */
-}
+  color: $purple;
+  border-color: $purple;
 
-.btn-outline-purple:hover {
-  color: white;            /* Texto blanco al pasar el mouse */
-  background-color: #6f42c1; /* Fondo púrpura al pasar el mouse */
+  &:hover {
+    color: white;
+    background-color: $purple;
+  }
 }
 
 .bg-purple {
-  background-color: #6f42c1 !important; /* Fondo púrpura */
+  background-color: $purple !important;
 }
 
 .border-purple {
-  border-color: #6f42c1 !important;     /* Borde púrpura */
+  border-color: $purple !important;
 }
 
 .text-purple {
-  color: #6f42c1 !important;            /* Texto púrpura */
+  color: $purple !important;
 }
 
-/* Estilos para los estados */
-.text-estado-1 { color: #0d6efd; } /* Vendrá - Azul */
-.text-estado-2 { color: #198754; } /* Asistió - Verde */
-.text-estado-3 { color: #fd7e14; } /* Avisó - Naranja */
-.text-estado-4 { color: #dc3545; } /* Faltó - Rojo */
+// Estilos para estados
+.text-estado-1 { color: $estado-1; }
+.text-estado-2 { color: $estado-2; }
+.text-estado-3 { color: $estado-3; }
+.text-estado-4 { color: $estado-4; }
 
-/* Transición suave para cambios de estado */
 [id^="alumno-"] {
   transition: all 0.3s ease;
 }
 
-/* Botones de estado */
 .btn-group-sm .btn {
   transition: all 0.2s ease;
+
+  &.active {
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
+    transform: scale(1.05);
+  }
 }
 
-.btn-group-sm .btn.active {
-  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
-  transform: scale(1.05);
-}
-
-
+// Componentes comunes
 .btn-sm {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
@@ -75,11 +79,484 @@ h1 {
   border-radius: 4px;
 }
 
-
 .color-indicator {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border-radius: 50%; /* Cambia a 0 para rectángulo en lugar de círculo */
+  border-radius: 50%;
   cursor: default;
+}
+
+// Estilos para calendarios
+.simple-calendar {
+  width: 100%;
+
+  .calendar-heading {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+
+  .table {
+    tbody tr {
+      height: 120px;
+    }
+
+    td {
+      vertical-align: top;
+      padding: 5px;
+    }
+
+    // Estilos adicionales para calendario
+    border-collapse: separate;
+    border-spacing: 2px;
+
+    th {
+      background-color: #f8f9fa;
+      padding: 0.5rem;
+      text-align: center;
+      font-weight: normal;
+    }
+
+    td {
+      height: 80px;
+      border: 1px solid #dee2e6;
+      background-color: white;
+
+      &.day {
+        position: relative;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+
+      &.prev-month, &.next-month {
+        background-color: #f8f9fa;
+        color: #6c757d;
+      }
+
+      &.today {
+        background-color: #e3f2fd;
+      }
+    }
+  }
+
+  // Versión optimizada
+  .calendar-heading {
+    text-align: center;
+    font-size: 1.3em;
+    margin-bottom: 1.25rem;
+    color: #495057;
+
+    a {
+      color: #495057;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        color: #007bff;
+      }
+    }
+  }
+
+  .table {
+    border-collapse: separate;
+    border-spacing: 1px;
+    margin-bottom: 0;
+
+    th {
+      background-color: #f8f9fa;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      font-weight: 600;
+      color: #6c757d;
+      border-bottom: 2px solid #dee2e6;
+      font-size: 0.9rem;
+    }
+
+    td {
+      height: 60px; // Altura reducida
+      padding: 0.5rem;
+
+      &.prev-month, &.next-month {
+        background-color: #fafafa;
+        color: #adb5bd;
+      }
+
+      &.today {
+        background-color: #e7f5ff;
+        font-weight: bold;
+
+        .estado-indicador {
+          border-color: #e7f5ff;
+        }
+      }
+    }
+  }
+}
+
+.clases-del-dia {
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.calendar-event {
+  cursor: pointer;
+  margin: 2px;
+  padding: 2px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  color: white;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  small {
+    font-size: 0.7em;
+    opacity: 0.9;
+  }
+}
+
+.calendar-container {
+  margin: 20px 0;
+
+  .day {
+    min-height: 100px;
+  }
+}
+
+// Sección WhatsApp
+.whatsapp-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #dee2e6;
+
+  h4 {
+    color: #25d366;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.25rem;
+      background-color: #f8f9fa;
+
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+  }
+
+  // Versión con acordeón
+  &.whatsapp-accordion {
+    margin-top: 3rem;
+
+    .accordion-button {
+      background-color: #25d366;
+      color: white;
+      font-weight: bold;
+      padding: 1rem 1.5rem;
+
+      &:not(.collapsed) {
+        background-color: #128c7e;
+        color: white;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 0.25rem rgba(37, 211, 102, 0.25);
+      }
+    }
+
+    .accordion-body {
+      background-color: #f8f9fa;
+      padding: 1.5rem;
+    }
+  }
+}
+
+// Sección de enlace de app
+.app-link-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+
+  h4 {
+    margin-bottom: 1rem;
+    color: #495057;
+  }
+
+  .col {
+    word-break: break-all;
+    font-family: monospace;
+    padding: 0.75rem;
+  }
+
+  display: none; // Ocultamos el enlace como solicitaste
+}
+
+// Calendarios mensuales
+.month-calendar {
+  margin-bottom: 3rem;
+
+  h3 {
+    color: #495057;
+    font-weight: bold;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+  }
+
+  // Versión optimizada
+  margin-bottom: 2.5rem;
+
+  h3 {
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+  }
+}
+
+// Indicadores de estado - CORREGIDO
+.estado-indicador {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: help;
+  margin: 1px;
+  // REMOVED: background-color: inherit !important; // Esta línea era el problema
+
+  &:hover {
+    transform: scale(1.3);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  }
+}
+
+// Leyenda de estados
+.estados-leyenda {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+
+  .leyenda-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 1.5rem;
+
+    .leyenda-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+  }
+
+  // Versión corregida
+  margin: 1rem 0 2rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+
+  h6 {
+    margin-bottom: 1rem;
+    color: #495057;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .leyenda-item {
+    margin-right: 2rem;
+    margin-bottom: 0.75rem;
+
+    .leyenda-color {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    small {
+      color: #495057;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Media queries responsivos
+@media (max-width: 768px) {
+  .month-calendar {
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.2rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  .simple-calendar {
+    .calendar-heading {
+      font-size: 1.1em;
+      margin-bottom: 1rem;
+    }
+
+    .table {
+      th {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+
+      td {
+        height: 50px;
+        padding: 0.25rem;
+        font-size: 0.85rem;
+
+        .estado-indicador {
+          width: 12px;
+          height: 12px;
+          margin: 0.5px;
+        }
+      }
+    }
+  }
+
+  .estados-leyenda {
+    padding: 1rem;
+
+    .leyenda-item {
+      margin-right: 1.5rem;
+      margin-bottom: 0.5rem;
+
+      .leyenda-color {
+        width: 16px;
+        height: 16px;
+        margin-right: 0.5rem;
+      }
+
+      small {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .simple-calendar .table td {
+    height: 70px; // Un poco más alto en desktop
+  }
+}
+
+// app/assets/stylesheets/application.scss
+// Añadir estas reglas al fichero existente
+
+.btn-outline-purple {
+  color: #6f42c1;
+  border-color: #6f42c1;
+
+  &:hover {
+    color: #fff;
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+  }
+}
+
+.btn-purple {
+  color: #fff;
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+
+  &:hover {
+    background-color: #5a32a3;
+    border-color: #5a32a3;
+  }
+}
+
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
+
+.text-purple {
+  color: #6f42c1 !important;
+}
+
+// Estilos específicos para las tarjetas de estadísticas
+.card-border-purple {
+  border-color: #6f42c1;
+
+  .card-header {
+    background-color: #6f42c1;
+    color: white;
+  }
+}
+
+// Estilos para los accordions de estadísticas
+#estadisticasAccordion {
+  .accordion-button {
+    &:not(.collapsed) {
+      background-color: #6f42c1;
+      color: white;
+
+      &::after {
+        filter: brightness(0) invert(1);
+      }
+    }
+
+    &:focus {
+      border-color: #6f42c1;
+      box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+    }
+  }
+}
+
+// Badges personalizados
+.badge-purple {
+  background-color: #6f42c1;
+  color: white;
+}
+
+// Gráficos responsive
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+
+  @media (max-width: 576px) {
+    height: 250px;
+  }
+}
+
+// Métricas rápidas en el accordion
+.metricas-rapidas {
+  .metric-item {
+    border-left: 3px solid #6f42c1;
+    padding-left: 10px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-value {
+      font-weight: 600;
+      color: #6f42c1;
+    }
+  }
 }

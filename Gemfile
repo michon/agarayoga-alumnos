@@ -80,3 +80,7 @@ gem 'sepa', github: 'conanite/sepa'
 
 gem "webpacker", "~> 5.4"
 gem 'simple_calendar'
+#gem 'will_paginate', '~> 3.3'
+gem 'kaminari'
+gem 'prawn-icon'
+gem 'prawn-svg'

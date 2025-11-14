@@ -10,13 +10,14 @@
       <%= ca.usuario.nombre %>
     </label>
   </div>
-  <%= link_to clase_alumno_path(ca),
+    <%= link_to clase_alumno_path(ca),
               method: :delete,
               class: "btn btn-sm btn-outline-danger",
               data: {
-                confirm: "¿Eliminar a #{ca.usuario.nombre} de la clase?",
+                turbo_confirm: "¿Eliminar a #{ca.usuario.nombre} de la clase?",
                 turbo_method: :delete
               } do %>
     <i class="bi bi-trash"></i>
   <% end %>
+
 </div>
