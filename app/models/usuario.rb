@@ -30,6 +30,7 @@ class Usuario < ApplicationRecord
   enum rol: [:yogui, :instructor, :admin, :michon]
 
   after_initialize :set_default_rol, :if => :new_record?
+  before_save :eliminar_asignaciones_si_de_baja
 
 
   def generar_clave_facil
@@ -57,8 +58,25 @@ class Usuario < ApplicationRecord
 
 
   def self.ransackable_attributes(auth_object = nil)
-    [ "nombre" ]
+    [ "nombre", "debaja" ]
   end  
+
+  # app/models/usuario.rb - Agrega esto justo después de ransackable_attributes
+  def self.ransackable_associations(auth_object = nil)
+    # Lista explícita de asociaciones que pueden ser buscadas con Ransack
+    [
+      "cajas",
+      "claseAlumno",
+      "grupoAlumno",
+      "horarioAlumno",
+      "horarios",
+      "image_attachment",
+      "image_blob",
+      "instructor",
+      "preinscripciones",
+      "recibos"
+    ]
+  end
 
   def ibanImpreso
       ibanImp = ""
@@ -142,4 +160,26 @@ def bic_valido
   end
 end
 
+# Métodos privados
+private
+
+ def eliminar_asignaciones_si_de_baja
+    # Solo ejecutar si el campo 'debaja' cambió de false a true
+    return unless debaja_changed? && debaja == true
+
+    # Contar antes de eliminar para el log
+    horarios_count = horarioAlumno.count
+    clases_futuras_count = claseAlumno.futuras.count
+
+    # Eliminar horarios habituales
+    horarioAlumno.destroy_all if horarios_count > 0
+    
+    # Eliminar clases futuras (solo las que están por venir)
+    claseAlumno.futuras.destroy_all if clases_futuras_count > 0
+
+    # Log informativo
+    Rails.logger.info "[BAJA USUARIO] ID: #{id}, Nombre: #{nombre}. " \
+                      "Horarios eliminados: #{horarios_count}, " \
+                      "Clases futuras eliminadas: #{clases_futuras_count}"
+  end
 end

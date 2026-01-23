@@ -12,7 +12,9 @@ class IncomeCombiner
     # Calcular totales por mes natural
     current = months.map do |month_start|
       month_end = month_start.end_of_month
+      usuarios_excluidos = Usuario.unscoped.where(grupoAlumno_id: [7, 8]).pluck(:id)
       total = Recibo.where(vencimiento: month_start..month_end)
+                   .where.not(usuario_id: usuarios_excluidos)
                    .sum(:importe)
                    .to_f
 

@@ -11,17 +11,10 @@ class AlumnosController < ApplicationController
         render :file => "public/401.html", :status => :unauthorized
       end
 
-      @q = Usuario.alumno.ransack(params[:q])
+      @q = Usuario.activo.ransack(params[:q])
       @highlight_alumno_id = params[:highlight_alumno]
       @alumnos = @q.result(distinct: true)
-      #
-      # FILTRO ADICIONAL: SI QUIERES MANTENER SOLO ACTIVOS POR DEFECTO:
-      # Si NO se ha seleccionado ningún filtro de estado, mostrar solo activos por defecto
-      #if params[:q].nil? || params[:q][:debaja_eq].blank?
-      #  @alumnos = @alumnos.where(debaja: false)
-      #end
 
-  
       @clases = ClaseAlumno.futuras
       @fechaInicio = Date.today.beginning_of_month
       @fechaHoy = Date.today.next_month
@@ -51,13 +44,13 @@ class AlumnosController < ApplicationController
         end
       end
 
-      # Pre-cargar los últimos 12 recibos de los alumnos ordenados por fecha (más reciente primero)
+      # AÑADIR ESTO: Pre-cargar los últimos 12 recibos de los alumnos ordenados por fecha (más reciente primero)
       @recibos_por_alumno = {}
       alumnos_con_relaciones.each do |alumno|
         @recibos_por_alumno[alumno.id] = alumno.recibos
-                                  .where.not(vencimiento: nil)  # ← Excluye nulos
-                                  .order(vencimiento: :desc)    # ← Mejor que sort_by
-                                  .limit(12)
+                                .sort_by(&:vencimiento)
+                                .reverse
+                                .take(12)
       end
   end
 

@@ -1,0 +1,522 @@
+// Configura Font Awesome (usa @import temporalmente)
+$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+
+// Bootstrap (usa @import por ahora)
+@import '~bootstrap/scss/bootstrap';
+//@import '~bootstrap-icons/font/bootstrap-icons';
+// Toastr
+@import 'toastr';
+
+// Tus estilos (versión corregida)
+h1 {
+  text-decoration: underline; /* Usa la propiedad CSS directamente */
+  color: red;
+}
+
+
+/* Clases personalizadas para el color púrpura */
+.btn-outline-purple {
+  color: #6f42c1;          /* Color púrpura para texto/borde */
+  border-color: #6f42c1;   /* Borde púrpura */
+}
+
+.btn-outline-purple:hover {
+  color: white;            /* Texto blanco al pasar el mouse */
+  background-color: #6f42c1; /* Fondo púrpura al pasar el mouse */
+}
+
+.bg-purple {
+  background-color: #6f42c1 !important; /* Fondo púrpura */
+}
+
+.border-purple {
+  border-color: #6f42c1 !important;     /* Borde púrpura */
+}
+
+.text-purple {
+  color: #6f42c1 !important;            /* Texto púrpura */
+}
+
+/* Estilos para los estados */
+.text-estado-1 { color: #0d6efd; } /* Vendrá - Azul */
+.text-estado-2 { color: #198754; } /* Asistió - Verde */
+.text-estado-3 { color: #fd7e14; } /* Avisó - Naranja */
+.text-estado-4 { color: #dc3545; } /* Faltó - Rojo */
+
+/* Transición suave para cambios de estado */
+[id^="alumno-"] {
+  transition: all 0.3s ease;
+}
+
+/* Botones de estado */
+.btn-group-sm .btn {
+  transition: all 0.2s ease;
+}
+
+.btn-group-sm .btn.active {
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.5);
+  transform: scale(1.05);
+}
+
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  margin: 0 2px;
+}
+
+.badge {
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+
+.color-indicator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; /* Cambia a 0 para rectángulo en lugar de círculo */
+  cursor: default;
+}
+
+/* Estilos para el calendario de asistencias */
+.simple-calendar {
+  width: 100%;
+
+  .calendar-heading {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+
+  .table {
+    tbody tr {
+      height: 120px;
+    }
+
+    td {
+      vertical-align: top;
+      padding: 5px;
+    }
+  }
+}
+
+.clases-del-dia {
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.calendar-event {
+  cursor: pointer;
+  margin: 2px;
+  padding: 2px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  color: white;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  small {
+    font-size: 0.7em;
+    opacity: 0.9;
+  }
+}
+
+/* Estilos específicos para la vista de clases agendadas */
+.calendar-container {
+  margin: 20px 0;
+
+  .day {
+    min-height: 100px;
+  }
+}
+
+/* Para la sección de WhatsApp */
+.whatsapp-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #dee2e6;
+
+  h4 {
+    color: #25d366;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.25rem;
+      background-color: #f8f9fa;
+
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+  }
+}
+
+/* Para la sección de enlace de la app */
+.app-link-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+
+  h4 {
+    margin-bottom: 1rem;
+    color: #495057;
+  }
+
+  .col {
+    word-break: break-all;
+    font-family: monospace;
+    padding: 0.75rem;
+  }
+}
+
+/* Estilos para los calendarios mensuales */
+.month-calendar {
+  margin-bottom: 3rem;
+
+  h3 {
+    color: #495057;
+    font-weight: bold;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+  }
+}
+
+.simple-calendar {
+  width: 100%;
+
+  .calendar-heading {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  .table {
+    border-collapse: separate;
+    border-spacing: 2px;
+
+    th {
+      background-color: #f8f9fa;
+      padding: 0.5rem;
+      text-align: center;
+      font-weight: normal;
+    }
+
+    td {
+      height: 80px;
+      vertical-align: top;
+      padding: 5px;
+      border: 1px solid #dee2e6;
+      background-color: white;
+
+      &.day {
+        position: relative;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+
+      &.prev-month, &.next-month {
+        background-color: #f8f9fa;
+        color: #6c757d;
+      }
+
+      &.today {
+        background-color: #e3f2fd;
+      }
+    }
+  }
+}
+
+/* Indicadores de estado */
+.estado-indicador {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+/* Leyenda de estados */
+.estados-leyenda {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+
+  .leyenda-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 1.5rem;
+
+    .leyenda-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+  }
+}
+
+
+/* ==============================================
+   ESTILOS ESPECÍFICOS PARA CLASES AGENDADAS
+   ============================================== */
+
+/* Leyenda de estados - Versión corregida */
+.estados-leyenda {
+  margin: 1rem 0 2rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+
+  h6 {
+    margin-bottom: 1rem;
+    color: #495057;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .leyenda-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 2rem;
+    margin-bottom: 0.75rem;
+
+    .leyenda-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-right: 0.75rem;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    small {
+      color: #495057;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* Indicadores de estado - Versión corregida */
+.estado-indicador {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: help;
+  margin: 1px;
+
+  /* Eliminar cualquier fondo blanco que pueda estar ocultando el color */
+  background-color: inherit !important;
+
+  &:hover {
+    transform: scale(1.3);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  }
+}
+
+/* Calendarios responsivos */
+.month-calendar {
+  margin-bottom: 2.5rem;
+
+  h3 {
+    color: #495057;
+    font-weight: bold;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+  }
+}
+
+/* Simple Calendar - Versión optimizada */
+.simple-calendar {
+  width: 100%;
+
+  .calendar-heading {
+    text-align: center;
+    font-size: 1.3em;
+    margin-bottom: 1.25rem;
+    color: #495057;
+
+    a {
+      color: #495057;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        color: #007bff;
+      }
+    }
+  }
+
+  .table {
+    border-collapse: separate;
+    border-spacing: 1px;
+    margin-bottom: 0;
+
+    th {
+      background-color: #f8f9fa;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      font-weight: 600;
+      color: #6c757d;
+      border-bottom: 2px solid #dee2e6;
+      font-size: 0.9rem;
+    }
+
+    td {
+      vertical-align: top;
+      padding: 0.5rem;
+      border: 1px solid #dee2e6;
+      background-color: white;
+      height: 60px; /* Altura reducida */
+
+      &.day {
+        position: relative;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+
+      &.prev-month, &.next-month {
+        background-color: #fafafa;
+        color: #adb5bd;
+      }
+
+      &.today {
+        background-color: #e7f5ff;
+        font-weight: bold;
+
+        .estado-indicador {
+          border-color: #e7f5ff;
+        }
+      }
+    }
+  }
+}
+
+/* WhatsApp Section con acordeón */
+.whatsapp-accordion {
+  margin-top: 3rem;
+
+  .accordion-button {
+    background-color: #25d366;
+    color: white;
+    font-weight: bold;
+    padding: 1rem 1.5rem;
+
+    &:not(.collapsed) {
+      background-color: #128c7e;
+      color: white;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.25rem rgba(37, 211, 102, 0.25);
+    }
+  }
+
+  .accordion-body {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+  }
+}
+
+/* Responsive optimizations */
+@media (max-width: 768px) {
+  .month-calendar {
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.2rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  .simple-calendar {
+    .calendar-heading {
+      font-size: 1.1em;
+      margin-bottom: 1rem;
+    }
+
+    .table {
+      th {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+
+      td {
+        height: 50px;
+        padding: 0.25rem;
+        font-size: 0.85rem;
+
+        .estado-indicador {
+          width: 12px;
+          height: 12px;
+          margin: 0.5px;
+        }
+      }
+    }
+  }
+
+  .estados-leyenda {
+    padding: 1rem;
+
+    .leyenda-item {
+      margin-right: 1.5rem;
+      margin-bottom: 0.5rem;
+
+      .leyenda-color {
+        width: 16px;
+        height: 16px;
+        margin-right: 0.5rem;
+      }
+
+      small {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .simple-calendar .table td {
+    height: 70px; /* Un poco más alto en desktop */
+  }
+}
+
+/* Eliminar estilos duplicados o conflictivos */
+.app-link-section {
+  display: none; /* Ocultamos el enlace como solicitaste */
+}

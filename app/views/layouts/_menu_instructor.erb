@@ -18,8 +18,8 @@
                       <li> <%= link_to "Clases asignadas",        clase_clasesDesde_path(:fecha => Date.today), method: :post, class: "dropdown-item" %></li>
                       
                       <ul class="list-group">
-                      <li> <%= link_to "Facturacion mes actual",  instructor_path(:id => 4, :fecha => Date.today),  class: "dropdown-item" %></li>
-                      <li> <%= link_to "Facturacion mes anterior",instructor_path(:id => 4, :fecha => Date.today - 1.month),  class: "dropdown-item" %></li>
+                      <li> <%= link_to "Facturación mes actual",  instructor_path(:id => current_usuario.instructor.id, :fecha => Date.today),  class: "dropdown-item" %></li>
+                      <li> <%= link_to "Facturación mes anterior",instructor_path(:id => current_usuario.instructor.id, :fecha => Date.today - 1.month),  class: "dropdown-item" %></li>
                       </ul>
                     </ul>
                   </li>

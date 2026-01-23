@@ -1,0 +1,660 @@
+# app/controllers/stats_controller.rb
+class StatsController < ApplicationController
+  before_action :set_common_variables, only: [:dashboard, :monthly_comparison, :evolucion_ingresos, :asistencia_mensual, :asistencia_instructor]
+
+
+  # Dashboard general principal
+  def dashboard
+    @key_metrics = build_key_metrics
+    @attendance_data = build_attendance_data
+    @financial_data = build_financial_data
+    @alumnos_faltas = top_alumnos_faltas_mes
+    @alumnos_llamar = alumnos_para_llamar
+
+    # Nuevas métricas de alumnos estables
+    stable_data = stable_students
+    @new_stable_count = stable_data[:new_stable].size
+    @lost_stable_count = stable_data[:lost_stable].size
+
+    @segmentacion = segment_active_students
+
+    # NUEVO: Comparativa de métricas de actividad
+    @activity_comparison = compare_activity_metrics
+  end
+
+
+  # Gráfico de asistencia mensual
+  def asistencia_mensual
+    mes = params[:mes] ? Date.parse(params[:mes] + "-01") : Date.today.beginning_of_month
+    @attendance_data = monthly_attendance_data(mes)
+    @mes_nombre = I18n.l(mes, format: "%B %Y")
+  end
+
+  # Gráfico de asistencia por instructor
+  def asistencia_instructor
+    @instructor = Instructor.find_by(id: params[:instructor_id])
+    mes = params[:mes] ? Date.parse(params[:mes] + "-01") : Date.today.beginning_of_month
+
+    if @instructor
+      @attendance_data = instructor_attendance_data(@instructor, mes)
+      @mes_nombre = I18n.l(mes, format: "%B %Y")
+    end
+  end
+
+  # Comparación mensual através de los años (existente)
+  def monthly_comparison
+    @comparison_data = IncomeComparisonBuilder.yearly_comparison_data
+    @years = @comparison_data.keys.sort
+    @months = (1..12).map { |m| "%02d" % m }
+  end
+
+  # Gráfico de evolución de los ingresos bruto (existente)
+  def evolucion_ingresos
+    combined_data = IncomeCombiner.combined_data
+    @paraver = combined_data
+
+    @chart_data = {
+      labels: combined_data.map { |d| I18n.l(d[:date], format: "%b %Y") },
+      values: combined_data.map { |d| d[:amount] },
+      is_historical: combined_data.map { |d| d[:date] < Date.new(2025, 5, 1) }
+    }
+  end
+
+  
+  private
+
+  def set_common_variables
+    @fechaHoy = Date.today
+    @alumnosTotal = Usuario.activo
+    # Pre-cargar métricas clave para la vista michon
+    @key_metrics ||= build_key_metrics if action_name == 'dashboard'
+  end
+
+  def build_key_metrics
+    {
+    active_students: HorarioAlumno.select("distinct usuario_id").count,
+    monthly_attendance_rate: calculate_monthly_attendance_rate,
+    avg_student_tenure: calculate_avg_student_tenure_months,
+    stable_students_pct: calculate_stable_students_percentage, # ← NUEVO
+    avg_classes_per_student: calculate_avg_classes_per_student,
+    popular_instructor: most_popular_instructor
+    }
+  end
+
+  def build_attendance_data
+    {
+      monthly_trend: monthly_attendance_trend,
+      by_weekday: attendance_by_weekday,
+      by_instructor: attendance_by_instructor
+    }
+  end
+
+  def build_financial_data
+    {
+      monthly_comparison: IncomeComparisonBuilder.yearly_comparison_data,
+      income_evolution: IncomeCombiner.combined_data
+    }
+  end
+
+  # Métodos de cálculo específicos
+  #
+  #
+  #
+  #
+
+def calculate_stable_students_percentage
+    segmentacion = segment_active_students    # ← MISMA lógica que el dashboard
+  active_total = Usuario.activo.count
+
+  return 0.0 if active_total == 0
+  ((segmentacion[:estables].to_f / active_total) * 100).round(1)
+end
+
+def count_new_stable_students
+  stable_students[:new_stable].size
+end
+
+def count_lost_stable_students
+  stable_students[:lost_stable].size
+end
+
+  def calculate_monthly_attendance_rate
+    current_month = Date.today.beginning_of_month..Date.today.end_of_month
+    total_classes = ClaseAlumno.joins(:clase).where(clases: { diaHora: current_month }).count
+    attended_classes = ClaseAlumno.joins(:clase).where(clases: { diaHora: current_month }, claseAlumnoEstado_id: [1, 2]).count
+
+    total_classes > 0 ? (attended_classes.to_f / total_classes * 100).round(1) : 0
+  end
+
+def calculate_retention_rate
+  reference_start = 3.months.ago.beginning_of_month
+  reference_end   = 3.months.ago.end_of_month
+  recent_start    = 1.month.ago.beginning_of_day
+  recent_end      = Date.today.end_of_day
+
+  # Alumnos con clase en el mes de referencia (usando campo local)
+  alumnos_ref = ClaseAlumno
+    .where(diaHora: reference_start..reference_end)
+    .distinct
+    .pluck(:usuario_id)
+
+  return 0.0 if alumnos_ref.empty?
+
+  # De esos, cuántos tienen clase en el periodo reciente
+  alumnos_ret = ClaseAlumno
+    .where(usuario_id: alumnos_ref)
+    .where(diaHora: recent_start..recent_end)
+    .distinct
+    .count
+
+  tasa = (alumnos_ret.to_f / alumnos_ref.size * 100).round(1)
+  [tasa, 100.0].min
+end
+
+  def calculate_avg_classes_per_student
+    total_classes = ClaseAlumno.where(usuario_id: Usuario.activo.pluck(:id)).count
+    active_count = Usuario.activo.count
+    active_count > 0 ? (total_classes.to_f / active_count).round(1) : 0
+  end
+
+  def most_popular_instructor
+    instructor_id = ClaseAlumno.joins(:clase)
+      .where(clases: { diaHora: 1.month.ago..Date.today })
+      .group('clases.instructor_id')
+      .order('COUNT(clase_alumnos.id) DESC')
+      .limit(1)
+      .pluck('clases.instructor_id')
+      .first
+
+    Instructor.find_by(id: instructor_id)&.nombre || "No data"
+  end
+
+  def monthly_attendance_data(mes)
+    month_start = mes.beginning_of_month
+    month_end = mes.end_of_month
+
+    datos_semanales = []
+    current_week = month_start
+
+    while current_week <= month_end
+      week_end = [current_week.end_of_week, month_end].min
+
+      total = ClaseAlumno.joins(:clase).where(clases: { diaHora: current_week..week_end }).count
+      attended = ClaseAlumno.joins(:clase).where(clases: { diaHora: current_week..week_end }, claseAlumnoEstado_id: [1, 2]).count
+
+      datos_semanales << {
+        semana: "Semana #{(current_week - month_start).to_i / 7 + 1}",
+        total: total,
+        attended: attended,
+        rate: total > 0 ? (attended.to_f / total * 100).round(1) : 0
+      }
+
+      current_week = week_end + 1.day
+    end
+
+    datos_semanales
+  end
+
+  def instructor_attendance_data(instructor, mes)
+    month_start = mes.beginning_of_month
+    month_end = mes.end_of_month
+
+    # Datos por día para el instructor específico
+    attendance_by_day = []
+    current_day = month_start
+
+    while current_day <= month_end
+      total = ClaseAlumno.joins(:clase)
+        .where(clases: { diaHora: current_day.all_day, instructor_id: instructor.id })
+        .count
+
+      attended = ClaseAlumno.joins(:clase)
+        .where(clases: { diaHora: current_day.all_day, instructor_id: instructor.id })
+        .where(claseAlumnoEstado_id: [1, 2])
+        .count
+
+      attendance_by_day << {
+        dia: I18n.l(current_day, format: "%a %d"),
+        total: total,
+        attended: attended,
+        rate: total > 0 ? (attended.to_f / total * 100).round(1) : 0
+      }
+
+      current_day += 1.day
+    end
+
+    attendance_by_day
+  end
+
+
+
+#---------------------------------------------------------
+# Tendencia de asistencia últimos 6 meses
+#---------------------------------------------------------
+def monthly_attendance_trend
+  6.downto(0).map do |months_ago|
+    month_start = months_ago.months.ago.beginning_of_month
+    month_end = months_ago.months.ago.end_of_month
+
+    total = ClaseAlumno.joins(:clase).where(clases: { diaHora: month_start..month_end }).count
+    attended = ClaseAlumno.joins(:clase).where(clases: { diaHora: month_start..month_end }, claseAlumnoEstado_id: [1, 2]).count
+
+    {
+      period: month_start.strftime("%b %Y"),
+      total: total,
+      attended: attended,
+      rate: total > 0 ? (attended.to_f / total * 100).round(1) : 0
+    }
+  end
+end
+
+def attendance_by_weekday
+  # Asistencia por día de la semana (último mes)
+  weekdays = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+
+  weekdays.map.with_index do |day_name, day_index|
+    # MySQL/MariaDB usa DAYOFWEEK: 1=Domingo, 2=Lunes, ..., 7=Sábado
+    sql_day = day_index + 1  # DAYOFWEEK devuelve 1-7 (Domingo=1)
+
+    total = ClaseAlumno.joins(:clase)
+      .where("DAYOFWEEK(clases.diaHora) = ?", sql_day)
+      .where(clases: { diaHora: 1.month.ago..Date.today })
+      .count
+
+    attended = ClaseAlumno.joins(:clase)
+      .where("DAYOFWEEK(clases.diaHora) = ?", sql_day)
+      .where(clases: { diaHora: 1.month.ago..Date.today })
+      .where(claseAlumnoEstado_id: [1, 2])
+      .count
+
+    {
+      day: day_name,
+      total: total,
+      attended: attended,
+      rate: total > 0 ? (attended.to_f / total * 100).round(1) : 0
+    }
+  end
+end
+
+def attendance_by_instructor
+  # Asistencia por instructor (último mes)
+  Instructor.all.map do |instructor|
+    total = ClaseAlumno.joins(:clase)
+      .where(clases: { instructor_id: instructor.id, diaHora: 1.month.ago..Date.today })
+      .count
+
+    attended = ClaseAlumno.joins(:clase)
+      .where(clases: { instructor_id: instructor.id, diaHora: 1.month.ago..Date.today })
+      .where(claseAlumnoEstado_id: [1, 2])
+      .count
+
+    {
+      instructor: instructor.nombre,
+      total: total,
+      attended: attended,
+      rate: total > 0 ? (attended.to_f / total * 100).round(1) : 0
+    }
+  end
+end
+
+# También asegúrate de tener calculate_current_month_income:
+def calculate_current_month_income
+  # Implementación temporal
+  begin
+    # Intenta con modelo Recibo si existe
+    if defined?(Recibo)
+      current_month = Date.today.beginning_of_month..Date.today.end_of_month
+      Recibo.where(fecha: current_month).sum(:importe)
+    else
+      # Estimación basada en alumnos activos
+      Usuario.activo.count * 50
+    end
+  rescue
+    0
+  end
+end
+
+
+
+def top_alumnos_faltas_mes
+  current_month = Date.today.beginning_of_month..Date.today.end_of_month
+
+  # Contar faltas por alumno en el mes actual
+  faltas_por_alumno = ClaseAlumno.joins(:clase, :usuario)
+    .where(clases: { diaHora: current_month })
+    .where(claseAlumnoEstado_id: [3, 4]) # aviso (3) y falto (4) se consideran faltas
+    .group('usuarios.id', 'usuarios.nombre')
+    .select('usuarios.id, usuarios.nombre, COUNT(clase_alumnos.id) as total_faltas')
+    .order('total_faltas DESC')
+    .limit(10)
+    .map do |record|
+      {
+        id: record.id,
+        nombre: record.nombre,
+        faltas: record.total_faltas,
+        # Calcular también total de clases del alumno para tener contexto
+        total_clases: ClaseAlumno.joins(:clase)
+          .where(usuario_id: record.id)
+          .where(clases: { diaHora: current_month })
+          .count
+      }
+    end
+
+  faltas_por_alumno
+end
+
+# Método para alumnos en riesgo (han faltado a casi todas las clases del mes)
+def alumnos_riesgo_abandono
+  current_month = Date.today.beginning_of_month..Date.today.end_of_month
+  umbral_riesgo = 0.8 # 80% de faltas o más
+
+  # Primero, obtener todos los alumnos activos con sus estadísticas del mes
+  alumnos_stats = Usuario.activo.map do |alumno|
+    total_clases = ClaseAlumno.joins(:clase)
+      .where(usuario_id: alumno.id)
+      .where(clases: { diaHora: current_month })
+      .count
+
+    total_faltas = ClaseAlumno.joins(:clase)
+      .where(usuario_id: alumno.id)
+      .where(clases: { diaHora: current_month })
+      .where(claseAlumnoEstado_id: [3, 4])
+      .count
+
+    tasa_faltas = total_clases > 0 ? (total_faltas.to_f / total_clases) : 0
+
+    {
+      id: alumno.id,
+      nombre: alumno.nombre,
+      telefono: alumno.telefono || alumno.movil,
+      total_clases: total_clases,
+      total_faltas: total_faltas,
+      tasa_faltas: (tasa_faltas * 100).round(1),
+      necesita_llamada: tasa_faltas >= umbral_riesgo && total_clases >= 2 # Mínimo 2 clases para considerar
+    }
+  end
+
+  # Filtrar solo los que necesitan llamada
+  alumnos_stats.select { |alumno| alumno[:necesita_llamada] }
+               .sort_by { |alumno| -alumno[:tasa_faltas] }
+end
+
+# Método mejorado para alumnos que deberías llamar (más estricto)
+def alumnos_para_llamar
+  current_month = Date.today.beginning_of_month..Date.today.end_of_month
+
+  alumnos_activos = Usuario.activo
+
+  alumnos_con_faltas = alumnos_activos.map do |alumno|
+    # Estadísticas del mes actual
+    clases_mes = ClaseAlumno.joins(:clase)
+      .where(usuario_id: alumno.id)
+      .where(clases: { diaHora: current_month })
+
+    total_clases = clases_mes.count
+    total_faltas = clases_mes.where(claseAlumnoEstado_id: [3, 4]).count
+    total_asistencias = clases_mes.where(claseAlumnoEstado_id: [1, 2]).count
+
+    # Criterios para considerar "necesita llamada":
+    # 1. Tiene más de 3 faltas este mes
+    # 2. Tasa de faltas > 70%
+    # 3. No ha asistido a ninguna clase este mes
+    criterio_1 = total_faltas >= 3
+    criterio_2 = total_clases > 0 && (total_faltas.to_f / total_clases) >= 0.7
+    criterio_3 = total_asistencias == 0 && total_clases > 0
+
+    necesita_llamada = criterio_1 || criterio_2 || criterio_3
+
+    {
+      id: alumno.id,
+      nombre: alumno.nombre,
+      telefono: alumno.telefono || alumno.movil,
+      email: alumno.email,
+      total_clases: total_clases,
+      total_asistencias: total_asistencias,
+      total_faltas: total_faltas,
+      tasa_faltas: total_clases > 0 ? (total_faltas.to_f / total_clases * 100).round(1) : 0,
+      necesita_llamada: necesita_llamada,
+      urgencia: calcular_urgencia(total_faltas, total_clases, total_asistencias)
+    }
+  end
+
+  # Devolver solo los que necesitan llamada, ordenados por urgencia
+  alumnos_con_faltas.select { |a| a[:necesita_llamada] }
+                    .sort_by { |a| -a[:urgencia] }
+end
+
+  def calcular_urgencia(faltas, total_clases, asistencias)
+    # Calcular puntuación de urgencia (0-100)
+    urgencia = 0
+
+    if total_clases > 0
+      # Base: porcentaje de faltas (0-70 puntos)
+      urgencia += (faltas.to_f / total_clases * 70).round
+    end
+
+    # Bonus por número absoluto de faltas (0-20 puntos)
+    urgencia += [faltas * 2, 20].min
+
+    # Bonus si no tiene asistencias (10 puntos)
+    urgencia += 10 if asistencias == 0 && total_clases > 0
+
+    [urgencia, 100].min
+  end
+
+def calculate_avg_student_tenure_months
+  cutoff_date = 60.days.ago
+
+  # Agrupar por alumno y obtener primera/última clase
+  student_ranges = ClaseAlumno
+    .group(:usuario_id)
+    .having("MAX(diaHora) < ?", cutoff_date)
+    .pluck(:usuario_id, "MIN(diaHora)", "MAX(diaHora)")
+
+  valid_durations = student_ranges.map do |user_id, first_class, last_class|
+    # Diferencia en segundos → convertir a días → a meses
+    duration_seconds = (last_class - first_class).to_f
+    next if duration_seconds < (15.days) # excluye <15 días
+
+    duration_days = duration_seconds / 1.day
+    duration_days / 30.44
+  end.compact
+
+  return 0.0 if valid_durations.empty?
+
+  avg_months = (valid_durations.sum / valid_durations.size).round(1)
+  [avg_months, 0.0].max
+end
+
+  # Método auxiliar: alumnos con actividad reciente (últimos 60 días)
+  def active_user_ids_with_recent_activity
+    ClaseAlumno
+      .where("diaHora >= ?", 60.days.ago)
+      .distinct
+      .pluck(:usuario_id)
+  end
+
+def stable_students
+  current_year = Date.today.year
+  course_start = Date.new(current_year - 1, 9, 1) # inicio del curso actual (sept 2024)
+
+  # Paso 1: Obtener años con ≥3 meses de actividad REAL por usuario
+  qualifying_years_sql = <<-SQL
+    SELECT
+      usuario_id,
+      YEAR(diaHora) AS activity_year
+    FROM clase_alumnos
+    WHERE
+      diaHora >= '2020-01-01'
+      AND claseAlumnoEstado_id IN (2, 3, 5)
+    GROUP BY usuario_id, YEAR(diaHora)
+    HAVING COUNT(DISTINCT MONTH(diaHora)) >= 3
+  SQL
+
+  results = ActiveRecord::Base.connection.execute(qualifying_years_sql)
+
+  years_by_user = Hash.new { |h, k| h[k] = [] }
+  results.each do |row|
+    user_id = row[0].to_i
+    activity_year = row[1].to_i
+    years_by_user[user_id] << activity_year
+  end
+
+  stable_ids = []
+  new_stable_ids = []
+  lost_stable_ids = []
+
+  years_by_user.each do |user_id, years|
+    qualifying_years = years.sort.uniq
+    next unless qualifying_years.size >= 2
+
+    # ¿Tuvo actividad REAL en el curso actual?
+    has_current_activity = ClaseAlumno
+      .where(
+        usuario_id: user_id,
+        diaHora: course_start..Date.today,
+        claseAlumnoEstado_id: [2, 3, 5]
+      )
+      .exists?
+
+    if has_current_activity
+      stable_ids << user_id
+      # ¿Es nuevo estable? (activo en 2023 y 2024)
+      if qualifying_years.include?(current_year - 1) && qualifying_years.include?(current_year)
+        new_stable_ids << user_id
+      end
+    else
+      # ¿Estuvo activo en 2023 (año pasado)?
+      if qualifying_years.include?(current_year - 1)
+        lost_stable_ids << user_id
+      end
+    end
+  end
+
+  {
+    stable: stable_ids,
+    new_stable: new_stable_ids,
+    lost_stable: lost_stable_ids
+  }
+end
+
+
+def segment_active_students
+  current_year = Date.today.year
+  course_start = Date.new(current_year - 1, 9, 1) # inicio del curso actual
+
+  # IDs de usuarios activos
+  active_user_ids = Usuario.activo.pluck(:id).to_set
+
+  # Actividad REAL de todos los alumnos activos
+  all_activity = ClaseAlumno
+    .where(usuario_id: active_user_ids, claseAlumnoEstado_id: [2, 3, 5])
+    .where.not(diaHora: nil)
+    .pluck(:usuario_id, :diaHora)
+
+  # Agrupar por usuario
+  activity_by_user = all_activity.group_by { |uid, _| uid }
+
+  nuevos = 0
+  nuevos_estables = 0
+  estables = 0
+
+  activity_by_user.each do |user_id, records|
+    # Actividad en el curso actual
+    current_activity = records.select { |_, dh| dh >= course_start }
+    next if current_activity.empty?
+
+    current_months = current_activity.map { |_, dh| dh.month }.uniq.size
+
+    # Historial antes del curso actual
+    past_activity = records.select { |_, dh| dh < course_start }
+
+    if past_activity.empty?
+      # Sin historial previo → solo puede ser Nuevo o Nuevo Estable
+      if current_months >= 3
+        nuevos_estables += 1
+      else
+        nuevos += 1
+      end
+    else
+      # Con historial: ¿fue estable antes? (≥2 años con ≥3 meses)
+      months_by_year = {}
+      past_activity.each do |_, dh|
+        year = dh.year
+        months_by_year[year] ||= Set.new
+        months_by_year[year] << dh.month
+      end
+
+      qualifying_past_years = months_by_year.count { |_, months| months.size >= 3 }
+
+      if qualifying_past_years >= 2
+        estables += 1
+      else
+        # No era estable, pero tiene historial → tratarlo como Nuevo Estable si cumple este curso
+        if current_months >= 3
+          nuevos_estables += 1
+        else
+          nuevos += 1
+        end
+      end
+    end
+  end
+
+  {
+    nuevos: nuevos,
+    nuevos_estables: nuevos_estables,
+    estables: estables
+  }
+end
+
+def compare_activity_metrics
+  activos_teoricos = Usuario.activo.count
+  activos_reales = HorarioAlumno.select("DISTINCT usuario_id").count
+  
+  discrepancia = activos_teoricos - activos_reales
+  porcentaje_discrepancia = activos_teoricos > 0 ? ((discrepancia.to_f / activos_teoricos) * 100).round(1) : 0
+  
+  {
+    teoricos: activos_teoricos,
+    reales: activos_reales,
+    discrepancia: discrepancia.abs,
+    porcentaje_discrepancia: porcentaje_discrepancia,
+    hay_problema: discrepancia > 0 # Alerta si hay más de 2 alumnos de diferencia
+  }
+end
+
+def build_key_metrics
+  comparacion = compare_activity_metrics
+  
+  {
+    active_students: comparacion[:reales], # ← Usar el dato REAL (horario)
+    active_students_teoricos: comparacion[:teoricos], # ← Guardar el teórico para referencia
+    monthly_attendance_rate: calculate_monthly_attendance_rate,
+    avg_student_tenure: calculate_avg_student_tenure_months,
+    stable_students_pct: calculate_stable_students_percentage,
+    avg_classes_per_student: calculate_avg_classes_per_student,
+    popular_instructor: most_popular_instructor,
+    # 🔍 Nueva métrica de salud de datos
+    data_health_issue: comparacion[:hay_problema],
+    data_discrepancy: comparacion[:discrepancia]
+  }
+end
+
+def calculate_monthly_attendance_rate
+  month_start = Date.today.beginning_of_month
+  today = Date.today
+  current_period = month_start..today
+  
+  # 1. Clases PACTADAS = total de clase_alumnos generadas en el periodo
+  clases_pactadas = ClaseAlumno.where(diaHora: current_period).count
+  
+  # 2. Clases ASISTIDAS = clase_alumnos con estado 2 ("asistio") en el periodo
+  clases_asistidas = ClaseAlumno.where(diaHora: current_period)
+                               .where(claseAlumnoEstado_id: 2)
+                               .count
+
+  # 3. Ratio = asistidas / pactadas
+  clases_pactadas > 0 ? (clases_asistidas.to_f / clases_pactadas * 100).round(1) : 0
+end
+
+end

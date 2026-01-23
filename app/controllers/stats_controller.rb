@@ -384,22 +384,26 @@ end
     }
   end
 
-def datos_alumnos_por_mes
-  datos_alumnos = {}
 
-  @years.each do |year|
-    datos_alumnos[year] = {}
-    @months.each do |mes|
-      inicio_mes = Date.new(year.to_i, mes.to_i, 1)
-      fin_mes = inicio_mes.end_of_month
+  def datos_alumnos_por_mes
+    datos_alumnos = {}
+    usuarios_excluidos = Usuario.where(grupoAlumno_id: [7, 8]).pluck(:id)
 
-      datos_alumnos[year][mes] = ClaseAlumno
-        .where(diaHora: inicio_mes..fin_mes, claseAlumnoEstado_id: [1, 2])
-        .distinct
-        .count(:usuario_id)
+    @years.each do |year|
+      datos_alumnos[year] = {}
+      @months.each do |mes|
+        inicio_mes = Date.new(year.to_i, mes.to_i, 1)
+        fin_mes = inicio_mes.end_of_month
+
+        datos_alumnos[year][mes] = ClaseAlumno
+          .where(diaHora: inicio_mes..fin_mes, claseAlumnoEstado_id: [1, 2])
+          .where.not(usuario_id: usuarios_excluidos)
+          .distinct
+          .count(:usuario_id)
+      end
     end
+
+    datos_alumnos
   end
 
-  datos_alumnos
-end
 end

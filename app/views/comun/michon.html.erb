@@ -184,41 +184,76 @@
       </div>
     </div>
 
-    <!-- TARJETA DE FACTURACIÓN -->
-    <div class="col">
-      <div class="card h-100 border-warning">
-        <div class="card-header bg-warning text-dark">
-          <h5><i class="bi bi-receipt me-2"></i>Facturación</h5>
-        </div>
-        <div class="card-body">
-          <div class="d-grid gap-3">
-            <%= link_to facturacion_path, class: 'btn btn-outline-warning text-start' do %>
-              <i class="bi bi-list-check me-2"></i>Listado facturación
-            <% end %>
+<!-- TARJETA DE FACTURACIÓN -->
+<div class="col">
+  <div class="card h-100 border-warning">
+    <div class="card-header bg-warning text-dark">
+      <h5><i class="bi bi-receipt me-2"></i>Facturación</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-grid gap-3">
+        <%= link_to facturacion_path, class: 'btn btn-outline-warning text-start' do %>
+          <i class="bi bi-list-check me-2"></i>Listado facturación
+        <% end %>
 
-            <div class="accordion" id="facturacionAccordion">
-              <!-- Facturas ODS -->
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturasODS">
-                    <i class="bi bi-file-excel me-2"></i> Yacob XLS 
-                  </button>
-                </h2>
-                <div id="collapseFacturasODS" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
-                  <div class="accordion-body p-2">
-                    <%= form_tag(recibo_yacob_path, method: :post, data: { turbo: false }, target: "_blank") do %>
-                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
-                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
-                      <button class="btn btn-sm btn-warning w-100" type="submit">Generar</button>
-                    <% end %>
-                  </div>
+        <div class="accordion" id="facturacionAccordion">
+          <!-- Facturas ODS -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturasODS">
+                <i class="bi bi-file-excel me-2"></i> Yacob XLS
+              </button>
+            </h2>
+            <div id="collapseFacturasODS" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
+              <div class="accordion-body p-2">
+                <%= form_tag(recibo_yacob_path, method: :post, data: { turbo: false }, target: "_blank") do %>
+                  <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                  <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                  <button class="btn btn-sm btn-warning w-100" type="submit">Generar</button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exportar FacturaDirecta -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturaDirecta">
+                <i class="bi bi-cloud-upload me-2"></i> Exportar FacturaDirecta
+              </button>
+            </h2>
+            <div id="collapseFacturaDirecta" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
+              <div class="accordion-body p-2">
+                <div class="alert alert-info mb-2">
+                  <small>
+                    <strong>Exportación a FacturaDirecta</strong><br>
+                    • Asignará números de factura correlativos<br>
+                    • Generará archivos para clientes y facturas<br>
+                    • Solo procesa recibos sin factura asignada
+                  </small>
                 </div>
+
+                <%= form_tag(recibo_exportar_facturadirecta_path, method: :post, data: { turbo: false }) do %>
+                  <div class="mb-2">
+                    <label class="form-label small">Fecha inicio:</label>
+                    <input name="fechaInicio" class="form-control form-control-sm" type="date" value="<%= @fechaHoy %>" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Fecha fin:</label>
+                    <input name="fechaFin" class="form-control form-control-sm" type="date" value="<%= @fechaHoy %>" required>
+                  </div>
+                  <button class="btn btn-sm btn-success w-100" type="submit">
+                    <i class="fas fa-file-export"></i> Exportar a FacturaDirecta
+                  </button>
+                <% end %>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
     <!-- TARJETA DE REMESAS -->
     <div class="col">

@@ -1,0 +1,73 @@
+<% content_for :title,  "Historial de clases" %>
+<% content_for :description,  "Hola #{@clsDelAlumno.first&.usuario&.nombre&.split(' ')&.first}. Estas son tus clases agendadas en AgâraYoga" %>
+
+<!-- Gráfico de torta -->
+<div data-controller="echart-asistencias"
+     data-echart-asistencias-data-value="<%= @instructores_data.to_json %>"
+     data-echart-asistencias-title-value="Porcentaje de asistencia por instructor"
+     style="width: 100%; height: 400px;">
+</div>
+
+<!-- Leyenda de estados -->
+<div class="estados-leyenda mb-4">
+  <h6>Leyenda de estados:</h6>
+  <% @estados.each do |estado| %>
+    <div class="leyenda-item">
+      <div class="leyenda-color bg-<%= estado.color %> !important"></div>
+      <small><%= estado.nombre %></small>
+    </div>
+  <% end %>
+</div>
+
+<!-- Calendarios mensuales -->
+<% @meses.each do |mes| %>
+  <div class="month-calendar mb-5">
+    <h3 class="text-center mb-3">
+      <%= I18n.l(mes, format: '%B %Y').upcase %>
+    </h3>
+
+    <%= month_calendar(start_date: mes) do |date| %>
+      <%= date.day %>
+
+      <% if @clases_por_dia[date] %>
+        <div class="d-flex justify-content-center mt-1">
+          <% @clases_por_dia[date].each do |estado| %>
+            <div class="estado-indicador bg-<%= estado.color %> !important"
+                 data-bs-toggle="tooltip"
+                 data-bs-placement="top"
+                 title="<%= estado.nombre %> - <%= date.strftime('%d/%m/%Y') %>">
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Acordeón para WhatsApp -->
+<div class="whatsapp-accordion">
+  <div class="accordion" id="whatsappAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="whatsappHeading">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#whatsappCollapse" aria-expanded="false" aria-controls="whatsappCollapse">
+          <i class="fab fa-whatsapp me-2"></i> Resumen para WhatsApp
+        </button>
+      </h2>
+      <div id="whatsappCollapse" class="accordion-collapse collapse" aria-labelledby="whatsappHeading" data-bs-parent="#whatsappAccordion">
+        <div class="accordion-body">
+          <%= render 'whatsapp_section' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar tooltips de Bootstrap
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+})
+</script>

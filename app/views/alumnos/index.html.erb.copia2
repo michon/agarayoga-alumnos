@@ -1,92 +1,19 @@
 <% content_for :title, "Listado de Alumnos" %>
 
 <div class="container">
-  <!-- Barra de búsqueda MEJORADA con filtros -->
+  <!-- Barra de búsqueda -->
   <div class="card mb-4 shadow-sm">
-    <div class="card-header">
-      <h5 class="mb-0">Filtros de Alumnos</h5>
-    </div>
     <div class="card-body">
-      <%= search_form_for(@q, url: alumnos_path, method: :get, class: "mb-0") do |f| %>
-        <div class="row g-3">
-          <!-- Campo de búsqueda por nombre -->
-          <div class="col-md-5">
-            <%= f.label :nombre_cont, "Buscar alumno", class: "form-label" %>
-            <%= f.search_field :nombre_cont, class: "form-control", placeholder: "Nombre del alumno..." %>
-          </div>
-          
-          <!-- Filtro por estado activo/inactivo -->
-          <div class="col-md-4">
-            <%= f.label :debaja_eq, "Estado", class: "form-label" %>
-            <%= f.select :debaja_eq, 
-                [
-                  ['Todos', ''],
-                  ['Activos', 'false'],
-                  ['Inactivos', 'true']
-                ], 
-                { selected: params.dig(:q, :debaja_eq) },
-                class: "form-select" %>
-          </div>
-          
-          <!-- Botones de acción -->
-          <div class="col-md-3 d-flex align-items-end">
-            <div class="d-grid gap-2 w-100">
-              <%= f.submit 'Buscar', class: "btn btn-primary" %>
-              <%= link_to 'Limpiar', alumnos_path, class: "btn btn-outline-secondary" %>
-            </div>
-          </div>
+      <%= search_form_for(@q, url: alumnos_path, method: :get) do |f| %>
+        <div class="input-group">
+          <%= f.search_field :nombre_cont, class: "form-control", placeholder: "Buscar alumno..." %>
+          <%= f.submit 'Buscar', class: "btn btn-primary" %>
+          <%= link_to 'Limpiar', alumnos_path, class: "btn btn-outline-secondary" %>
         </div>
       <% end %>
     </div>
   </div>
 
-  <!-- Botones rápidos de filtro -->
-  <div class="mb-4">
-    <div class="btn-group" role="group" aria-label="Filtros rápidos">
-      <%= link_to alumnos_path(q: { debaja_eq: 'false' }), 
-          class: "btn btn-outline-primary #{'active' if params.dig(:q, :debaja_eq) == 'false'}" do %>
-        <i class="bi bi-person-check"></i> Activos
-        <span class="badge bg-primary"><%= Usuario.activo.count %></span>
-      <% end %>
-      
-      <%= link_to alumnos_path(q: { debaja_eq: 'true' }), 
-          class: "btn btn-outline-secondary #{'active' if params.dig(:q, :debaja_eq) == 'true'}" do %>
-        <i class="bi bi-person-x"></i> Inactivos
-        <span class="badge bg-secondary"><%= Usuario.inactivos.count %></span>
-      <% end %>
-      
-      <%= link_to alumnos_path, 
-          class: "btn btn-outline-info #{'active' unless params.dig(:q, :debaja_eq)}" do %>
-        <i class="bi bi-people"></i> Todos
-        <span class="badge bg-info"><%= Usuario.alumno.count %></span>
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Mostrar información del filtro actual -->
-  <% if params[:q] && params[:q][:debaja_eq].present? %>
-    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <i class="bi bi-funnel"></i>
-        <strong>Filtro aplicado:</strong>
-        <span class="badge bg-<%= params.dig(:q, :debaja_eq) == 'false' ? 'success' : 'secondary' %> ms-2">
-          <%= params.dig(:q, :debaja_eq) == 'false' ? 'Solo activos' : 'Solo inactivos' %>
-        </span>
-        <span class="ms-2"><%= @alumnos.count %> alumnos encontrados</span>
-      </div>
-      <%= link_to 'Limpiar filtro', alumnos_path, class: "btn btn-sm btn-outline-info" %>
-    </div>
-  <% elsif params[:q] && params[:q][:nombre_cont].present? %>
-    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <i class="bi bi-search"></i>
-        <strong>Búsqueda:</strong>
-        <span class="badge bg-primary ms-2">Nombre: <%= params.dig(:q, :nombre_cont) %></span>
-        <span class="ms-2"><%= @alumnos.count %> alumnos encontrados</span>
-      </div>
-      <%= link_to 'Limpiar búsqueda', alumnos_path, class: "btn btn-sm btn-outline-info" %>
-    </div>
-  <% end %>
   <!-- Lista de alumnos -->
   <% @alumnos.each do |alumno| %>
     <div class="card mb-3 shadow-sm">
@@ -299,10 +226,10 @@
           <tfoot>
             <tr class="table-active">
               <td colspan="2"><strong>Total</strong></td>
-              <td><strong><%= number_to_currency(recibos.sum { |r| r.importe.to_f }, unit: "€", separator: ",", delimiter: ".", format: "%n %u") %></strong></td>
+              <td><strong><%= number_to_currency(recibos.sum(&:importe), unit: "€", separator: ",", delimiter: ".", format: "%n %u") %></strong></td>
               <td colspan="2">
                 <span class="badge bg-info">
-                    <%= recibos.count { |r| !r.reciboEstado_id.nil? && r.reciboEstado_id == 2 } %>/<%= recibos.count %> pagados
+                  <%= recibos.count { |r| r.reciboEstado_id == 2 } %>/<%= recibos.count %> pagados
                 </span>
               </td>
             </tr>

@@ -64,22 +64,57 @@
                       <% unless clalm.usuario.blank? %>
                       <% unless clalm.usuario.grupoAlumno_id == 5 %>
                         <div class="row">
-                          <div class="col-9 form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
-                            <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
-                            <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>"  for="<%=clalm.id%>" >
 
-                              <% if  clalm.usuario.regalo? %>
-                                     <% color_indicador = 'success' %>
-                              <%else %>
-                                <%color_indicador = 'warning'%>
-                              <%end %>
-                              <span class="color-indicator bg-<%= color_indicador %>"
-                                    title="Regalo entregado: <%= clalm.usuario.regalo.to_s  %>">
-                              </span>
 
-                              <%= clalm.usuario.nombre %> 
-                            </label>
-                          </div>
+
+<div class="col-9 form-check" id="colordiv-<%=cl.id%>-<%=clalm.claseAlumnoEstado.id%>">
+  <% if  clalm.usuario.regalo? %>
+    <% color_indicador = 'success' %>
+  <%else %>
+    <%color_indicador = 'warning'%>
+  <%end %>
+
+  <!-- Indicador de regalo -->
+  <span class="color-indicator bg-<%= color_indicador %>"
+        title="Regalo entregado: <%= clalm.usuario.regalo.to_s  %>">
+  </span>
+  
+      <% if false %>
+  <!-- Indicador de navidad -->
+  <%= link_to alumnos_navidad_path(clalm.usuario, fecha: cl.diaHora.to_s, anchor: "clase-#{cl.id}"), 
+      method: :get,
+      class: "text-decoration-none me-1",
+      remote: true,
+      title: clalm.usuario.navidad ? "Regalo de navidad activo - Haz clic para desactivar" : "Regalo de navidad inactivo - Haz clic para activar",
+      data: { 
+        usuario_id: clalm.usuario.id,
+        navidad_current: clalm.usuario.navidad 
+      } do %>
+
+
+    <% if clalm.usuario.navidad %>
+      <span class="text-success" style="cursor: pointer; font-size: 1.1em;" title="Regalo de navidad activo - Haz clic para desactivar">
+        🎁
+      </span>
+    <% else %>
+      <span class="text-secondary" style="cursor: pointer; font-size: 1.1em;" title="Regalo de navidad inactivo - Haz clic para activar">
+        📦
+      </span>
+    <% end %>
+
+<%end%> <!-- quitar regal de navidad %> 
+
+  <% end %>
+
+
+
+  <input id="<%=clalm.id%>" name="alumnos_ids[]" type="checkbox" class="form-check-input" value="<%=clalm.id%>" >
+  <label class="form-check-label text-<%=clalm.claseAlumnoEstado.color%>" for="<%=clalm.id%>" >
+    <%= clalm.usuario.nombre %>
+  </label>
+</div>
+
+
                           <div class="col-3 text-end d-flex d-inline-flex justify-content-end">
                             <%= link_to alumnos_path(q: {nombre_cont: clalm.usuario.nombre}), target: '_blank' do %>
                                 <i class="bi bi-person-lines-fill"></i>
@@ -572,4 +607,6 @@
       }, 1000); // 1 segundo de delay para asegurar carga completa
     });
   </script>
+
 <% end %>
+

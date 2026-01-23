@@ -95,6 +95,7 @@ Rails.application.routes.draw do
   get    'recibo/remesar_seleccionar_todos/',      to: 'recibo#remesar_seleccionar_todos',       as: 'recibo/remesar_seleccionar_todos'
   get    'recibo/remesar_seleccionar_actual/',     to: 'recibo#remesar_seleccionar_actual',      as: 'recibo/remesar_seleccionar_actual'
   get    'recibo/remesar_seleccionar_anterior/',   to: 'recibo#remesar_seleccionar_anterior',    as: 'recibo/remesar_seleccionar_anterior'
+  post   'recibo/exportar_facturadirecta',         to: 'recibo#exportar_facturadirecta'
   post   'recibo/remesar_seleccionar_post',        to: 'recibo#remesarSeleccionarPost',          as: "recibo/remesarSeleccionarPost"
   get    'recibo/estado/:id/:estado' ,             to: 'recibo#estado',                          as: 'recibo/estado'
   get    'recibo/numerar',                         to: 'recibo#numerar',                         as: 'recibo/numerar'
