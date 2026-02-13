@@ -1,0 +1,150 @@
+<% content_for :title, "Cambios Completados - #{@alumno.nombre}" %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-check-circle"></i>
+            Paso 4: Cambios Completados para <%= @alumno.nombre %>
+          </h4>
+        </div>
+        
+        <div class="card-body">
+          <!-- Mensaje de éxito -->
+          <div class="alert alert-success mb-4">
+            <h5><i class="bi bi-check-circle-fill"></i> ¡Horario actualizado correctamente!</h5>
+            <p class="mb-0">
+              Los cambios se han aplicado exitosamente al horario habitual y a las clases futuras.
+            </p>
+          </div>
+          
+          <!-- Resumen de cambios aplicados -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5 class="border-bottom pb-2">📋 Resumen de Cambios Aplicados</h5>
+              
+              <% if @cambios_aplicados %>
+                <!-- Si tenemos datos de la sesión -->
+                <div class="row text-center">
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded border">
+                      <h3 class="text-success"><%= @cambios_aplicados[:nuevas_creadas] || 0 %></h3>
+                      <p class="mb-0 small">Clases nuevas creadas</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded border">
+                      <h3 class="text-danger"><%= @cambios_aplicados[:existentes_eliminadas] || 0 %></h3>
+                      <p class="mb-0 small">Clases futuras eliminadas</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 bg-light rounded border">
+                      <h3 class="text-primary"><%= @cambios_aplicados[:total_clases] || 0 %></h3>
+                      <p class="mb-0 small">Total clases futuras ahora</p>
+                    </div>
+                  </div>
+                </div>
+              <% else %>
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle"></i>
+                  Los cambios se aplicaron correctamente. Consulta el horario del alumno para ver los detalles.
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Email enviado -->
+          <% if @email_enviado %>
+            <div class="alert alert-info mb-4">
+              <h6><i class="bi bi-envelope-check"></i> Email enviado</h6>
+              <p class="mb-0">
+                Se ha enviado un email a <strong><%= @alumno.email %></strong> con el nuevo horario.
+              </p>
+            </div>
+          <% end %>
+          
+          <!-- Nuevo horario del alumno -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">
+                    <i class="bi bi-calendar-week"></i>
+                    Horario Actualizado de <%= @alumno.nombre %>
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <% horario_actual = @alumno.horarioAlumno.includes(:horario).map(&:horario) %>
+                  
+                  <% if horario_actual.any? %>
+                    <div class="list-group">
+                      <% horario_actual.each do |horario| %>
+                        <div class="list-group-item">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <strong><%= horario.dia_humano.capitalize %> <%= horario.hora_humano %></strong>
+                              <br>
+                              <small class="text-muted">
+                                <%= horario.instructor.nombre %> | 
+                                Aula <%= horario.aula.nombre %> | 
+                                <%= horario.horarioAlumno.count %>/<%= horario.aula.aforo %> alumnos
+                              </small>
+                            </div>
+                            <span class="badge bg-info">ACTIVO</span>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <div class="alert alert-warning">
+                      <i class="bi bi-exclamation-triangle"></i>
+                      El alumno no tiene horarios asignados actualmente.
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Acciones siguientes -->
+          <div class="row">
+            <div class="col-12">
+              <h5 class="border-bottom pb-2">🚀 Acciones Recomendadas</h5>
+              
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-3">
+                <%= link_to "👁‍🗨 Ver Ficha del Alumno", 
+                      editar_alumno_path(@alumno),
+                      class: "btn btn-primary me-2" %>
+                
+                <%= link_to "📋 Ver Horario Completo", 
+                      horario_nuevo_path,
+                      class: "btn btn-info me-2" %>
+                
+                <%= link_to "📅 Ver Clases Futuras del Alumno", 
+                      alumno_clases_agendadas_path(@alumno),
+                      class: "btn btn-warning me-2" %>
+                
+                <%= link_to "🗓️ Gestionar otro Horario", 
+                      wizard_horario_paso1_path(alumno_id: @alumno.id),
+                      class: "btn btn-success" %>
+              </div>
+              
+              <div class="mt-4">
+                <%= link_to "← Volver al Listado de Alumnos", 
+                      alumnos_path,
+                      class: "btn btn-outline-secondary" %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer text-muted">
+          <small>Proceso completado correctamente - <%= Time.current.strftime("%d/%m/%Y %H:%M") %></small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

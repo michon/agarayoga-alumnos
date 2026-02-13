@@ -1,0 +1,83 @@
+<% content_for :title, "Gestión de Horario - #{@alumno.nombre}" %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-calendar-check"></i>
+            Paso 1: Contexto del Alumno
+          </h4>
+        </div>
+        
+        <div class="card-body">
+          <!-- Información del alumno -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5>Alumno: <strong><%= @alumno.nombre %></strong></h5>
+              <p class="text-muted">
+                Email: <%= @alumno.email %> | 
+                Teléfono: <%= @alumno.movil %> |
+                Grupo: <%= @alumno.grupoAlumno.nombre if @alumno.grupoAlumno %>
+              </p>
+            </div>
+          </div>
+          
+          <!-- Horario actual (si existe) -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6>Horario Actual:</h6>
+              
+              <% if @horario_actual.any? %>
+                <div class="list-group">
+                  <% @horario_actual.each do |horario| %>
+                    <div class="list-group-item">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong><%= horario.dia_humano.capitalize %></strong>
+                          <%= horario.hora_humano %>
+                          con <%= horario.instructor.nombre %>
+                          (Aula <%= horario.aula.nombre %>)
+                        </div>
+                        <span class="badge bg-info">
+                          <%= horario.horarioAlumno.count %>/<%= horario.aula.aforo %> alumnos
+                        </span>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle"></i>
+                  Este alumno no tiene horario habitual asignado.
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Acciones -->
+          <div class="row">
+            <div class="col-12">
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <%= link_to alumnos_path, class: "btn btn-secondary me-md-2" do %>
+                  <i class="bi bi-arrow-left"></i> Cancelar
+                <% end %>
+                
+                <%= link_to wizard_horario_paso2_path(alumno_id: @alumno.id), 
+                      class: "btn btn-primary" do %>
+                  Continuar a Selección 
+                  <i class="bi bi-arrow-right"></i>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer text-muted">
+          <small>Paso 1 de 4 - Verificando contexto del alumno</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

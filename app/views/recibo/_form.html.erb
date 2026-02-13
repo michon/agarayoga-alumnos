@@ -1,8 +1,66 @@
+
+<% content_for :title, "Editar recibo ##{@recibo.id} - AgâraYoga" %>
+
+
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to 'Inicio', root_path, class: 'text-decoration-none' %></li>
+      <li class="breadcrumb-item"><%= link_to 'Gestión', gestion_recibos_path, class: 'text-decoration-none' %></li>
+      <li class="breadcrumb-item"><%= link_to 'Recibos', gestion_recibos_path, class: 'text-decoration-none' %></li>
+      <li class="breadcrumb-item active" aria-current="page">Editar #<%= @recibo.id %></li>
+    </ol>
+  </nav>
+
+  <!-- Cabecera elegante -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="bg-primary bg-opacity-10 p-3 rounded-3 d-none d-sm-block">
+        <i class="bi bi-receipt-cutoff fs-1 text-primary"></i>
+      </div>
+      <div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <h1 class="h2 fw-semibold mb-0">
+            Editar recibo
+          </h1>
+          <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+            #<%= @recibo.id %>
+          </span>
+        </div>
+        <div class="text-muted mt-1">
+          <% if @recibo.usuario %>
+            <i class="bi bi-person-circle me-1"></i> <%= @recibo.usuario.nombre %>
+          <% else %>
+            <i class="bi bi-person-slash me-1"></i> <em>Usuario no asignado</em>
+          <% end %>
+          <% if @recibo.created_at %>
+            <span class="mx-2">•</span>
+            <i class="bi bi-calendar3 me-1"></i> <%= l(@recibo.created_at, format: '%d/%m/%Y') %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge de estado usando tu helper -->
+    <% if @recibo.reciboEstado %>
+      <span class="badge bg-<%= estado_badge_color(@recibo.reciboEstado_id) %> bg-opacity-10 text-<%= estado_badge_color(@recibo.reciboEstado_id) %> p-3 rounded-3 mt-2 mt-sm-0">
+        <i class="bi bi-<%= estado_icono(@recibo.reciboEstado_id) %> me-1"></i>
+        <%= @recibo.reciboEstado.nombre %>
+      </span>
+    <% end %>
+  </div>
+
+
+
+
+
+
+
+
 <%= form_with(model: recibo, url: recibo.persisted? ? update_gestion_recibo_path(recibo) : create_gestion_recibo_path, local: true) do |form| %>
   <% if recibo.errors.any? %>
     <div class="alert alert-danger">
-      <h4><%= pluralize(recibo.errors.count, "error") %> prohiben guardar este recibo:</h4>
-      <ul>
+      <h4 class="alert-heading"><%= pluralize(recibo.errors.count, "error") %> prohiben guardar este recibo:</h4>
+      <ul class="mb-0">
         <% recibo.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -11,57 +69,154 @@
   <% end %>
 
   <div class="row">
+    <!-- Columna izquierda -->
     <div class="col-md-6">
-      <div class="form-group">
-        <%= form.label :usuario_id %>
-        <%= form.select :usuario_id,
-                       options_from_collection_for_select(@usuarios, :id, :nombre, recibo.usuario_id),
-                       { include_blank: 'Seleccionar usuario' }, class: 'form-control' %>
-      </div>
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">Información del recibo</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-group mb-3">
+            <%= form.label :usuario_id, class: 'form-label fw-bold' %>
+            <%= form.select :usuario_id,
+                           options_from_collection_for_select(@usuarios, :id, :nombre, recibo.usuario_id),
+                           { include_blank: 'Seleccionar usuario' },
+                           class: 'form-select' %>
+          </div>
 
-      <div class="form-group">
-        <%= form.label :importe %>
-        <%= form.number_field :importe, step: 0.01, class: 'form-control' %>
-      </div>
+          <div class="form-group mb-3">
+            <%= form.label :importe, class: 'form-label fw-bold' %>
+            <div class="input-group">
+              <span class="input-group-text">€</span>
+              <%= form.number_field :importe, step: 0.01, class: 'form-control', placeholder: '0.00' %>
+            </div>
+          </div>
 
-      <div class="form-group">
-        <%= form.label :reciboEstado_id %>
-        <%= form.select :reciboEstado_id,
-                       options_from_collection_for_select(@recibo_estados, :id, :nombre, recibo.reciboEstado_id),
-                       { include_blank: 'Seleccionar estado' }, class: 'form-control' %>
-      </div>
+          <div class="form-group mb-3">
+            <%= form.label :reciboEstado_id, 'Estado', class: 'form-label fw-bold' %>
+            <%= form.select :reciboEstado_id,
+                           options_from_collection_for_select(@recibo_estados, :id, :nombre, recibo.reciboEstado_id),
+                           { include_blank: 'Seleccionar estado' },
+                           class: 'form-select' %>
+          </div>
 
-      <div class="form-group">
-        <%= form.label :vencimiento %>
-        <%= form.date_field :vencimiento, class: 'form-control' %>
+          <div class="form-group mb-3">
+            <%= form.label :vencimiento, class: 'form-label fw-bold' %>
+            <%= form.date_field :vencimiento, class: 'form-control' %>
+          </div>
+
+          <div class="form-group mb-3">
+            <%= form.label :serie, class: 'form-label fw-bold' %>
+            <%= form.text_field :serie, class: 'form-control', placeholder: 'Serie del recibo' %>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Columna derecha -->
     <div class="col-md-6">
-      <div class="form-group">
-        <%= form.label :concepto %>
-        <%= form.text_area :concepto, class: 'form-control', rows: 3 %>
+      <!-- Sección de concepto y facturación -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">Detalles del recibo</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-group mb-3">
+            <%= form.label :concepto, class: 'form-label fw-bold' %>
+            <%= form.text_area :concepto, class: 'form-control', rows: 3, placeholder: 'Descripción del concepto' %>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <%= form.label :factura, class: 'form-label fw-bold' %>
+                <%= form.text_field :factura, class: 'form-control', placeholder: 'Nº de factura' %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <%= form.label :pago, 'Fecha de pago', class: 'form-label fw-bold' %>
+                <%= form.datetime_local_field :pago, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <%= form.label :factura %>
-        <%= form.text_field :factura, class: 'form-control' %>
-      </div>
+      <!-- NUEVA SECCIÓN: Datos bancarios IBAN y BIC -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-bank me-2"></i>Datos bancarios
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info py-2 small">
+            <i class="bi bi-info-circle me-1"></i>
+            Estos datos se cargan automáticamente desde el usuario, pero puedes modificarlos para este recibo.
+          </div>
 
-      <div class="form-group">
-        <%= form.label :serie %>
-        <%= form.text_field :serie, class: 'form-control' %>
-      </div>
+          <div class="form-group mb-3">
+            <%= form.label :iban, class: 'form-label fw-bold' %>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+              <%= form.text_field :iban, class: 'form-control font-monospace',
+                                  placeholder: 'ES00 0000 0000 0000 0000 0000',
+                                  pattern: '[A-Z]{2}\d{2}\s?(\d{4}\s?){4}\d{4}',
+                                  title: 'Formato IBAN: ES00 0000 0000 0000 0000 0000' %>
+            </div>
+            <div class="form-text">Formato: ES00 0000 0000 0000 0000 0000</div>
+          </div>
 
-      <div class="form-group">
-        <%= form.label :pago %>
-        <%= form.datetime_local_field :pago, class: 'form-control' %>
+          <div class="form-group mb-3">
+            <%= form.label :bic, 'BIC / SWIFT', class: 'form-label fw-bold' %>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-building"></i></span>
+              <%= form.text_field :bic, class: 'form-control font-monospace text-uppercase',
+                                  placeholder: 'BCOEESMM',
+                                  style: 'text-transform: uppercase;',
+                                  pattern: '[A-Z]{6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3})?',
+                                  title: 'Código BIC/SWIFT de 8 u 11 caracteres' %>
+            </div>
+            <div class="form-text">Ejemplo: BCOEESMM070</div>
+          </div>
+
+          <!-- Campos ocultos que se sincronizan automáticamente -->
+          <%= form.hidden_field :nombre %>
+          <%= form.hidden_field :moneda %>
+          <%= form.hidden_field :mandatoFecha %>
+          <%= form.hidden_field :sepaTipo %>
+          <%= form.hidden_field :sepaSecuencia %>
+          <%= form.hidden_field :batchBooking %>
+          <%= form.hidden_field :lugar %>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="form-group">
-    <%= form.submit 'Guardar', class: 'btn btn-primary' %>
-    <%= link_to 'Cancelar', gestion_recibos_path, class: 'btn btn-secondary' %>
+  <!-- Botones de acción -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body bg-light">
+          <%= form.submit 'Guardar', class: 'btn btn-primary px-4' %>
+          <%= link_to 'Cancelar', gestion_recibos_path, class: 'btn btn-outline-secondary ms-2' %>
+        </div>
+      </div>
+    </div>
   </div>
+<% end %>
+
+
+
+<% content_for :javascript do %>
+  <script>
+    // Inicializar tooltips si los usas
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    });
+  </script>
 <% end %>

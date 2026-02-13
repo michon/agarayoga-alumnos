@@ -1,0 +1,277 @@
+f<% content_for :title, "Seleccionar Horarios - #{@alumno.nombre}" %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-calendar-plus"></i>
+            Paso 2: Seleccionar Horarios para <%= @alumno.nombre %>
+          </h4>
+        </div>
+        
+        <%= form_with url: wizard_horario_paso3_path(@alumno), method: :get, local: true, class: "card-body" do |f| %>
+          
+          <!-- Información del alumno -->
+          <div class="alert alert-info mb-4">
+            <h6><i class="bi bi-person-circle"></i> Alumno: <strong><%= @alumno.nombre %></strong></h6>
+            <p class="mb-0">
+              Selecciona los horarios que tendrá este alumno. Puedes mantener los actuales, añadir nuevos o eliminar.
+            </p>
+          </div>
+          
+          <div class="row">
+            <!-- Columna izquierda: Horario Actual -->
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                  <h5 class="mb-0">
+                    <i class="bi bi-calendar-check"></i>
+                    Horario Actual
+                    <span class="badge bg-light text-dark"><%= @horario_actual.count %></span>
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <% if @horario_actual.any? %>
+                    <p class="text-muted small">
+                      <i class="bi bi-info-circle"></i>
+                      Desmarca los horarios que quieras eliminar.
+                    </p>
+                    
+                    <div class="list-group">
+                      <% @horario_actual.each do |horario| %>
+                        <div class="list-group-item">
+                          <div class="form-check">
+                            <%= check_box_tag "horarios_mantener[]", 
+                                  horario.id, 
+                                  true,  # Por defecto marcados (mantener)
+                                  class: "form-check-input horario-checkbox",
+                                  id: "mantener_#{horario.id}" %>
+                            
+                            <%= label_tag "mantener_#{horario.id}", class: "form-check-label w-100" do %>
+                              <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                  <strong><%= horario.dia_humano.capitalize %></strong>
+                                  <%= horario.hora_humano %>
+                                  <br>
+                                  <small class="text-muted">
+                                    <%= horario.instructor.nombre %> | 
+                                    Aula <%= horario.aula.nombre %>
+                                  </small>
+                                </div>
+                                <span class="badge bg-info">
+                                  <%= horario.horarioAlumno.count %>/<%= horario.aula.aforo %>
+                                </span>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <div class="alert alert-warning">
+                      <i class="bi bi-exclamation-triangle"></i>
+                      Este alumno no tiene horario asignado actualmente.
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Columna derecha: Horarios Disponibles -->
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                  <h5 class="mb-0">
+                    <i class="bi bi-calendar-plus"></i>
+                    Horarios Disponibles
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <!-- Tabs para separar disponibles/completos -->
+                  <ul class="nav nav-tabs mb-3" id="horarioTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="disponibles-tab" data-bs-toggle="tab" 
+                              data-bs-target="#disponibles" type="button" role="tab">
+                        ✅ Con Plazas (<%= @horarios_disponibles.count %>)
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="completos-tab" data-bs-toggle="tab" 
+                              data-bs-target="#completos" type="button" role="tab">
+                        ⚠️ Completos (<%= @horarios_completos.count %>)
+                      </button>
+                    </li>
+                  </ul>
+                  
+                  <div class="tab-content" id="horarioTabsContent">
+                    <!-- Tab 1: Horarios con plazas -->
+                    <div class="tab-pane fade show active" id="disponibles" role="tabpanel">
+                      <% if @horarios_disponibles.any? %>
+                        <div class="list-group">
+                          <% @horarios_disponibles.each do |horario| %>
+                            <div class="list-group-item">
+                              <div class="form-check">
+                                <%= check_box_tag "horarios_nuevos[]", 
+                                      horario.id,
+                                      false,
+                                      class: "form-check-input horario-checkbox",
+                                      id: "nuevo_#{horario.id}" %>
+                                
+                                <%= label_tag "nuevo_#{horario.id}", class: "form-check-label w-100" do %>
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                      <strong><%= horario.dia_humano.capitalize %></strong>
+                                      <%= horario.hora_humano %>
+                                      <br>
+                                      <small class="text-muted">
+                                        <%= horario.instructor.nombre %> | 
+                                        Aula <%= horario.aula.nombre %>
+                                      </small>
+                                    </div>
+                                    <span class="badge bg-success">
+                                      <%= horario.aula.aforo - horario.horarioAlumno.count %> plazas
+                                    </span>
+                                  </div>
+                                <% end %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <div class="alert alert-info">
+                          No hay horarios con plazas disponibles.
+                        </div>
+                      <% end %>
+                    </div>
+                    
+                    <!-- Tab 2: Horarios completos (sobreasignación) -->
+                    <div class="tab-pane fade" id="completos" role="tabpanel">
+                      <% if @horarios_completos.any? %>
+                        <div class="alert alert-warning mb-3">
+                          <i class="bi bi-exclamation-triangle"></i>
+                          Estos horarios ya están al límite del aforo. 
+                          Seleccionarlos implica sobreasignación.
+                        </div>
+                        
+                        <div class="list-group">
+                          <% @horarios_completos.each do |horario| %>
+                            <div class="list-group-item">
+                              <div class="form-check">
+                                <%= check_box_tag "horarios_nuevos[]", 
+                                      horario.id,
+                                      false,
+                                      class: "form-check-input horario-checkbox",
+                                      id: "completo_#{horario.id}" %>
+                                
+                                <%= label_tag "completo_#{horario.id}", class: "form-check-label w-100" do %>
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                      <strong><%= horario.dia_humano.capitalize %></strong>
+                                      <%= horario.hora_humano %>
+                                      <br>
+                                      <small class="text-muted">
+                                        <%= horario.instructor.nombre %> | 
+                                        Aula <%= horario.aula.nombre %>
+                                      </small>
+                                    </div>
+                                    <span class="badge bg-danger">
+                                      COMPLETO <%= horario.horarioAlumno.count %>/<%= horario.aula.aforo %>
+                                    </span>
+                                  </div>
+                                <% end %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <div class="alert alert-success">
+                          ¡Genial! No hay horarios completos, todos tienen plazas disponibles.
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resumen y botones -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-0">Resumen de selección:</h6>
+                      <small class="text-muted" id="resumen-seleccion">
+                        Manteniendo: <span id="manteniendo-count">0</span> | 
+                        Añadiendo: <span id="anadiendo-count">0</span> | 
+                        Total: <span id="total-count">0</span>
+                      </small>
+                    </div>
+                    
+<!-- Al final del formulario, antes del submit -->
+<%= hidden_field_tag "horarios_mantener[]", "" %>
+<%= hidden_field_tag "horarios_nuevos[]", "" %> 
+
+                    <div class="btn-group">
+                      <%= link_to "← Volver", wizard_horario_paso1_path(@alumno), 
+                            class: "btn btn-secondary" %>
+                      <%= f.submit "Continuar →", 
+                            class: "btn btn-primary",
+                            data: { confirm: "¿Continuar a la confirmación?" } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        
+        <div class="card-footer text-muted">
+          <small>Paso 2 de 4 - Selecciona los horarios. Los desmarcados en "Horario Actual" se eliminarán.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+<script>
+// Contador de selecciones en tiempo real
+function actualizarContadores() {
+  const manteniendo = document.querySelectorAll('input[name="horarios_mantener[]"]:checked').length;
+  const anadiendo = document.querySelectorAll('input[name="horarios_nuevos[]"]:checked').length;
+  const total = manteniendo + anadiendo;
+  
+  document.getElementById('manteniendo-count').textContent = manteniendo;
+  document.getElementById('anadiendo-count').textContent = anadiendo;
+  document.getElementById('total-count').textContent = total;
+}
+
+// Inicializar contadores
+document.addEventListener('DOMContentLoaded', function() {
+  actualizarContadores();
+  
+  // Actualizar cuando cambie cualquier checkbox
+  document.querySelectorAll('.horario-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', actualizarContadores);
+  });
+  
+  // Prevenir selección de mismo horario en ambas listas
+  document.querySelectorAll('input[name="horarios_nuevos[]"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const horarioId = this.value;
+      const mantenerCheckbox = document.querySelector(`input[name="horarios_mantener[]"][value="${horarioId}"]`);
+      
+      if (mantenerCheckbox) {
+        mantenerCheckbox.checked = false;
+        actualizarContadores();
+      }
+    });
+  });
+});
+</script>
+<% end %>

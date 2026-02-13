@@ -11,7 +11,7 @@ class RemesaController < ApplicationController
     @remesa = Remesa.find(params[:id])
     @rcbEstado = ReciboEstado.all
     # Todos los recibos que no se han remesados - Boton añadir
-    @rcb = Recibo.where(usuario_id: Usuario.where(codigofacturacion: Cliente.where(codserie: "A").pluck("codcliente")).pluck('id')).all
+    @rcb = Recibo.where(serie: "A")
     @rcb = @rcb.where(reciboEstado_id: 1)
     respond_to do |format|
       format.html # index.html.erb

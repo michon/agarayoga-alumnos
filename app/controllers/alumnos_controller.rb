@@ -78,54 +78,54 @@ class AlumnosController < ApplicationController
 
 # app/controllers/alumnos_controller.rb
 
-def pdfAlumnos
-  unless ComunPolicy.new(current_usuario).verFacturacion?
-    render file: "public/401.html", status: :unauthorized
-    return
+  def pdfAlumnos
+    unless ComunPolicy.new(current_usuario).verFacturacion?
+      render file: "public/401.html", status: :unauthorized
+      return
+    end
+
+    # Obtener parámetros o usar valores por defecto
+    alumno_id = params[:id] || current_usuario.id
+    fecha_inicio = params[:fechaInicio] ? params[:fechaInicio].to_datetime : 1.month.ago
+    fecha_fin = params[:fechaFin] ? params[:fechaFin].to_datetime : DateTime.now
+
+    @alumno = Usuario.find(alumno_id)
+
+    # Obtener datos para el informe
+    @clases_alumno = ClaseAlumno
+      .includes(:clase, :claseAlumnoEstado, clase: [:instructor])
+      .where(usuario_id: @alumno.id)
+      .where(diaHora: fecha_inicio..fecha_fin)
+      .order(:diaHora)
+
+    # Calcular estadísticas usando los métodos existentes
+    @distribucion_estados = calcular_distribucion_estados(@clases_alumno)
+    @horarios_frecuentes = calcular_horarios_frecuentes(@clases_alumno)
+    @porcentaje_instructores = calcular_porcentaje_asistencia_por_instructor
+    @racha_actual = calcular_racha_actual(@alumno.id)
+    @total_asistencias = @clases_alumno.where(claseAlumnoEstado_id: [1, 2]).count
+    @total_avisos = @clases_alumno.where(claseAlumnoEstado_id: 3).count
+    @total_faltas = @clases_alumno.where(claseAlumnoEstado_id: 4).count
+
+    # Generar PDF con Prawn
+    pdf = AlumnoAsistenciaPdf.new(
+      @alumno, 
+      fecha_inicio, 
+      fecha_fin, 
+      @distribucion_estados, 
+      @horarios_frecuentes, 
+      @porcentaje_instructores,
+      @racha_actual,
+      @total_asistencias,
+      @total_avisos,
+      @total_faltas,
+      @clases_alumno
+    )
+
+    ficNombre = "Informe_Asistencia_#{@alumno.nombre.parameterize}_#{Date.today.strftime('%Y%m%d')}.pdf"
+    
+    send_data pdf.render, filename: ficNombre, type: 'application/pdf', disposition: 'inline'
   end
-
-  # Obtener parámetros o usar valores por defecto
-  alumno_id = params[:id] || current_usuario.id
-  fecha_inicio = params[:fechaInicio] ? params[:fechaInicio].to_datetime : 1.month.ago
-  fecha_fin = params[:fechaFin] ? params[:fechaFin].to_datetime : DateTime.now
-
-  @alumno = Usuario.find(alumno_id)
-
-  # Obtener datos para el informe
-  @clases_alumno = ClaseAlumno
-    .includes(:clase, :claseAlumnoEstado, clase: [:instructor])
-    .where(usuario_id: @alumno.id)
-    .where(diaHora: fecha_inicio..fecha_fin)
-    .order(:diaHora)
-
-  # Calcular estadísticas usando los métodos existentes
-  @distribucion_estados = calcular_distribucion_estados(@clases_alumno)
-  @horarios_frecuentes = calcular_horarios_frecuentes(@clases_alumno)
-  @porcentaje_instructores = calcular_porcentaje_asistencia_por_instructor
-  @racha_actual = calcular_racha_actual(@alumno.id)
-  @total_asistencias = @clases_alumno.where(claseAlumnoEstado_id: [1, 2]).count
-  @total_avisos = @clases_alumno.where(claseAlumnoEstado_id: 3).count
-  @total_faltas = @clases_alumno.where(claseAlumnoEstado_id: 4).count
-
-  # Generar PDF con Prawn
-  pdf = AlumnoAsistenciaPdf.new(
-    @alumno, 
-    fecha_inicio, 
-    fecha_fin, 
-    @distribucion_estados, 
-    @horarios_frecuentes, 
-    @porcentaje_instructores,
-    @racha_actual,
-    @total_asistencias,
-    @total_avisos,
-    @total_faltas,
-    @clases_alumno
-  )
-
-  ficNombre = "Informe_Asistencia_#{@alumno.nombre.parameterize}_#{Date.today.strftime('%Y%m%d')}.pdf"
-  
-  send_data pdf.render, filename: ficNombre, type: 'application/pdf', disposition: 'inline'
-end
 
 
   def sincronizar_facturacion
@@ -341,8 +341,9 @@ end
 end
 
     def clasesAgendadas
-      @fechaInicio = params[:fechaInicio].to_datetime
-      @fechaFin = params[:fechaFin].to_datetime
+      @fechaInicio = params[:fechaInicio] ? params[:fechaInicio].to_datetime : Date.today.beginning_of_month.to_datetime
+      @fechaFin = params[:fechaFin] ? params[:fechaFin].to_datetime : Date.today.end_of_month.to_datetime
+
       @id = params[:id].to_i
 
       # Optimizamos las consultas

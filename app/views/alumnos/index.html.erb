@@ -124,6 +124,7 @@
         <div class="d-flex flex-wrap gap-2 mb-3">
           <%= link_to "📅 Clases Agendadas", "#clases-#{alumno.id}", class: "btn btn-sm btn-outline-info", data: { bs_toggle: "collapse" } %>
           <%= link_to "📋 Horario", "#horario-#{alumno.id}", class: "btn btn-sm btn-outline-warning", data: { bs_toggle: "collapse" } %>
+          <%= link_to "🗓️ Gestionar Horario", wizard_horario_paso1_path(alumno_id: alumno.id), class: "btn btn-sm btn-primary" %>
           <%= link_to "📤 WhatsApp", "#whatsapp-#{alumno.id}", class: "btn btn-sm btn-outline-success", data: { bs_toggle: "collapse" } %>
           <%= link_to "🔑 Generar Clave", "#", class: "btn btn-sm btn-outline-info generar-clave-btn", data: { alumno_id: alumno.id } %>
           <%= link_to "🕒 Historial", "#historial-#{alumno.id}", class: "btn btn-sm btn-outline-secondary", data: { bs_toggle: "collapse" } %>
@@ -290,7 +291,7 @@
                   </span>
                 </td>
                 <td>
-                  <%= link_to "👁‍🗨", recibo_path(recibo), class: "btn btn-sm btn-outline-info" if defined?(recibo_path) %>
+                  <%= link_to "👁‍🗨", edit_gestion_recibo_path(recibo), class: "btn btn-sm btn-outline-info" if defined?(recibo_path) %>
                   <%= link_to "📄", recibo_path(recibo, format: :pdf), class: "btn btn-sm btn-outline-primary" if defined?(recibo_path) %>
                 </td>
               </tr>

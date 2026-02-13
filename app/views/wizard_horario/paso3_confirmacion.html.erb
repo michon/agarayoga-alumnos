@@ -1,0 +1,247 @@
+<% content_for :title, "Confirmar Cambios - #{@alumno.nombre}" %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="card-header bg-warning text-dark">
+          <h4 class="mb-0">
+            <i class="bi bi-clipboard-check"></i>
+            Paso 3: Confirmar Cambios para <%= @alumno.nombre %>
+          </h4>
+        </div>
+        
+        <%= form_with url: wizard_horario_ejecutar_path(@alumno), method: :post, local: true, class: "card-body" do |f| %>
+          
+          <!-- Información del alumno -->
+          <div class="alert alert-info mb-4">
+            <h6><i class="bi bi-person-circle"></i> Alumno: <strong><%= @alumno.nombre %></strong></h6>
+            <p class="mb-0">
+              Revisa los cambios antes de confirmar. Se aplicarán inmediatamente.
+            </p>
+          </div>
+          
+          <!-- Resumen de cambios -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5 class="border-bottom pb-2">📋 Resumen de Cambios</h5>
+              
+              <!-- Mantenidos -->
+              <% if @horarios_mantener.any? %>
+                <div class="card mb-3 border-success">
+                  <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                      <i class="bi bi-check-circle"></i>
+                      Mantenidos (<%= @horarios_mantener.count %>)
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="list-group">
+                      <% @horarios_mantener.each do |horario| %>
+                        <div class="list-group-item">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <strong><%= horario.dia_humano.capitalize %> <%= horario.hora_humano %></strong>
+                              <br>
+                              <small class="text-muted">
+                                <%= horario.instructor.nombre %> | 
+                                Aula <%= horario.aula.nombre %> | 
+                                <%= horario.horarioAlumno.count %>/<%= horario.aula.aforo %> alumnos
+                              </small>
+                            </div>
+                            <span class="badge bg-success">MANTENIDO</span>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              
+              <!-- Nuevos -->
+              <% if @horarios_nuevos.any? %>
+                <div class="card mb-3 border-primary">
+                  <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                      <i class="bi bi-plus-circle"></i>
+                      Nuevos (<%= @horarios_nuevos.count %>)
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="list-group">
+                      <% @horarios_nuevos.each do |horario| %>
+                        <div class="list-group-item">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <strong><%= horario.dia_humano.capitalize %> <%= horario.hora_humano %></strong>
+                              <br>
+                              <small class="text-muted">
+                                <%= horario.instructor.nombre %> | 
+                                Aula <%= horario.aula.nombre %> | 
+                                <%= horario.horarioAlumno.count %>/<%= horario.aula.aforo %> alumnos
+                              </small>
+                            </div>
+                            <span class="badge bg-<%= horario.horarioAlumno.count >= horario.aula.aforo ? 'danger' : 'primary' %>">
+                              <%= horario.horarioAlumno.count >= horario.aula.aforo ? 'COMPLETO' : 'NUEVO' %>
+                            </span>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              
+              <!-- Eliminados -->
+              <% if @horarios_eliminar.any? %>
+                <div class="card mb-3 border-danger">
+                  <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0">
+                      <i class="bi bi-dash-circle"></i>
+                      Eliminados (<%= @horarios_eliminar.count %>)
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="list-group">
+                      <% @horarios_eliminar.each do |horario| %>
+                        <div class="list-group-item">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <strong><%= horario.dia_humano.capitalize %> <%= horario.hora_humano %></strong>
+                              <br>
+                              <small class="text-muted">
+                                <%= horario.instructor.nombre %> | 
+                                Aula <%= horario.aula.nombre %>
+                              </small>
+                            </div>
+                            <span class="badge bg-danger">ELIMINAR</span>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Impacto en clases futuras -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                  <h6 class="mb-0">
+                    <i class="bi bi-calendar-event"></i>
+                    Impacto en Clases Futuras
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4 text-center">
+                      <div class="p-3 bg-light rounded">
+                        <h3 class="text-success"><%= @impacto[:nuevas_crear] %></h3>
+                        <p class="mb-0 small">Clases nuevas creadas</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      <div class="p-3 bg-light rounded">
+                        <h3 class="text-danger"><%= @impacto[:existentes_eliminar] %></h3>
+                        <p class="mb-0 small">Clases futuras eliminadas</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      <div class="p-3 bg-light rounded">
+                        <h3 class="text-primary"><%= @impacto[:total_clases_futuras] %></h3>
+                        <p class="mb-0 small">Total clases futuras después</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <% if @impacto[:existentes_eliminar] > 0 %>
+                    <div class="alert alert-warning mt-3">
+                      <i class="bi bi-exclamation-triangle"></i>
+                      <strong>Atención:</strong> Se eliminarán <%= @impacto[:existentes_eliminar] %> 
+                      inscripciones en clases futuras. Esta acción no se puede deshacer.
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Opciones adicionales -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">
+                    <i class="bi bi-gear"></i>
+                    Opciones Adicionales
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="form-check form-switch">
+                    <%= f.check_box :enviar_email, 
+                          class: 'form-check-input',
+                          id: 'enviar_email',
+                          checked: true %>
+                    <%= f.label :enviar_email, 
+                          "📧 Enviar email al alumno con su nuevo horario",
+                          class: 'form-check-label',
+                          for: 'enviar_email' %>
+                    <small class="form-text text-muted d-block">
+                      Se enviará a: <%= @alumno.email %>
+                    </small>
+                  </div>
+                  
+                  <% if @horarios_nuevos.any? { |h| h.horarioAlumno.count >= h.aula.aforo } %>
+                    <div class="form-check mt-3">
+                      <%= f.check_box :confirmar_sobreasignacion,
+                            class: 'form-check-input',
+                            id: 'confirmar_sobreasignacion',
+                            required: true %>
+                      <%= f.label :confirmar_sobreasignacion,
+                            "⚠️ Confirmo que soy consciente de que estoy sobreasignando aforo",
+                            class: 'form-check-label text-danger',
+                            for: 'confirmar_sobreasignacion' %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Botones de acción -->
+          <div class="row">
+            <div class="col-12">
+              <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                <%= link_to "← Volver a selección", 
+                      wizard_horario_paso2_path(@alumno, 
+                        horarios_mantener: @horarios_mantener_ids,
+                        horarios_nuevos: @horarios_nuevos_ids),
+                      class: "btn btn-secondary" %>
+                
+                <div class="btn-group">
+                  <%= f.submit "✅ Confirmar y Aplicar Cambios", 
+                        class: "btn btn-success btn-lg",
+                        data: { 
+                          confirm: "¿Estás seguro de aplicar estos cambios?",
+                          disable_with: "Procesando..."
+                        } %>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Campos ocultos para mantener la selección -->
+          <%= hidden_field_tag :horarios_mantener, @horarios_mantener_ids.join(',') %>
+          <%= hidden_field_tag :horarios_nuevos, @horarios_nuevos_ids.join(',') %>
+        <% end %>
+        
+        <div class="card-footer text-muted">
+          <small>Paso 3 de 4 - Revisa los cambios antes de confirmar</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

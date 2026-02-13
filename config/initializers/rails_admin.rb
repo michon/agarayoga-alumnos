@@ -56,6 +56,11 @@ RailsAdmin.config do |config|
     object_label_method do
         :custom_label_method
     end
+    field :nombre
+    field :usuario
+    field :color
+    field :debaja
+    field :avatar
   end
 
   config.model 'Usuario' do

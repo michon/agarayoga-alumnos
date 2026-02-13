@@ -1,5 +1,27 @@
 Rails.application.routes.draw do
 
+  scope :wizard do
+    resources :horario, only: [] do
+      member do
+        # Flujo principal del wizard
+        get 'paso1_contexto', as: :paso1_contexto
+        get 'paso2_seleccion', as: :paso2_seleccion
+        get 'paso3_confirmacion', as: :paso3_confirmacion
+        post 'ejecutar', as: :ejecutar
+
+        # Ruta especial para invocación con contexto
+        get 'iniciar/:alumno_id', to: 'wizard_horario#iniciar', as: :iniciar
+      end
+    end
+
+    # También podemos tener rutas directas si prefieres
+    get 'horario/alumno/:alumno_id/paso1', to: 'wizard_horario#paso1_contexto', as: :wizard_horario_paso1
+    get 'horario/alumno/:alumno_id/paso2', to: 'wizard_horario#paso2_seleccion', as: :wizard_horario_paso2
+    get 'horario/alumno/:alumno_id/paso3', to: 'wizard_horario#paso3_confirmacion', as: :wizard_horario_paso3
+    post 'horario/alumno/:alumno_id/ejecutar', to: 'wizard_horario#ejecutar', as: :wizard_horario_ejecutar
+    get 'wizard/horario/alumno/:alumno_id/paso4', to: 'wizard_horario#paso4_resultado', as: :wizard_horario_resultado
+  end
+
   get  'julio/index'
   get  'julio/links'
   get  'julio/facturar'
@@ -9,6 +31,7 @@ Rails.application.routes.draw do
 
   resources :pruebas, only: [:new, :create]
   resources :solicitum, only: [:new, :create]
+
 
   resources :alumnos, except: [:index] do 
     member do

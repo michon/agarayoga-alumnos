@@ -55,6 +55,7 @@
                       </div>
 
                       <div class="col-md-4">
+                        <%= link_to "🗓️ Gestionar Horario", wizard_horario_paso1_path(alumno_id: @usuario.id), class: 'btn btn-outline-warning btn-sm' %>
                         <%= link_to "👁‍🗨 Ver Ficha", alumno_path(@usuario),
                             class: "btn btn-outline-dark btn-sm" %>
                         <%= link_to "📄 PDF", alumno_path(@usuario, format: :pdf),
