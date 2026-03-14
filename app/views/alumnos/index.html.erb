@@ -72,7 +72,7 @@
         <span class="badge bg-<%= params.dig(:q, :debaja_eq) == 'false' ? 'success' : 'secondary' %> ms-2">
           <%= params.dig(:q, :debaja_eq) == 'false' ? 'Solo activos' : 'Solo inactivos' %>
         </span>
-        <span class="ms-2"><%= @alumnos.count %> alumnos encontrados</span>
+        <span class="ms-2"><%= @alumnos.total_count %> alumnos encontrados (página <%= @alumnos.current_page %> de <%= @alumnos.total_pages %>)</span>
       </div>
       <%= link_to 'Limpiar filtro', alumnos_path, class: "btn btn-sm btn-outline-info" %>
     </div>
@@ -82,7 +82,7 @@
         <i class="bi bi-search"></i>
         <strong>Búsqueda:</strong>
         <span class="badge bg-primary ms-2">Nombre: <%= params.dig(:q, :nombre_cont) %></span>
-        <span class="ms-2"><%= @alumnos.count %> alumnos encontrados</span>
+        <span class="ms-2"><%= @alumnos.total_count %> alumnos (página <%= @alumnos.current_page %> de <%= @alumnos.total_pages %>)</span>
       </div>
       <%= link_to 'Limpiar búsqueda', alumnos_path, class: "btn btn-sm btn-outline-info" %>
     </div>
@@ -138,9 +138,10 @@
         <div class="collapse mb-3" id="clases-<%= alumno.id %>">
           <div class="card card-body">
             <h6><i class="bi bi-calendar3"></i> Clases Programadas</h6>
-            <% if @clases.where(usuario_id: alumno.id).any? %>
-              <ul class="list-group list-group-flush">
-                <% @clases.where(usuario_id: alumno.id).order(:diaHora).each do |clase| %>
+            <% clases_alumno = @clases_futuras[alumno.id] || [] %>
+              <% if clases_alumno.any? %>
+                <ul class="list-group list-group-flush">
+                  <% clases_alumno.sort_by(&:diaHora).each do |clase| %>
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                       <% if clase.clase.present? %>
@@ -176,8 +177,9 @@
               <p>
                 Hola <%= alumno.alias.presence || alumno.nombre.split.first %> 😊,<br>
                 las clases que tenemos programadas son:<br><br>
-                <% if @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1).any? %>
-                  <% @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1).order(:diaHora).each do |cl| %>
+                <% clases_activas_alumno = (@clases_futuras[alumno.id] || []).select { |c| c.claseAlumnoEstado_id == 1 } %>
+                  <% if clases_activas_alumno.any? %>
+                    <% clases_activas_alumno.sort_by(&:diaHora).each do |cl| %>
                     -📅  <%= I18n.l(cl.diaHora, format: "%A %d/%m a las ⏰  %H:%M") %>
                     <% if cl.clase.present? && cl.clase.instructor.present? %>
                       con <%= cl.clase.instructor.nombre.split.first %><br>
@@ -312,7 +314,7 @@
       </div>
       
       <!-- Enlace para ver todos los recibos si hay más de 12 -->
-      <% total_recibos = alumno.recibos.count %>
+     <% total_recibos = alumno.recibos.size %>
       <% if total_recibos > 12 %>
         <div class="mt-2">
           <%= link_to "📋 Ver todos los recibos (#{total_recibos} total)", recibos_path(q: { usuario_id_eq: alumno.id }), class: "btn btn-sm btn-outline-secondary" if defined?(recibos_path) %>

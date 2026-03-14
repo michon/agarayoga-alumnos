@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   resources :solicitum, only: [:new, :create]
 
 
+
   resources :alumnos, except: [:index] do 
     member do
       post 'alta_clase'
@@ -197,7 +198,7 @@ resources :clase_alumno, only: [:destroy]
   get 'indice',       to: 'comun#indice'
   get 'inicio',       to: 'comun#inicio'
   get 'michon',       to: 'comun#michon'
-  get 'facturacion',  to: 'comun#facturacion'
+  #get 'facturacion',  to: 'comun#facturacion'
 
 
   # solo michon accede al entorno de administración
@@ -210,4 +211,15 @@ resources :clase_alumno, only: [:destroy]
 
 
   root to: 'comun#indice'
+  # config/routes.rb
+  # Añadir dentro del bloque existente, antes de 'end' final
+
+      get   'facturacion/trimestres',          to: 'facturacion#trimestres', as: :facturacion_trimestres
+      get   'facturacion/:trimestre',          to: 'facturacion#show',       as: :facturacion_trimestre, constraints: { trimestre: /\d{4}T\d/ }
+      post  'facturacion/:trimestre/generar',  to: 'facturacion#generar',    as: :generar_facturacion,    constraints: { trimestre: /\d{4}T\d/ }
+      post  'facturacion/:trimestre/emitir',   to: 'facturacion#emitir',     as: :emitir_facturacion,     constraints: { trimestre: /\d{4}T\d/ }
+      delete 'facturacion/:trimestre/limpiar', to: 'facturacion#limpiar',   as: :limpiar_facturacion,   constraints: { trimestre: /\d{4}T\d/ }
+      get   'facturacion/:trimestre/exportar', to: 'facturacion#exportar',   as: :exportar_facturacion,   constraints: { trimestre: /\d{4}T\d/ }
+      post  'facturacion/:trimestre/verificar', to: 'facturacion#verificar_emision', as: :verificar_emision_facturacion, constraints: { trimestre: /\d{4}T\d/ }
+
 end

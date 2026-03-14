@@ -1,0 +1,280 @@
+<%# app/views/facturacion/verificar_emision.html.erb %>
+
+<div class="modal-header bg-primary text-white">
+  <h5 class="modal-title">
+    <i class="bi bi-shield-check me-2"></i>
+    Verificación <%= @trimestre %>
+  </h5>
+  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+</div>
+
+<div class="modal-body">
+  <% if @verificacion.nil? %>
+    <div class="alert alert-danger">Error interno: verificación no disponible</div>
+  <% else %>
+    <%# Cards resumen %>
+    <div class="row g-2 mb-3">
+      <div class="col-6 col-md-3">
+        <div class="card text-center h-100 border-primary">
+          <div class="card-body py-2">
+            <h4 class="text-primary mb-0"><%= @verificacion[:recibos_en_remesas] || 0 %></h4>
+            <small class="text-muted">En Remesas</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center h-100 border-warning">
+          <div class="card-body py-2">
+            <h4 class="text-warning mb-0"><%= @verificacion[:facturas_borradores] || 0 %></h4>
+            <small class="text-muted">Borradores</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center h-100 border-success">
+          <div class="card-body py-2">
+            <h4 class="text-success mb-0"><%= @verificacion[:facturas_emitidas] || 0 %></h4>
+            <small class="text-muted">Emitidas</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center h-100 border-info">
+          <div class="card-body py-2">
+            <h4 class="text-info mb-0"><%= @verificacion[:recibos_serie_a_total] || 0 %></h4>
+            <small class="text-muted">Total Serie A</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# === SECCIÓN 1: RECIBOS EN REMESAS SIN FACTURA (CRÍTICO) === %>
+    <% remesas_sin_factura = Recibo.joins(:remesa).where(vencimiento: @inicio..@fin, serie: 'A', factura_id: nil) %>
+    <% if remesas_sin_factura.any? %>
+      <div class="card border-danger mb-3">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-exclamation-octagon me-2"></i>En remesas SIN FACTURA (<%= remesas_sin_factura.count %>)</span>
+          <span class="badge bg-white text-danger">CRÍTICO</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive" style="max-height: 200px;">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Recibo</th>
+                  <th>Alumno</th>
+                  <th>Importe</th>
+                  <th>Remesa</th>
+                  <th>Vencimiento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% remesas_sin_factura.includes(:usuario, :remesa).each do |r| %>
+                  <tr>
+                    <td><code>rcb-<%= r.id %></code></td>
+                    <td><%= r.usuario&.nombre || "N/A" %></td>
+                    <td><%= number_to_currency(r.importe, unit: '€') %></td>
+                    <td>#<%= r.remesa_id %></td>
+                    <td><%= l(r.vencimiento, format: :short) if r.vencimiento %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer bg-danger-subtle">
+          <small class="text-danger">
+            <i class="bi bi-info-circle me-1"></i>
+            Estos recibos fueron enviados al banco pero no están declarados a Hacienda.
+            <%= link_to "Generar facturas ahora", generar_facturacion_path(@trimestre), method: :post, class: "alert-link" %>
+          </small>
+        </div>
+      </div>
+    <% end %>
+
+    <%# === SECCIÓN 2: RECIBOS PAGADOS/DEVUELTOS SIN FACTURA (Bizum/Efectivo) === %>
+    <% sin_factura = Recibo.where(vencimiento: @inicio..@fin, serie: 'A', factura_id: nil).where(reciboEstado_id: [2, 3]) %>
+    <% sin_factura_no_remesa = sin_factura.where(remesa_id: nil) %>
+    <% if sin_factura_no_remesa.any? %>
+      <div class="card border-warning mb-3">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-cash-coin me-2"></i>Pagados sin remesa ni factura (<%= sin_factura_no_remesa.count %>)</span>
+          <span class="badge bg-dark">Revisar</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive" style="max-height: 150px;">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Recibo</th>
+                  <th>Alumno</th>
+                  <th>Importe</th>
+                  <th>Estado</th>
+                  <th>Tipo Pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% sin_factura_no_remesa.includes(:usuario).each do |r| %>
+                  <tr>
+                    <td><code>rcb-<%= r.id %></code></td>
+                    <td><%= r.usuario&.nombre || "N/A" %></td>
+                    <td><%= number_to_currency(r.importe, unit: '€') %></td>
+                    <td>
+                      <% if r.pagado? %>
+                        <span class="badge bg-success">Pagado</span>
+                      <% elsif r.devuelto? %>
+                        <span class="badge bg-danger">Devuelto</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <span class="badge bg-info">Bizum/Efectivo</span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">
+            <i class="bi bi-question-circle me-1"></i>
+            Estos recibos están pagados pero no pasaron por remesa bancaria.
+            ¿Son Bizum o efectivo que deben facturarse?
+          </small>
+        </div>
+      </div>
+    <% end %>
+
+    <%# === SECCIÓN 3: RECIBOS PENDIENTES DE ESTADO === %>
+    <% pendientes = Recibo.where(vencimiento: @inicio..@fin, serie: 'A', reciboEstado_id: 1) %>
+    <% if pendientes.any? %>
+      <div class="card border-secondary mb-3">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-hourglass-split me-2"></i>Recibos pendientes de estado (<%= pendientes.count %>)</span>
+          <span class="badge bg-white text-secondary">Revisar</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive" style="max-height: 150px;">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Recibo</th>
+                  <th>Alumno</th>
+                  <th>Importe</th>
+                  <th>Vencimiento</th>
+                  <th>¿Remesa?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% pendientes.includes(:usuario).each do |r| %>
+                  <tr>
+                    <td><code>rcb-<%= r.id %></code></td>
+                    <td><%= r.usuario&.nombre || "N/A" %></td>
+                    <td><%= number_to_currency(r.importe, unit: '€') %></td>
+                    <td><%= l(r.vencimiento, format: :short) if r.vencimiento %></td>
+                    <td>
+                      <% if r.remesa_id %>
+                        <span class="badge bg-info">En remesa #<%= r.remesa_id %></span>
+                      <% else %>
+                        <span class="badge bg-warning text-dark">Sin remesa</span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Estos recibos están en estado "pendiente". Deben marcarse como pagados o devueltos antes de facturar.
+          </small>
+        </div>
+      </div>
+    <% end %>
+
+    <%# === SECCIÓN 4: FACTURAS SIN RECIBO ASOCIADO === %>
+    <% facturas_sin_recibo = Factura.where(trimestre: @trimestre).where(recibo_id: nil) %>
+    <% if facturas_sin_recibo.any? %>
+      <div class="card border-info mb-3">
+        <div class="card-header bg-info text-white">
+          <span><i class="bi bi-receipt me-2"></i>Facturas sin recibo asociado (<%= facturas_sin_recibo.count %>)</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive" style="max-height: 150px;">
+            <table class="table table-sm table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Factura</th>
+                  <th>Tipo</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% facturas_sin_recibo.each do |f| %>
+                  <tr>
+                    <td><code><%= f.numero %></code></td>
+                    <td><%= f.tipo %></td>
+                    <td><%= number_to_currency(f.total, unit: '€') %></td>
+                    <td>
+                      <% if f.borrador? %>
+                        <span class="badge bg-secondary">Borrador</span>
+                      <% elsif f.emitida? %>
+                        <span class="badge bg-success">Emitida</span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%# === RESUMEN DE COINCIDENCIAS === %>
+    <% coinciden = @verificacion[:recibos_en_remesas].to_i - remesas_sin_factura.count %>
+    <% if coinciden > 0 && remesas_sin_factura.empty? && pendientes.empty? %>
+      <div class="alert alert-success">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>¡Todo correcto!</strong>
+        <%= coinciden %> recibos de remesas coinciden con facturas.
+        <% if sin_factura_no_remesa.any? %>
+          Hay <%= sin_factura_no_remesa.count %> recibos adicionales por Bizum/efectivo.
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="modal-footer bg-light">
+  <div class="d-flex justify-content-between align-items-center w-100">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+      <i class="bi bi-x-lg me-1"></i>Cancelar
+    </button>
+
+    <% errores = (@verificacion[:problemas] || []).select { |p| p[:severidad] == 'error' } %>
+
+    <% if @verificacion && errores.empty? && (@verificacion[:facturas_borradores] || 0) > 0 %>
+      <%= form_with url: emitir_facturacion_path(@trimestre), method: :post, class: 'd-flex align-items-center gap-3' do |f| %>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-warning fw-bold text-dark border-warning">
+            <i class="bi bi-exclamation-triangle me-1"></i>Confirma:
+          </span>
+          <%= f.text_field :confirmacion, class: 'form-control', placeholder: 'EMITIR',
+                           style: 'width: 90px; text-transform: uppercase;', required: true, pattern: 'EMITIR' %>
+          <%= f.submit 'Emitir Definitivamente', class: 'btn btn-success' %>
+        </div>
+      <% end %>
+    <% elsif errores.any? %>
+      <div class="d-flex align-items-center gap-2 text-danger">
+        <i class="bi bi-lock-fill"></i>
+        <span>Corregir errores antes de emitir</span>
+      </div>
+    <% else %>
+      <span class="text-muted">No hay borradores para emitir</span>
+    <% end %>
+  </div>
+</div>

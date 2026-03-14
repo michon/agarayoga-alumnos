@@ -183,77 +183,105 @@
         </div>
       </div>
     </div>
-
-<!-- TARJETA DE FACTURACIÓN -->
-<div class="col">
-  <div class="card h-100 border-warning">
-    <div class="card-header bg-warning text-dark">
-      <h5><i class="bi bi-receipt me-2"></i>Facturación</h5>
-    </div>
-    <div class="card-body">
-      <div class="d-grid gap-3">
-        <%= link_to facturacion_path, class: 'btn btn-outline-warning text-start' do %>
-          <i class="bi bi-list-check me-2"></i>Listado facturación
-        <% end %>
-
-        <div class="accordion" id="facturacionAccordion">
-          <!-- Facturas ODS -->
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturasODS">
-                <i class="bi bi-file-excel me-2"></i> Yacob XLS
-              </button>
-            </h2>
-            <div id="collapseFacturasODS" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
-              <div class="accordion-body p-2">
-                <%= form_tag(recibo_yacob_path, method: :post, data: { turbo: false }, target: "_blank") do %>
-                  <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
-                  <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
-                  <button class="btn btn-sm btn-warning w-100" type="submit">Generar</button>
-                <% end %>
-              </div>
-            </div>
-          </div>
-
-          <!-- Exportar FacturaDirecta -->
-          <div class="accordion-item">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturaDirecta">
-                <i class="bi bi-cloud-upload me-2"></i> Exportar FacturaDirecta
-              </button>
-            </h2>
-            <div id="collapseFacturaDirecta" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
-              <div class="accordion-body p-2">
-                <div class="alert alert-info mb-2">
-                  <small>
-                    <strong>Exportación a FacturaDirecta</strong><br>
-                    • Asignará números de factura correlativos<br>
-                    • Generará archivos para clientes y facturas<br>
-                    • Solo procesa recibos sin factura asignada
-                  </small>
-                </div>
-
-                <%= form_tag(recibo_exportar_facturadirecta_path, method: :post, data: { turbo: false }) do %>
-                  <div class="mb-2">
-                    <label class="form-label small">Fecha inicio:</label>
-                    <input name="fechaInicio" class="form-control form-control-sm" type="date" value="<%= @fechaHoy %>" required>
-                  </div>
-                  <div class="mb-2">
-                    <label class="form-label small">Fecha fin:</label>
-                    <input name="fechaFin" class="form-control form-control-sm" type="date" value="<%= @fechaHoy %>" required>
-                  </div>
-                  <button class="btn btn-sm btn-success w-100" type="submit">
-                    <i class="fas fa-file-export"></i> Exportar a FacturaDirecta
+    
+    <!-- TARJETA DE FACTURACIÓN - ACTUALIZADA -->
+    <div class="col">
+      <div class="card h-100 border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5><i class="bi bi-receipt me-2"></i>Facturación</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-3">
+            <%# NUEVO: Enlace principal a gestión trimestral %>
+            <%= link_to facturacion_trimestres_path, class: 'btn btn-warning text-start fw-bold' do %>
+              <i class="bi bi-calendar3 me-2"></i>Gestión Trimestral
+              <span class="badge bg-danger ms-2">Nuevo</span>
+            <% end %>
+            <%if false %>
+          <%= link_to facturacion_path, class: 'btn btn-outline-warning text-start' do %>
+              <i class="bi bi-list-check me-2"></i>Listado facturación (legacy)
+            <% end %>
+<%end%>
+            <div class="accordion" id="facturacionAccordion">
+              <%# NUEVO: Exportar Trimestre %>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExportarTrimestre">
+                    <i class="bi bi-file-earmark-excel me-2"></i> Exportar Trimestre (Nuevo)
                   </button>
-                <% end %>
+                </h2>
+                <div id="collapseExportarTrimestre" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
+                  <div class="accordion-body p-2">
+                    <div class="accordion-body p-2">
+                      <label class="form-label small">Selecciona trimestre:</label>
+                      <select id="select-trimestre" class="form-select form-select-sm mb-2">
+                        <option value="2025T1">2025 T1 (Ene-Mar)</option>
+                        <option value="2025T2">2025 T2 (Abr-Jun)</option>
+                        <option value="2025T3">2025 T3 (Jul-Sep)</option>
+                        <option value="2025T4">2025 T4 (Oct-Dic)</option>
+                      </select>
+                      <%= link_to "Ir a trimestre", "#", id: "link-ir-trimestre", class: "btn btn-sm btn-warning w-100" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <%# DEPRECATED: Yacob XLS - Ocultar o mantener para histórico %>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturasODS">
+                    <i class="bi bi-file-excel me-2"></i> Yacob XLS (deprecated)
+                  </button>
+                </h2>
+                <div id="collapseFacturasODS" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
+                  <div class="accordion-body p-2">
+                    <div class="alert alert-warning small mb-2">
+                      <i class="bi bi-exclamation-triangle me-1"></i>
+                      Usar solo para histórico pre-2025
+                    </div>
+                    <%= form_tag(recibo_yacob_path, method: :post, data: { turbo: false }, target: "_blank") do %>
+                      <input name="fechaInicio" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <input name="fechaFin" class="form-control mb-2" type="date" value="<%= @fechaHoy %>">
+                      <button class="btn btn-sm btn-outline-secondary w-100" type="submit">Generar (legacy)</button>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <%# DEPRECATED: Exportar FacturaDirecta %>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturaDirecta">
+                    <i class="bi bi-cloud-upload me-2"></i> Exportar FacturaDirecta (deprecated)
+                  </button>
+                </h2>
+                <div id="collapseFacturaDirecta" class="accordion-collapse collapse" data-bs-parent="#facturacionAccordion">
+                  <div class="accordion-body p-2">
+                    <div class="alert alert-warning small mb-2">
+                      <i class="bi bi-exclamation-triangle me-1"></i>
+                      Funcionalidad legacy. Usar Gestión Trimestral.
+                    </div>
+                    <%= form_tag(recibo_exportar_facturadirecta_path, method: :post, data: { turbo: false }) do %>
+                      <div class="mb-2">
+                        <label class="form-label small">Fecha inicio:</label>
+                        <input name="fechaInicio" class="form-control form-control-sm" type="date" value="<%= @fechaHoy %>" required>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label small">Fecha fin:</label>
+                        <input name="fechaFin" class="form-control form-control-sm" type="date" value="<%= @fechaHoy %>" required>
+                      </div>
+                      <button class="btn btn-sm btn-outline-secondary w-100" type="submit">
+                        <i class="fas fa-file-export"></i> Exportar (legacy)
+                      </button>
+                    <% end %>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
     <!-- TARJETA DE REMESAS -->
     <div class="col">
@@ -485,12 +513,26 @@
 
 <%= content_for :js do %>
   <script>
-    // Activar tooltips
+        // Activar tooltips
     document.addEventListener('DOMContentLoaded', function() {
       var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
       var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
       });
+
+      <%# NUEVO: Link dinámico a trimestre %>
+      var selectTrimestre = document.getElementById('select-trimestre');
+      var linkIrTrimestre = document.getElementById('link-ir-trimestre');
+
+      if (selectTrimestre && linkIrTrimestre) {
+        function actualizarLink() {
+          var trimestre = selectTrimestre.value;
+          linkIrTrimestre.href = '/facturacion/' + trimestre;
+        }
+
+        selectTrimestre.addEventListener('change', actualizarLink);
+        actualizarLink();
+      }
     });
   </script>
 <% end %>

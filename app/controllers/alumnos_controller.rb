@@ -5,61 +5,67 @@ class AlumnosController < ApplicationController
     before_action :set_usuario, only: [:editar, :actualizar]
 
   # requires authentication only for "update" and "destroy"
-
-  def index
-      unless AlumnosPolicy.new(current_usuario).verIndex?
-        render :file => "public/401.html", :status => :unauthorized
-      end
-
-      @q = Usuario.alumno.ransack(params[:q])
-      @highlight_alumno_id = params[:highlight_alumno]
-      @alumnos = @q.result(distinct: true)
-      #
-      # FILTRO ADICIONAL: SI QUIERES MANTENER SOLO ACTIVOS POR DEFECTO:
-      # Si NO se ha seleccionado ningún filtro de estado, mostrar solo activos por defecto
-      #if params[:q].nil? || params[:q][:debaja_eq].blank?
-      #  @alumnos = @alumnos.where(debaja: false)
-      #end
-
-  
-      @clases = ClaseAlumno.futuras
-      @fechaInicio = Date.today.beginning_of_month
-      @fechaHoy = Date.today.next_month
-
-      alumnos_con_relaciones = @alumnos.includes(
-        horarioAlumno: { horario: :aula },
-        recibos: []
-      )
-
-      # Prepara el texto de WhatsApp para cada alumno
-      @whatsapp_texts = {}
-      alumnos_con_relaciones.each do |alumno|
-        @whatsapp_texts[alumno.id] = generate_whatsapp_text(alumno)
-      end
-
-      # Pre-cargar los horarios de los alumnos para evitar el problema N+1
-      @horarios_por_alumno = {}
-      @alumnos.includes(horarioAlumno: :horario).each do |alumno|
-            @horarios_por_alumno[alumno.id] = alumno.horarioAlumno.map do |ha|
-          {
-            horario: ha.horario,
-            dia_semana: ha.horario.diaSemana,
-            hora: ha.horario.hora,
-            minuto: ha.horario.minuto,
-            aula: ha.horario.aula
-          }
-        end
-      end
-
-      # Pre-cargar los últimos 12 recibos de los alumnos ordenados por fecha (más reciente primero)
-      @recibos_por_alumno = {}
-      alumnos_con_relaciones.each do |alumno|
-        @recibos_por_alumno[alumno.id] = alumno.recibos
-                                  .where.not(vencimiento: nil)  # ← Excluye nulos
-                                  .order(vencimiento: :desc)    # ← Mejor que sort_by
-                                  .limit(12)
-      end
+def index
+  unless AlumnosPolicy.new(current_usuario).verIndex?
+    render file: "public/401.html", status: :unauthorized
+    return
   end
+
+
+  @q = Usuario.alumno.ransack(params[:q])
+  # ✅ Si NO hay filtro aplicado, mostrar solo activos por defecto
+  if params[:q].blank? || (params[:q][:debaja_eq].blank? && params[:q][:nombre_cont].blank?)
+    @q.debaja_eq = 'false'  # Solo activos
+  end
+
+  @highlight_alumno_id = params[:highlight_alumno]
+  
+  # Sin paginación por ahora, pero SÍ con includes correcto
+  @alumnos = @q.result(distinct: true)
+               .includes(horarioAlumno: { horario: :aula }, recibos: :reciboEstado)
+               .page(params[:page])
+               .per(25)
+
+  # Solo IDs de alumnos cargados
+  alumno_ids = @alumnos.map(&:id)
+
+  # UNA SOLA CONSULTA para todas las clases futuras
+  @clases_futuras = ClaseAlumno.futuras
+                               .where(usuario_id: alumno_ids)
+                               .includes(:clase, :claseAlumnoEstado, clase: :instructor)
+                               .group_by(&:usuario_id)
+
+  # Pre-cargar horarios
+  @horarios_por_alumno = {}
+  @alumnos.each do |alumno|
+    @horarios_por_alumno[alumno.id] = alumno.horarioAlumno.map do |ha|
+      {
+        horario: ha.horario,
+        dia_semana: ha.horario.diaSemana,
+        hora: ha.horario.hora,
+        minuto: ha.horario.minuto,
+        aula: ha.horario.aula
+      }
+    end
+  end
+
+  # Pre-cargar recibos
+  @recibos_por_alumno = {}
+  @alumnos.each do |alumno|
+    @recibos_por_alumno[alumno.id] = alumno.recibos
+                                          .select { |r| r.vencimiento.present? }
+                                          .sort_by { |r| r.vencimiento }
+                                          .reverse
+                                          .first(12)
+  end
+
+  # WhatsApp texts
+  @whatsapp_texts = {}
+  @alumnos.each do |alumno|
+    @whatsapp_texts[alumno.id] = generate_whatsapp_text(alumno)
+  end
+end
+
 
   def clientes
       unless AlumnosPolicy.new(current_usuario).verClientes?
@@ -647,9 +653,6 @@ def calcular_bic
   end
 end
 
-
-
-
   private
 
   def generar_mensaje_bienvenida(alumno, clave)
@@ -932,29 +935,29 @@ end
       color_map[bootstrap_color] || '#cccccc'
     end
 
-  def generate_whatsapp_text(alumno)
-    clases_activas = @clases.where(usuario_id: alumno.id, claseAlumnoEstado_id: 1)
-                           .where("diaHora >= ?", Date.today)
-                           .order(:diaHora)
+def generate_whatsapp_text(alumno)
+  # ✅ Usar @clases_futuras en lugar de @clases.where(...)
+  clases_activas = (@clases_futuras[alumno.id] || [])
+                    .select { |c| c.claseAlumnoEstado_id == 1 && c.diaHora >= Date.today }
+                    .sort_by(&:diaHora)
 
-    # Usamos solo emojis básicos compatibles
-    text = "¡Hola #{alumno.alias.presence || alumno.nombre.split.first}!"
-    text = text + "👋 \n"
-    text = text + "\n"
-    text = text + "*TUS PRÓXIMAS CLASES*\n\n" 
+  # Usamos solo emojis básicos compatibles
+  text = "¡Hola #{alumno.alias.presence || alumno.nombre.split.first}!"
+  text = text + "👋 \n"
+  text = text + "\n"
+  text = text + "*TUS PRÓXIMAS CLASES*\n\n"
 
-    clases_activas.each do |cl|
-      text = text + "📅 *#{I18n.l(cl.diaHora, format: '%A %d/%m')}*\n"
-      text = text + "⏰ *" + "#{cl.diaHora.strftime('%H:%M')} con #{cl.clase.instructor.nombre.split.first}*\n"
-      text = text + "➖➖➖➖➖➖➖➖➖➖" + "\n\n"
-    end
-
-    text = text + "Gracias por llegar puntual para mantener la armonía del grupo\n\n"
-
-    text = text + "¡Nos vemos en clase!"
-
-    text
+  clases_activas.each do |cl|
+    text = text + "📅 *#{I18n.l(cl.diaHora, format: '%A %d/%m')}*\n"
+    text = text + "⏰ *" + "#{cl.diaHora.strftime('%H:%M')} con #{cl.clase.instructor.nombre.split.first}*\n"
+    text = text + "➖➖➖➖➖➖➖➖➖➖" + "\n\n"
   end
+
+  text = text + "Gracias por llegar puntual para mantener la armonía del grupo\n\n"
+  text = text + "¡Nos vemos en clase!"
+
+  text
+end
 
   def calcular_bic_manual(iban)
   codigo_banco = iban.gsub(/\s+/, '')[4..7]

@@ -1,0 +1,54 @@
+<%# app/views/facturacion/trimestres.html.erb %>
+<div class="container mt-4">
+  <h1>Gestión de Facturación Trimestral</h1>
+  
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Trimestres con Facturas Emitidas</h5>
+        </div>
+        <div class="card-body">
+          <% if @trimestres.any? %>
+            <div class="list-group">
+              <% @trimestres.each do |trimestre| %>
+                <%= link_to facturacion_trimestre_path(trimestre), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+                  <%= trimestre %>
+                  <span class="badge bg-success">Emitido</span>
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-muted">No hay trimestres facturados aún.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">Trimestres Pendientes de Facturar</h5>
+        </div>
+        <div class="card-body">
+          <% if @trimestres_pendientes.any? %>
+            <div class="list-group">
+              <% @trimestres_pendientes.each do |trimestre| %>
+                <%= link_to facturacion_trimestre_path(trimestre), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+                  <%= trimestre %>
+                  <span class="balldge bg-warning text-dark">Pendiente</span>
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-muted">No hay trimestres pendientes.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="mt-4">
+    <%= link_to "Volver", root_path, class: "btn btn-secondary" %>
+  </div>
+</div>

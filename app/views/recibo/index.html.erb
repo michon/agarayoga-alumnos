@@ -86,7 +86,7 @@
             <%= recibo.reciboEstado.nombre %>
           </span></td>
           <td><%= recibo.vencimiento.strftime('%d/%m/%Y') if recibo.vencimiento %></td>
-          <td><%= recibo.factura %></td>
+          <td><%= recibo.factura.numero unless recibo.factura.nil? %></td>
           <td>
             <% if recibo.remesa.present? %>
               <%= link_to "Remesa ##{recibo.remesa_id}", remesa_show_path(recibo.remesa_id), class: 'badge bg-info text-decoration-none' %>
