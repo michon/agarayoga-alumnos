@@ -150,40 +150,67 @@ class RemesaController < ApplicationController
   end
 
 
-  def emitir 
+  def emitir
     @remesa = Remesa.find(params[:id])
-    
-    # Configurar con encoding seguro
+
+    # 1. Verificar si ya está bloqueada (MOVIDO ANTES del SEPA)
+    if @remesa.bloqueada?
+      redirect_to remesa_show_path(@remesa), alert: "Esta remesa ya fue emitida el #{@remesa.fecha_emision.strftime('%d/%m/%Y %H:%M')}"
+      return
+    end
+
+    # 2. Generar XML
     sdd = SEPA::DirectDebit.new(
       name: SepaCharacterConverter.to_sepa_format("Miguel Rodríguez López (AgâraYoga)"),
       bic: 'BCOEESMM070',
       iban: 'ES9630700030186209805420',
-      creditor_identifier: 'ES6100133322144C'
+      creditor_identifier: 'ES610013332214C'
     )
 
     @remesa.recibos.each do |rms|
       safe_transaction(sdd, rms)
     end
 
+    # 3. BLOQUEAR LA REMESA - AQUÍ ESTÁ EL CÓDIGO QUE FALTABA
+    @remesa.bloquear!
+    Rails.logger.info "✅ Remesa ##{@remesa.id} bloqueada correctamente"
+
+    # 4. Responder
     respond_to do |format|
       format.html { redirect_to remesa_show_path(@remesa) }
 
       format.xml do
         xml_content = generate_valid_xml(sdd)
-
-        ficNombre = + "remesa-#{@remesa.id}-#{@remesa.created_at.strftime("%Y%m%d")} .xml"
-        send_data xml_content, filename: ficNombre, type: 'application/xml', diposition: 'inline'
-
-
-        # Redirigir o mostrar mensaje de éxito
+        ficNombre = "remesa-#{@remesa.id}-#{@remesa.created_at.strftime("%Y%m%d")}.xml"
+        send_data xml_content, 
+                  filename: ficNombre, 
+                  type: 'application/xml', 
+                  disposition: 'attachment'  # Corregido: disposition (no diposition)
       end
     end
   end
 
-
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:rms_id, rcbs_ids:[])
   end
+
+  def desbloquear
+    @remesa = Remesa.find(params[:id])
+
+    # Solo admin puede desbloquear
+    unless current_usuario&.admin? || current_usuario&.michon?
+      redirect_to remesa_show_path(@remesa), alert: "No autorizado para desbloquear remesas"
+      return
+    end
+
+    @remesa.desbloquear!
+
+    # Opcional: revertir estado de recibos a pendiente si es necesario
+    # @remesa.recibos.update_all(reciboEstado_id: 1, remesado: false)
+
+    redirect_to remesa_show_path(@remesa), notice: "Remesa desbloqueada correctamente"
+  end
+
 
   private
     

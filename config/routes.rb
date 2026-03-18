@@ -103,6 +103,7 @@ Rails.application.routes.draw do
   get 'remesa/edit'
   get 'remesa/emitir/:id',                         to: 'remesa#emitir',              as: 'remesa/emitir'
   post 'remesa/anhadirRcbARemesa',                 to: 'remesa#anhadirRcbARemesa',   as: "remesa/anhadirRcbARemesa"
+  post 'remesa/:id/desbloquear', to: 'remesa#desbloquear', as: 'remesa_desbloquear'
 
   get  'caja/listado'
   get  'caja/modificar'
@@ -221,5 +222,6 @@ resources :clase_alumno, only: [:destroy]
       delete 'facturacion/:trimestre/limpiar', to: 'facturacion#limpiar',   as: :limpiar_facturacion,   constraints: { trimestre: /\d{4}T\d/ }
       get   'facturacion/:trimestre/exportar', to: 'facturacion#exportar',   as: :exportar_facturacion,   constraints: { trimestre: /\d{4}T\d/ }
       post  'facturacion/:trimestre/verificar', to: 'facturacion#verificar_emision', as: :verificar_emision_facturacion, constraints: { trimestre: /\d{4}T\d/ }
+      get   'facturacion/factura/:id/pdf', to: 'facturacion#pdf', as: 'facturacion_factura_pdf'
 
 end

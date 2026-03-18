@@ -1,5 +1,12 @@
 <!-- Título de la página -->
 <% content_for :title,  "Rms: #{@remesa.id.to_s}" %>
+<% if @remesa.bloqueada? && (current_usuario&.admin? || current_usuario&.michon?) %>
+  <%= button_to "Desbloquear (Admin)", remesa_desbloquear_path(@remesa), 
+      method: :post, 
+      class: "btn btn-sm btn-danger",
+      form: { style: "display: inline-block;" },
+      data: { confirm: "¿Desbloquear esta remesa? Los recibos podrán modificarse." } %>
+<% end %>
 
 <p> <%= @rcbsId.to_s %> </p>
 <p> <%= @rmsId.to_s %> </p>

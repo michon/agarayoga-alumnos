@@ -89,6 +89,17 @@
         <td><%= recibo.vencimiento.strftime("%d/%m/%Y") if recibo.vencimiento %></td>
         <td><%= number_to_currency(recibo.importe, unit: "€") %></td>
         <td>
+          <% if recibo.recibo_abono %>
+            <span class="badge bg-secondary" title="Recibo de abono ##{recibo.recibo_abono.id}">
+              Abono generado
+            </span>
+          <% elsif recibo.recibo_origen %>
+            <span class="badge bg-info" title="Abono del recibo ##{recibo.recibo_origen.id}">
+              Es abono
+            </span>
+          <% end %>
+        </td>
+        <td>
           <%= link_to "Pagar", recibo_estado_path(recibo, 2, q: filtro_params[:q], year: filtro_params[:year], mes: filtro_params[:mes]),
                       method: :get,
                       class: "btn btn-sm #{recibo.reciboEstado_id == 2 ? 'btn-success disabled' : 'btn-outline-success'}" %>

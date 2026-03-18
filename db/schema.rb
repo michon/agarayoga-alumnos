@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_02_13_000001) do
+ActiveRecord::Schema.define(version: 2026_03_14_183311) do
 
   create_table "active_storage_attachments", charset: "latin1", collation: "latin1_swedish_ci", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name", null: false
@@ -292,7 +292,9 @@ ActiveRecord::Schema.define(version: 2026_02_13_000001) do
     t.string "lugar"
     t.bigint "remesa_id"
     t.bigint "factura_id"
+    t.integer "recibo_origen_id"
     t.index ["factura_id"], name: "index_recibos_on_factura_id"
+    t.index ["recibo_origen_id"], name: "index_recibos_on_recibo_origen_id"
     t.index ["remesa_id"], name: "index_recibos_on_remesa_id"
     t.index ["serie", "factura"], name: "index_recibos_on_serie_and_factura_legacy"
     t.index ["usuario_id", "vencimiento"], name: "idx_user_vencimiento"
@@ -317,6 +319,8 @@ ActiveRecord::Schema.define(version: 2026_02_13_000001) do
     t.string "empresa"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "bloqueada", default: false
+    t.datetime "fecha_emision"
   end
 
   create_table "usuarios", charset: "latin1", collation: "latin1_swedish_ci", force: :cascade do |t|

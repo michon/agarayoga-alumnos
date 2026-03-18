@@ -13,36 +13,52 @@
     <div class="alert alert-danger">Error interno: verificación no disponible</div>
   <% else %>
     <%# Cards resumen %>
-    <div class="row g-2 mb-3">
-      <div class="col-6 col-md-3">
-        <div class="card text-center h-100 border-primary">
-          <div class="card-body py-2">
-            <h4 class="text-primary mb-0"><%= @verificacion[:recibos_en_remesas] || 0 %></h4>
-            <small class="text-muted">En Remesas</small>
+        <%# Cards resumen con desglose %>
+      <div class="row g-2 mb-3">
+        <!-- Recibos en remesas -->
+        <div class="col-6 col-md-3">
+          <div class="card text-center h-100 border-primary">
+            <div class="card-body py-2">
+              <h4 class="text-primary mb-0"><%= @verificacion[:recibos_en_remesas] || 0 %></h4>
+              <small class="text-muted">En Remesas</small>
+              <div class="mt-1 text-success small">✓ Facturados</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card text-center h-100 border-warning">
-          <div class="card-body py-2">
-            <h4 class="text-warning mb-0"><%= @verificacion[:facturas_borradores] || 0 %></h4>
-            <small class="text-muted">Borradores</small>
+
+        <!-- Pagados sin remesa (Bizum/Efectivo) -->
+        <div class="col-6 col-md-3">
+          <div class="card text-center h-100 border-info">
+            <div class="card-body py-2">
+              <h4 class="text-info mb-0"><%= @verificacion[:pagados_sin_remesa] || 0 %></h4>
+              <small class="text-muted">Bizum/Efectivo</small>
+              <div class="mt-1 text-success small">✓ Facturados</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card text-center h-100 border-success">
-          <div class="card-body py-2">
-            <h4 class="text-success mb-0"><%= @verificacion[:facturas_emitidas] || 0 %></h4>
-            <small class="text-muted">Emitidas</small>
+
+        <!-- Devueltos -->
+        <div class="col-6 col-md-3">
+          <div class="card text-center h-100 border-warning">
+            <div class="card-body py-2">
+              <h4 class="text-warning mb-0"><%= @verificacion[:devueltos] || 0 %></h4>
+              <small class="text-muted">Devueltos</small>
+              <div class="mt-1 text-success small">✓ Venta+Abono</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card text-center h-100 border-info">
-          <div class="card-body py-2">
-            <h4 class="text-info mb-0"><%= @verificacion[:recibos_serie_a_total] || 0 %></h4>
-            <small class="text-muted">Total Serie A</small>
+
+        <!-- Total borradores (con desglose) -->
+        <div class="col-6 col-md-3">
+          <div class="card text-center h-100 border-secondary">
+            <div class="card-body py-2">
+              <h4 class="text-secondary mb-0"><%= @verificacion[:facturas_borradores] || 0 %></h4>
+              <small class="text-muted">Total Borradores</small>
+              <div class="mt-1 text-muted small">
+                <%= @verificacion[:borradores_venta] || 0 %> ventas +
+                <%= @verificacion[:borradores_abono] || 0 %> abonos
+              </div>
+            </div>
           </div>
         </div>
       </div>

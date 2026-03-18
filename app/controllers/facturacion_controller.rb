@@ -124,6 +124,20 @@ class FacturacionController < ApplicationController
     end
   end
 
+  def pdf
+    @factura = Factura.find(params[:id])
+
+    respond_to do |format|
+      format.pdf do
+        pdf = FacturaPdf.new(@factura)
+        send_data pdf.render,
+                  filename: "factura_#{@factura.numero}.pdf",
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
+  end
+
   private
 
   def autorizar_facturacion
@@ -190,59 +204,60 @@ class FacturacionController < ApplicationController
 
   # Añadir este método auxiliar en private
   def calcular_verificacion(inicio, fin, trimestre)
-      recibos_serie_a = Recibo.where(vencimiento: inicio..fin, serie: 'A')
+    recibos_serie_a = Recibo.where(vencimiento: inicio..fin, serie: 'A')
 
-      verif = {
-        # Totales
-        recibos_en_remesas: recibos_serie_a.joins(:remesa).count,
-        facturas_borradores: Factura.where(trimestre: trimestre, estado: :borrador).count,
-        facturas_emitidas: Factura.where(trimestre: trimestre, estado: :emitida).count,
+    # Desglose de recibos
+    recibos_en_remesas = recibos_serie_a.joins(:remesa).count
+    pagados_sin_remesa = recibos_serie_a.where(reciboEstado_id: 2, remesa_id: nil).count
+    devueltos = recibos_serie_a.where(reciboEstado_id: 3).count
 
-        # Por estado de recibo
-        recibos_pagados_sin_factura: recibos_serie_a.where(reciboEstado_id: 2, factura_id: nil).count,
-        recibos_devueltos_sin_factura: recibos_serie_a.where(reciboEstado_id: 3, factura_id: nil).count,
+    # Desglose de facturas borrador
+    borradores_venta = Factura.where(trimestre: trimestre, estado: :borrador, tipo: :venta).count
+    borradores_abono = Factura.where(trimestre: trimestre, estado: :borrador, tipo: :abono).count
 
-        # Alertas
-        recibos_pendientes_estado: recibos_serie_a.where(reciboEstado_id: 1).count,
-        recibos_serie_a_total: recibos_serie_a.count,
+    verif = {
+      # Totales
+      recibos_en_remesas: recibos_en_remesas,
+      pagados_sin_remesa: pagados_sin_remesa,
+      devueltos: devueltos,
+      facturas_borradores: borradores_venta + borradores_abono,
+      borradores_venta: borradores_venta,
+      borradores_abono: borradores_abono,
+      facturas_emitidas: Factura.where(trimestre: trimestre, estado: :emitida).count,
 
-        # Listas para mostrar
-        problemas: []
+      # Por estado de recibo
+      recibos_pagados_sin_factura: recibos_serie_a.where(reciboEstado_id: 2, factura_id: nil).count,
+      recibos_devueltos_sin_factura: recibos_serie_a.where(reciboEstado_id: 3, factura_id: nil).count,
+
+      # Alertas
+      recibos_pendientes_estado: recibos_serie_a.where(reciboEstado_id: 1).count,
+      recibos_serie_a_total: recibos_serie_a.count,
+
+      # Listas para mostrar
+      problemas: []
+    }
+
+    # Detectar problemas
+    remesas_sin_factura = recibos_serie_a.joins(:remesa).where(factura_id: nil).count
+
+    if remesas_sin_factura > 0
+      verif[:problemas] << {
+        tipo: 'remesa_sin_factura',
+        mensaje: "#{remesas_sin_factura} recibo(s) en remesas bancarias NO tienen factura asociada (ingresos no declarados a Hacienda)",
+        severidad: 'error',
+        cantidad: remesas_sin_factura
       }
-
-      # Detectar problemas
-      remesas_con_factura = recibos_serie_a.joins(:remesa).where.not(factura_id: nil).count
-      remesas_sin_factura = recibos_serie_a.joins(:remesa).where(factura_id: nil).count
-
-      if remesas_sin_factura > 0
-        verif[:problemas] << {
-          tipo: 'remesa_sin_factura',
-          mensaje: "#{remesas_sin_factura} recibo(s) en remesas bancarias NO tienen factura asociada (ingresos no declarados a Hacienda)",
-          severidad: 'error',
-          cantidad: remesas_sin_factura
-        }
-      end
-
-      if verif[:recibos_pendientes_estado] > 0
-        verif[:problemas] << {
-          tipo: 'pendientes',
-          mensaje: "#{verif[:recibos_pendientes_estado]} recibo(s) de Serie A están en estado pendiente (no pagados ni devueltos)",
-          severidad: 'warning',
-          cantidad: verif[:recibos_pendientes_estado]
-        }
-      end
-
-      # Verificar coincidencia de totales
-      recibos_a_facturar = recibos_serie_a.where(reciboEstado_id: [2, 3]).count
-      if recibos_a_facturar != verif[:facturas_borradores] && verif[:facturas_emitidas] == 0
-        verif[:problemas] << {
-          tipo: 'desajuste',
-          mensaje: "Hay #{recibos_a_facturar} recibos listos para facturar pero #{verif[:facturas_borradores]} facturas borradores",
-          severidad: 'warning',
-          cantidad: (recibos_a_facturar - verif[:facturas_borradores]).abs
-        }
-      end
-
-      verif
     end
+
+    if verif[:recibos_pendientes_estado] > 0
+      verif[:problemas] << {
+        tipo: 'pendientes',
+        mensaje: "#{verif[:recibos_pendientes_estado]} recibo(s) de Serie A están en estado pendiente (no pagados ni devueltos)",
+        severidad: 'warning',
+        cantidad: verif[:recibos_pendientes_estado]
+      }
+    end
+
+    verif
+  end
 end

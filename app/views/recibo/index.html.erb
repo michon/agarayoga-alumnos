@@ -102,9 +102,7 @@
                data: { confirm: '¿Estás seguro?', disable_with: 'Eliminando...' },
                class: 'btn btn-sm btn-danger',
                form: { class: 'd-inline' } %>
-            <% if recibo.factura.present? %>
-              <%= link_to 'PDF', recibo_facturaPdf_path(recibo, format: :pdf), class: 'btn btn-sm btn-secondary', target: '_blank' %>
-            <% end %>
+            <%= link_to 'PDF', recibo_facturaPdf_path(recibo, format: :pdf), class: 'btn btn-sm btn-secondary', target: '_blank' %>
           </td>
         </tr>
       <% end %>
